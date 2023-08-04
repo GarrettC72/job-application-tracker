@@ -2,14 +2,6 @@ import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import { User } from '../types';
 
-// interface User {
-//   email: string;
-//   passwordHash: string;
-//   firstName: string;
-//   lastName: string;
-//   verified: boolean;
-// }
-
 const schema = new mongoose.Schema<User>({
   email: {
     type: String,

@@ -4,11 +4,11 @@ import { GraphQLError } from 'graphql';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-import { toNewUser } from './utils/parser';
 import { NewUser } from './types';
+import { toNewUser } from './utils/parser';
+import { sendVerificationEmail } from './utils/mailer';
 import config from './utils/config';
 import User from './models/user';
-// import mailer from './utils/mailer';
 
 mongoose.set('strictQuery', false);
 
@@ -36,10 +36,12 @@ const typeDefs = `#graphql
   }
 
   type User {
-    email: String,
-    firstName: String,
-    lastName: String,
-    verified: Boolean
+    id: ID!
+    email: String!
+    passwordHash: String!
+    firstName: String!
+    lastName: String!
+    verified: Boolean!
   }
 
   # The "Query" type is special: it lists all of the available queries that
@@ -103,6 +105,7 @@ const resolvers = {
         });
 
         await user.save();
+        await sendVerificationEmail(email);
         return user;
       } catch (error: unknown) {
         if (error instanceof Error) {
