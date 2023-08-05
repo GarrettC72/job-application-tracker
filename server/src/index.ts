@@ -3,6 +3,7 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 import { GraphQLError } from 'graphql';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 import { NewUser } from './types';
 import { toNewUser } from './utils/parser';
@@ -105,7 +106,15 @@ const resolvers = {
         });
 
         await user.save();
-        await sendVerificationEmail(email);
+
+        const userForToken = {
+          email: user.email,
+        };
+        const token = jwt.sign(userForToken, config.SECRET, {
+          expiresIn: '1d',
+        });
+        await sendVerificationEmail(email, token);
+
         return user;
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -146,7 +155,7 @@ const start = async () => {
   //  2. installs your ApolloServer instance as middleware
   //  3. prepares your app to handle incoming requests
   const { url } = await startStandaloneServer(server, {
-    listen: { port: 4000 },
+    listen: { port: config.PORT },
   });
 
   console.log(`🚀  Server ready at: ${url}`);

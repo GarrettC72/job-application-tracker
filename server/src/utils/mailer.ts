@@ -1,6 +1,9 @@
 import nodemailer from 'nodemailer';
 import { google } from 'googleapis';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+
+import config from './config';
+
 const OAuth2 = google.auth.OAuth2;
 
 interface EmailOptions {
@@ -12,13 +15,13 @@ interface EmailOptions {
 
 const createTransporter = async () => {
   const oauth2Client = new OAuth2(
-    process.env.CLIENT_ID,
-    process.env.CLIENT_SECRET,
-    process.env.REDIRECT_URI
+    config.CLIENT_ID,
+    config.CLIENT_SECRET,
+    config.REDIRECT_URI
   );
 
   oauth2Client.setCredentials({
-    refresh_token: process.env.REFRESH_TOKEN,
+    refresh_token: config.REFRESH_TOKEN,
   });
 
   const accessToken = await oauth2Client.getAccessToken();
@@ -27,11 +30,11 @@ const createTransporter = async () => {
     service: 'gmail',
     auth: {
       type: 'OAuth2',
-      user: process.env.EMAIL,
+      user: config.EMAIL,
       accessToken: accessToken.token ?? '',
-      clientId: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET,
-      refreshToken: process.env.REFRESH_TOKEN,
+      clientId: config.CLIENT_ID,
+      clientSecret: config.CLIENT_SECRET,
+      refreshToken: config.REFRESH_TOKEN,
     },
   };
 
@@ -45,16 +48,23 @@ const mailer = async (emailOptions: EmailOptions) => {
   await emailTransporter.sendMail(emailOptions);
 };
 
-export const sendVerificationEmail = async (email: string) => {
-  if (!process.env.EMAIL) {
+export const sendVerificationEmail = async (email: string, token: string) => {
+  if (!config.EMAIL) {
     throw new Error('Missing email for OAuth2 client');
   }
 
+  const link = `${config.WEB_APP_URL}/verify/${token}`;
+
   const emailOptions = {
-    from: `Job Application Tracker <${process.env.EMAIL}>`,
+    from: `Job Application Tracker <${config.EMAIL}>`,
     to: email,
     subject: 'Email Verification',
-    html: '<p>Thank you for signing up with this email. Please verify your email with this link.</p>',
+    html: `
+    <p>
+      Thank you for registering with Job Application Tracker. Please verify your email with the link below:<br /><br />
+      <a href="${link}">${link}</a><br />
+      The link will expire in 24 hours.
+    </p>`,
   };
   await mailer(emailOptions);
 };
