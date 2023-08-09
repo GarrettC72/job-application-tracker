@@ -60,11 +60,34 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     to: email,
     subject: 'Email Verification',
     html: `
-    <p>
-      Thank you for registering with Job Application Tracker. Please verify your email with the link below:<br /><br />
-      <a href="${link}">${link}</a><br />
-      The link will expire in 24 hours.
-    </p>`,
+      <p>
+        Thank you for registering with Job Application Tracker. Please verify your email with the link below:<br /><br />
+        <a href="${link}">${link}</a><br />
+        The link will expire in 24 hours.
+      </p>
+    `,
+  };
+  await mailer(emailOptions);
+};
+
+export const resendVerificationEmail = async (email: string, token: string) => {
+  if (!config.EMAIL) {
+    throw new Error('Missing email for OAuth2 client');
+  }
+
+  const link = `${config.WEB_APP_URL}/verify/${token}`;
+
+  const emailOptions = {
+    from: `Job Application Tracker <${config.EMAIL}>`,
+    to: email,
+    subject: 'Email Verification',
+    html: `
+      <p>
+        A new verification link has been provided. Please verify your email by clicking the link below:<br /><br />
+        <a href="${link}">${link}</a><br />
+        The link will expire in 24 hours.
+      </p>
+    `,
   };
   await mailer(emailOptions);
 };
