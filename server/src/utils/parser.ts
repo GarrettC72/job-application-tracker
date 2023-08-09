@@ -1,4 +1,4 @@
-import { NewUser } from '../types';
+import { NewUser, VerificationToken } from '../types';
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -35,4 +35,20 @@ export const toNewUser = (object: unknown): NewUser => {
   };
 
   return newUser;
+};
+
+export const toVerificationToken = (object: unknown): VerificationToken => {
+  if (!object || typeof object !== 'object') {
+    throw new Error('Incorrect or missing data');
+  }
+
+  if (!('email' in object)) {
+    throw new Error('Incorrect data: some fields are missing');
+  }
+
+  const verificationToken = {
+    email: parseStringParam(object.email, 'email'),
+  };
+
+  return verificationToken;
 };

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
+
 import { User } from '../types';
 
 const schema = new mongoose.Schema<User>({

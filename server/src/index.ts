@@ -3,10 +3,10 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 import { GraphQLError } from 'graphql';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
-import { NewUser } from './types';
-import { toNewUser } from './utils/parser';
+import { NewUser, VerifyEmailArgs } from './types';
+import { toNewUser, toVerificationToken } from './utils/parser';
 import { sendVerificationEmail } from './utils/mailer';
 import config from './utils/config';
 import User from './models/user';
@@ -45,6 +45,10 @@ const typeDefs = `#graphql
     verified: Boolean!
   }
 
+  type Token {
+    value: String!
+  }
+
   # The "Query" type is special: it lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "books" query returns an array of zero or more Books (defined above).
@@ -58,6 +62,9 @@ const typeDefs = `#graphql
       password: String!
       firstName: String!
       lastName: String!
+    ): User
+    verifyUser(
+      token: String!
     ): User
   }
 `;
@@ -80,7 +87,7 @@ const resolvers = {
     books: () => books,
   },
   Mutation: {
-    createUser: async (_root: undefined, args: NewUser) => {
+    createUser: async (_root: never, args: NewUser) => {
       try {
         const { email, password, firstName, lastName, verified } =
           toNewUser(args);
@@ -136,6 +143,75 @@ const resolvers = {
               },
             }
           );
+        }
+      }
+    },
+    verifyUser: async (_root: never, args: VerifyEmailArgs) => {
+      try {
+        const decodedToken = jwt.verify(args.token, config.SECRET);
+        const verificationToken = toVerificationToken(decodedToken);
+
+        const user = await User.findOne({ email: verificationToken.email });
+        if (!user) {
+          throw new GraphQLError(`Verification failed - account not found`, {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.token,
+            },
+          });
+        }
+
+        if (user.verified) {
+          throw new GraphQLError(`This email is already verified`, {
+            extensions: {
+              code: 'ALREADY_VERIFIED',
+              invalidArgs: args.token,
+            },
+          });
+        }
+
+        user.verified = true;
+        await user.save();
+
+        return user;
+      } catch (error) {
+        if (error instanceof TokenExpiredError) {
+          throw new GraphQLError(
+            `Verification failed - verification link expired`,
+            {
+              extensions: {
+                code: 'EXPIRED_TOKEN',
+                invalidArgs: args.token,
+                error,
+              },
+            }
+          );
+        } else if (error instanceof JsonWebTokenError) {
+          throw new GraphQLError(
+            `Verification failed - invalid verification link`,
+            {
+              extensions: {
+                code: 'BAD_USER_INPUT',
+                invalidArgs: args.token,
+                error,
+              },
+            }
+          );
+        } else if (error instanceof Error) {
+          const errorMessage = 'Something went wrong. Error: ' + error.message;
+          throw new GraphQLError(errorMessage, {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              error,
+            },
+          });
+        } else {
+          throw new GraphQLError('Something went wrong.', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              error,
+            },
+          });
         }
       }
     },

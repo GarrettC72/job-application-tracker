@@ -7,6 +7,14 @@ export interface User {
   verified: boolean;
 }
 
+export interface VerifyEmailArgs {
+  token: string;
+}
+
+export interface VerificationToken {
+  email: string;
+}
+
 export interface NewUser {
   email: string;
   password: string;
