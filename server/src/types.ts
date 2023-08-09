@@ -11,6 +11,11 @@ export interface VerifyEmailArgs {
   token: string;
 }
 
+export interface LoginArgs {
+  email: string;
+  password: string;
+}
+
 export interface VerificationToken {
   email: string;
 }

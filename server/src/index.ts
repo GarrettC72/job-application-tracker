@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt, { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
-import { NewUser, VerifyEmailArgs } from './types';
+import { LoginArgs, NewUser, VerifyEmailArgs } from './types';
 import { toNewUser, toVerificationToken } from './utils/parser';
 import { resendVerificationEmail, sendVerificationEmail } from './utils/mailer';
 import config from './utils/config';
@@ -69,6 +69,10 @@ const typeDefs = `#graphql
     resendVerification(
       token: String!
     ): User
+    login(
+      email: String!
+      password: String!
+    ): Token
   }
 `;
 
@@ -177,7 +181,7 @@ const resolvers = {
         await user.save();
 
         return user;
-      } catch (error) {
+      } catch (error: unknown) {
         if (error instanceof TokenExpiredError) {
           throw new GraphQLError(
             `Verification failed - verification link expired`,
@@ -253,7 +257,7 @@ const resolvers = {
         await resendVerificationEmail(user.email, token);
 
         return user;
-      } catch (error) {
+      } catch (error: unknown) {
         if (error instanceof Error) {
           const errorMessage = 'Something went wrong. Error: ' + error.message;
           throw new GraphQLError(errorMessage, {
@@ -271,6 +275,29 @@ const resolvers = {
           });
         }
       }
+    },
+    login: async (_root: never, args: LoginArgs) => {
+      const user = await User.findOne({ email: args.email });
+      const passwordCorrect =
+        user === null
+          ? false
+          : await bcrypt.compare(args.password, user.passwordHash);
+
+      if (!(user && passwordCorrect)) {
+        throw new GraphQLError('Invalid email or password', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.email,
+          },
+        });
+      }
+
+      const userForToken = {
+        email: user.email,
+        id: user._id,
+      };
+
+      return { value: jwt.sign(userForToken, config.SECRET) };
     },
   },
 };
