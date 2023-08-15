@@ -3,8 +3,9 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 import mongoose from 'mongoose';
 
 import config from './utils/config';
-import typeDefs from './schema';
-import resolvers from './resolvers';
+import { typeDefs, resolvers } from './schemas';
+// import typeDefs from './schema';
+// import resolvers from './resolvers';
 
 mongoose.set('strictQuery', false);
 
