@@ -3,12 +3,12 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import gql from 'graphql-tag';
 
-import { NewUser, VerifyEmailArgs } from '../types';
-import { toNewUser, toVerificationToken } from '../utils/parser';
+import { toVerificationToken } from '../utils/parser';
 import {
   resendVerificationEmail,
   sendVerificationEmail,
 } from '../utils/mailer';
+import { Resolvers } from '../__generated__/resolvers-types';
 import User from '../models/user';
 import config from '../utils/config';
 
@@ -34,12 +34,11 @@ export const typeDef = gql`
   }
 `;
 
-export const resolvers = {
+export const resolvers: Resolvers = {
   Mutation: {
-    createUser: async (_root: never, args: NewUser) => {
+    createUser: async (_root, args) => {
       try {
-        const { email, password, firstName, lastName, verified } =
-          toNewUser(args);
+        const { email, password, firstName, lastName } = args;
 
         if (password.length < 8) {
           throw new GraphQLError('Password must have minimum length 8', {
@@ -58,7 +57,7 @@ export const resolvers = {
           passwordHash,
           firstName,
           lastName,
-          verified,
+          verified: false,
         });
 
         await user.save();
@@ -95,7 +94,7 @@ export const resolvers = {
         }
       }
     },
-    verifyUser: async (_root: never, args: VerifyEmailArgs) => {
+    verifyUser: async (_root, args) => {
       try {
         const decodedToken = jwt.verify(args.token, config.SECRET);
         const verificationToken = toVerificationToken(decodedToken);
@@ -164,7 +163,7 @@ export const resolvers = {
         }
       }
     },
-    resendVerification: async (_root: never, args: VerifyEmailArgs) => {
+    resendVerification: async (_root, args) => {
       try {
         const decodedToken = jwt.verify(args.token, config.SECRET, {
           ignoreExpiration: true,

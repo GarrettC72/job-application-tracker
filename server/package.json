@@ -8,11 +8,15 @@
     "dev": "ts-node-dev src/index.ts",
     "start": "node build/index.js",
     "lint": "eslint --ext .ts .",
-    "prettier": "npx prettier --write ."
+    "prettier": "npx prettier --write .",
+    "compile": "graphql-codegen"
   },
   "author": "Garrett Chen",
   "license": "ISC",
   "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-codegen/typescript": "^4.0.1",
+    "@graphql-codegen/typescript-resolvers": "^4.0.1",
     "@types/bcryptjs": "^2.4.2",
     "@types/jsonwebtoken": "^9.0.2",
     "@types/mongoose-unique-validator": "^1.0.7",

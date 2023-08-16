@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import gql from 'graphql-tag';
 
-import { LoginArgs } from '../types';
+import { Resolvers } from '../__generated__/resolvers-types';
 import User from '../models/user';
 import config from '../utils/config';
 
@@ -17,9 +17,9 @@ export const typeDef = gql`
   }
 `;
 
-export const resolvers = {
+export const resolvers: Resolvers = {
   Mutation: {
-    login: async (_root: never, args: LoginArgs) => {
+    login: async (_root, args) => {
       const user = await User.findOne({ email: args.email });
       const passwordCorrect =
         user === null
