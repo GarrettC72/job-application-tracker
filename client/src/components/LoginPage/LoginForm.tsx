@@ -33,14 +33,14 @@ const LoginForm = () => {
   return (
     <form onSubmit={onSubmit}>
       <div>
-        email{' '}
+        Email{' '}
         <input
           value={email}
           onChange={({ target }) => setEmail(target.value)}
         />
       </div>
       <div>
-        password{' '}
+        Password{' '}
         <input
           type="password"
           value={password}
