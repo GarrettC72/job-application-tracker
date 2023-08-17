@@ -35,6 +35,15 @@ export const resolvers: Resolvers = {
         });
       }
 
+      if (!user.verified) {
+        throw new GraphQLError('Email not verified', {
+          extensions: {
+            code: 'UNVERIFIED_EMAIL',
+            invalidArgs: args.email,
+          },
+        });
+      }
+
       const userForToken = {
         email: user.email,
         id: user._id,
