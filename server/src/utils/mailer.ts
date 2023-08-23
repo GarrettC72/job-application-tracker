@@ -53,7 +53,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     throw new Error('Missing email for OAuth2 client');
   }
 
-  const link = `${config.WEB_APP_URL}/verify/${token}`;
+  const link = `${config.WEB_APP_URL}/verify?token=${token}`;
 
   const emailOptions = {
     from: `Job Application Tracker <${config.EMAIL}>`,
@@ -75,7 +75,7 @@ export const resendVerificationEmail = async (email: string, token: string) => {
     throw new Error('Missing email for OAuth2 client');
   }
 
-  const link = `${config.WEB_APP_URL}/verify/${token}`;
+  const link = `${config.WEB_APP_URL}/verify?token=${token}`;
 
   const emailOptions = {
     from: `Job Application Tracker <${config.EMAIL}>`,

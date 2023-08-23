@@ -35,8 +35,10 @@ const LoginForm = () => {
       <div>
         Email{' '}
         <input
+          type="email"
           value={email}
           onChange={({ target }) => setEmail(target.value)}
+          required
         />
       </div>
       <div>
@@ -45,6 +47,7 @@ const LoginForm = () => {
           type="password"
           value={password}
           onChange={({ target }) => setPassword(target.value)}
+          required
         />
       </div>
       <button type="submit">Login</button>

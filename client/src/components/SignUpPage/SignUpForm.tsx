@@ -17,8 +17,10 @@ const SignUpForm = () => {
       <div>
         Email{' '}
         <input
+          type="email"
           value={email}
           onChange={({ target }) => setEmail(target.value)}
+          required
         />
       </div>
       <div>
@@ -27,6 +29,7 @@ const SignUpForm = () => {
           type="password"
           value={password}
           onChange={({ target }) => setPassword(target.value)}
+          required
         />
       </div>
       <div>
@@ -35,6 +38,7 @@ const SignUpForm = () => {
           type="password"
           value={confirmPassword}
           onChange={({ target }) => setConfirmPassword(target.value)}
+          required
         />
       </div>
       <div>
@@ -42,6 +46,7 @@ const SignUpForm = () => {
         <input
           value={firstName}
           onChange={({ target }) => setFirstName(target.value)}
+          required
         />
       </div>
       <div>
@@ -49,6 +54,7 @@ const SignUpForm = () => {
         <input
           value={lastName}
           onChange={({ target }) => setLastName(target.value)}
+          required
         />
       </div>
       <button type="submit">Sign up</button>

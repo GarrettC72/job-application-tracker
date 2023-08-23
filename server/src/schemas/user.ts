@@ -26,6 +26,7 @@ export const typeDef = gql`
     createUser(
       email: String!
       password: String!
+      confirmPassword: String!
       firstName: String!
       lastName: String!
     ): User
@@ -38,10 +39,19 @@ export const resolvers: Resolvers = {
   Mutation: {
     createUser: async (_root, args) => {
       try {
-        const { email, password, firstName, lastName } = args;
+        const { email, password, confirmPassword, firstName, lastName } = args;
 
         if (password.length < 8) {
           throw new GraphQLError('Password must have minimum length 8', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.password,
+            },
+          });
+        }
+
+        if (password !== confirmPassword) {
+          throw new GraphQLError('Please enter the same password twice', {
             extensions: {
               code: 'BAD_USER_INPUT',
               invalidArgs: args.password,

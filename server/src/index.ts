@@ -4,8 +4,6 @@ import mongoose from 'mongoose';
 
 import config from './utils/config';
 import { typeDefs, resolvers } from './schemas';
-// import typeDefs from './schema';
-// import resolvers from './resolvers';
 
 mongoose.set('strictQuery', false);
 
