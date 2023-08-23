@@ -1,11 +1,12 @@
 import { useMutation } from '@apollo/client';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { LOGIN } from '../../queries';
+import { useField } from '../../hooks';
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { reset: resetEmail, ...email } = useField('email');
+  const { reset: resetPassword, ...password } = useField('password');
 
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
@@ -24,31 +25,24 @@ const LoginForm = () => {
     event.preventDefault();
     console.log(email, password);
 
-    login({ variables: { email, password } });
+    login({
+      variables: {
+        email: email.value,
+        password: password.value,
+      },
+    });
 
-    setEmail('');
-    setPassword('');
+    resetEmail();
+    resetPassword();
   };
 
   return (
     <form onSubmit={onSubmit}>
       <div>
-        Email{' '}
-        <input
-          type="email"
-          value={email}
-          onChange={({ target }) => setEmail(target.value)}
-          required
-        />
+        Email <input {...email} required />
       </div>
       <div>
-        Password{' '}
-        <input
-          type="password"
-          value={password}
-          onChange={({ target }) => setPassword(target.value)}
-          required
-        />
+        Password <input {...password} required />
       </div>
       <button type="submit">Login</button>
     </form>

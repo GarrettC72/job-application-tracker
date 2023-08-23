@@ -1,61 +1,46 @@
-import { useState } from 'react';
+import { useField } from '../../hooks';
 
 const SignUpForm = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
+  const { reset: resetEmail, ...email } = useField('email');
+  const { reset: resetPassword, ...password } = useField('password');
+  const { reset: resetConfirmPassword, ...confirmPassword } =
+    useField('password');
+  const { reset: resetFirstName, ...firstName } = useField('text');
+  const { reset: resetLastName, ...lastName } = useField('text');
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    console.log(email, password, firstName, lastName);
+    console.log(
+      email.value,
+      password.value,
+      confirmPassword.value,
+      firstName.value,
+      lastName.value
+    );
+
+    resetEmail();
+    resetPassword();
+    resetConfirmPassword();
+    resetFirstName();
+    resetLastName();
   };
 
   return (
     <form onSubmit={onSubmit}>
       <div>
-        Email{' '}
-        <input
-          type="email"
-          value={email}
-          onChange={({ target }) => setEmail(target.value)}
-          required
-        />
+        Email <input {...email} required />
       </div>
       <div>
-        Password{' '}
-        <input
-          type="password"
-          value={password}
-          onChange={({ target }) => setPassword(target.value)}
-          required
-        />
+        Password <input {...password} required />
       </div>
       <div>
-        Confirm Password{' '}
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={({ target }) => setConfirmPassword(target.value)}
-          required
-        />
+        Confirm Password <input {...confirmPassword} required />
       </div>
       <div>
-        First Name{' '}
-        <input
-          value={firstName}
-          onChange={({ target }) => setFirstName(target.value)}
-          required
-        />
+        First Name <input {...firstName} required />
       </div>
       <div>
-        Last Name{' '}
-        <input
-          value={lastName}
-          onChange={({ target }) => setLastName(target.value)}
-          required
-        />
+        Last Name <input {...lastName} required />
       </div>
       <button type="submit">Sign up</button>
     </form>
