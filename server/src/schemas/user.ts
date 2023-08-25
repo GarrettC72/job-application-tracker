@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import gql from 'graphql-tag';
 
-import { toVerificationToken } from '../utils/parser';
+import { parseEmail, toVerificationToken } from '../utils/parser';
 import {
   resendVerificationEmail,
   sendVerificationEmail,
@@ -37,39 +37,68 @@ export const typeDef = gql`
 
 export const resolvers: Resolvers = {
   Mutation: {
-    createUser: async (_root, args) => {
+    createUser: async (
+      _root,
+      { email, password, confirmPassword, firstName, lastName }
+    ) => {
       try {
-        const { email, password, confirmPassword, firstName, lastName } = args;
-
-        if (password.length < 8) {
-          throw new GraphQLError('Password must have minimum length 8', {
+        parseEmail(email);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          throw new GraphQLError(error.message, {
             extensions: {
               code: 'BAD_USER_INPUT',
-              invalidArgs: args.password,
+              invalidArgs: password,
             },
           });
         }
+      }
 
-        if (password !== confirmPassword) {
-          throw new GraphQLError('Please enter the same password twice', {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-              invalidArgs: args.password,
-            },
-          });
-        }
-
-        const saltRounds = 10;
-        const passwordHash = await bcrypt.hash(password, saltRounds);
-
-        const user = new User({
-          email,
-          passwordHash,
-          firstName,
-          lastName,
-          verified: false,
+      if (password.length < 8) {
+        throw new GraphQLError('Password must be least 8 characters long', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: password,
+          },
         });
+      }
 
+      if (password !== confirmPassword) {
+        throw new GraphQLError('Please enter the same password twice', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: password,
+          },
+        });
+      }
+
+      const caseInsensitiveEmail = email.toLowerCase();
+
+      const existingUser = await User.findOne({ email: caseInsensitiveEmail });
+      if (existingUser) {
+        throw new GraphQLError(
+          'An account with this email address already exists',
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: email,
+            },
+          }
+        );
+      }
+
+      const saltRounds = 10;
+      const passwordHash = await bcrypt.hash(password, saltRounds);
+
+      const user = new User({
+        email: caseInsensitiveEmail,
+        passwordHash,
+        firstName,
+        lastName,
+        verified: false,
+      });
+
+      try {
         await user.save();
 
         const userForToken = {
@@ -79,30 +108,26 @@ export const resolvers: Resolvers = {
           expiresIn: '1d',
         });
         await sendVerificationEmail(email, token);
-
-        return user;
       } catch (error: unknown) {
         if (error instanceof Error) {
-          const errorMessage = 'Something went wrong. Error: ' + error.message;
-          throw new GraphQLError(errorMessage, {
+          console.log(error);
+          throw new GraphQLError(error.message, {
             extensions: {
               code: 'BAD_USER_INPUT',
+              invalidArgs: {
+                email,
+                password,
+                confirmPassword,
+                firstName,
+                lastName,
+              },
               error,
             },
           });
-        } else {
-          throw new GraphQLError(
-            `Creating user failed - email already exists`,
-            {
-              extensions: {
-                code: 'BAD_USER_INPUT',
-                invalidArgs: args.email,
-                error,
-              },
-            }
-          );
         }
       }
+
+      return user;
     },
     verifyUser: async (_root, args) => {
       try {

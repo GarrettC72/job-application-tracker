@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import uniqueValidator from 'mongoose-unique-validator';
 
 import { User } from '../types';
 
@@ -8,6 +7,7 @@ const schema = new mongoose.Schema<User>({
     type: String,
     required: true,
     unique: true,
+    uniqueCaseInsensitive: true,
   },
   passwordHash: String,
   firstName: {
@@ -23,7 +23,5 @@ const schema = new mongoose.Schema<User>({
     default: false,
   },
 });
-
-schema.plugin(uniqueValidator);
 
 export default mongoose.model<User>('User', schema);

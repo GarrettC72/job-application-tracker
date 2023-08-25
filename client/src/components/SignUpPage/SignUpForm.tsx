@@ -1,4 +1,8 @@
+import { useMutation } from '@apollo/client';
+import { useEffect } from 'react';
+
 import { useField } from '../../hooks';
+import { REGISTER } from '../../queries';
 
 const SignUpForm = () => {
   const { reset: resetEmail, ...email } = useField('email');
@@ -7,6 +11,19 @@ const SignUpForm = () => {
     useField('password');
   const { reset: resetFirstName, ...firstName } = useField('text');
   const { reset: resetLastName, ...lastName } = useField('text');
+
+  const [register, result] = useMutation(REGISTER, {
+    onError: (error) => {
+      console.log(error.graphQLErrors[0].message);
+    },
+  });
+
+  useEffect(() => {
+    if (result.data) {
+      const user = result.data.createUser;
+      console.log(user);
+    }
+  }, [result.data]);
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -17,6 +34,16 @@ const SignUpForm = () => {
       firstName.value,
       lastName.value
     );
+
+    register({
+      variables: {
+        email: email.value,
+        password: password.value,
+        confirmPassword: confirmPassword.value,
+        firstName: firstName.value,
+        lastName: lastName.value,
+      },
+    });
 
     resetEmail();
     resetPassword();
