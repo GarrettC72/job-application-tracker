@@ -23,7 +23,7 @@ const LoginForm = () => {
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    console.log(email, password);
+    console.log(email.value, password.value);
 
     login({
       variables: {

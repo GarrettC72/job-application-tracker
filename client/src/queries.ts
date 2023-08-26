@@ -20,3 +20,13 @@ export const REGISTER = gql(`
     }
   }
 `);
+
+export const VERIFY_USER = gql(`
+  mutation verifyUser($token: String!) {
+    verifyUser(token: $token) {
+      id
+      email
+      verified
+    }
+  }
+`);
