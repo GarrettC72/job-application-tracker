@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import gql from 'graphql-tag';
 
 import { Resolvers } from '../__generated__/resolvers-types';
+import { parseEmail } from '../utils/parser';
 import User from '../models/user';
 import config from '../utils/config';
 
@@ -19,18 +20,33 @@ export const typeDef = gql`
 
 export const resolvers: Resolvers = {
   Mutation: {
-    login: async (_root, args) => {
-      const user = await User.findOne({ email: args.email });
+    login: async (_root, { email, password }) => {
+      try {
+        parseEmail(email);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          throw new GraphQLError(error.message, {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: password,
+            },
+          });
+        }
+      }
+
+      const caseInsensitiveEmail = email.toLowerCase();
+
+      const user = await User.findOne({ email: caseInsensitiveEmail });
       const passwordCorrect =
         user === null
           ? false
-          : await bcrypt.compare(args.password, user.passwordHash);
+          : await bcrypt.compare(password, user.passwordHash);
 
       if (!(user && passwordCorrect)) {
         throw new GraphQLError('Invalid email or password', {
           extensions: {
             code: 'BAD_USER_INPUT',
-            invalidArgs: args.email,
+            invalidArgs: email,
           },
         });
       }
@@ -39,7 +55,7 @@ export const resolvers: Resolvers = {
         throw new GraphQLError('Email not verified', {
           extensions: {
             code: 'UNVERIFIED_EMAIL',
-            invalidArgs: args.email,
+            invalidArgs: email,
           },
         });
       }
