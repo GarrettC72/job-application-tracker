@@ -129,26 +129,28 @@ export const resolvers: Resolvers = {
 
       return user;
     },
-    verifyUser: async (_root, args) => {
+    verifyUser: async (_root, { token }) => {
       try {
-        const decodedToken = jwt.verify(args.token, config.SECRET);
+        const decodedToken = jwt.verify(token, config.SECRET);
         const verificationToken = toVerificationToken(decodedToken);
 
         const user = await User.findOne({ email: verificationToken.email });
         if (!user) {
-          throw new GraphQLError(`Verification failed - account not found`, {
-            extensions: {
-              code: 'USER_NOT_FOUND',
-              invalidArgs: args.token,
-            },
-          });
+          throw new GraphQLError(
+            'Verification failed - no account found with this email',
+            {
+              extensions: {
+                code: 'USER_NOT_FOUND',
+                invalidArgs: token,
+              },
+            }
+          );
         }
-
         if (user.verified) {
-          throw new GraphQLError(`This email is already verified`, {
+          throw new GraphQLError('This email is already verified', {
             extensions: {
               code: 'ALREADY_VERIFIED',
-              invalidArgs: args.token,
+              invalidArgs: token,
             },
           });
         }
@@ -159,37 +161,54 @@ export const resolvers: Resolvers = {
         return user;
       } catch (error: unknown) {
         if (error instanceof jwt.TokenExpiredError) {
+          const decodedToken = jwt.verify(token, config.SECRET, {
+            ignoreExpiration: true,
+          });
+          const verificationToken = toVerificationToken(decodedToken);
+
+          const user = await User.findOne({ email: verificationToken.email });
+          if (!user) {
+            throw new GraphQLError(
+              'Verification failed - no account found with this email',
+              {
+                extensions: {
+                  code: 'USER_NOT_FOUND',
+                  invalidArgs: token,
+                },
+              }
+            );
+          }
+          if (user.verified) {
+            throw new GraphQLError('This email is already verified', {
+              extensions: {
+                code: 'ALREADY_VERIFIED',
+                invalidArgs: token,
+              },
+            });
+          }
           throw new GraphQLError(
-            `Verification failed - verification link expired`,
+            'Verification failed - verification link expired',
             {
               extensions: {
                 code: 'EXPIRED_TOKEN',
-                invalidArgs: args.token,
+                invalidArgs: token,
                 error,
               },
             }
           );
         } else if (error instanceof jwt.JsonWebTokenError) {
           throw new GraphQLError(
-            `Verification failed - invalid verification link`,
+            'Verification failed - invalid verification link',
             {
               extensions: {
                 code: 'BAD_USER_INPUT',
-                invalidArgs: args.token,
+                invalidArgs: token,
                 error,
               },
             }
           );
-        } else if (error instanceof Error) {
-          const errorMessage = 'Something went wrong. Error: ' + error.message;
-          throw new GraphQLError(errorMessage, {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-              error,
-            },
-          });
         } else {
-          throw new GraphQLError('Something went wrong.', {
+          throw new GraphQLError('Verification failed.', {
             extensions: {
               code: 'BAD_USER_INPUT',
               error,
@@ -198,28 +217,31 @@ export const resolvers: Resolvers = {
         }
       }
     },
-    resendVerification: async (_root, args) => {
+    resendVerification: async (_root, { token }) => {
       try {
-        const decodedToken = jwt.verify(args.token, config.SECRET, {
+        const decodedToken = jwt.verify(token, config.SECRET, {
           ignoreExpiration: true,
         });
         const verificationToken = toVerificationToken(decodedToken);
 
         const user = await User.findOne({ email: verificationToken.email });
         if (!user) {
-          throw new GraphQLError(`Verification failed - account not found`, {
-            extensions: {
-              code: 'USER_NOT_FOUND',
-              invalidArgs: args.token,
-            },
-          });
+          throw new GraphQLError(
+            'Failed to send email - no account found with this email',
+            {
+              extensions: {
+                code: 'USER_NOT_FOUND',
+                invalidArgs: token,
+              },
+            }
+          );
         }
 
         if (user.verified) {
-          throw new GraphQLError(`This email is already verified`, {
+          throw new GraphQLError('This email is already verified', {
             extensions: {
               code: 'ALREADY_VERIFIED',
-              invalidArgs: args.token,
+              invalidArgs: token,
             },
           });
         }
@@ -227,29 +249,19 @@ export const resolvers: Resolvers = {
         const userForToken = {
           email: user.email,
         };
-        const token = jwt.sign(userForToken, config.SECRET, {
+        const newToken = jwt.sign(userForToken, config.SECRET, {
           expiresIn: '1d',
         });
-        await resendVerificationEmail(user.email, token);
+        await resendVerificationEmail(user.email, newToken);
 
         return user;
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          const errorMessage = 'Something went wrong. Error: ' + error.message;
-          throw new GraphQLError(errorMessage, {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-              error,
-            },
-          });
-        } else {
-          throw new GraphQLError('Something went wrong.', {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-              error,
-            },
-          });
-        }
+        throw new GraphQLError('Failed to send email.', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            error,
+          },
+        });
       }
     },
   },

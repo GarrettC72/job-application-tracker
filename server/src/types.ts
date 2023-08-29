@@ -10,11 +10,3 @@ export interface User {
 export interface VerificationToken {
   email: string;
 }
-
-// export interface NewUser {
-//   email: string;
-//   password: string;
-//   firstName: string;
-//   lastName: string;
-//   verified: boolean;
-// }
