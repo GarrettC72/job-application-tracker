@@ -20,6 +20,7 @@ export const typeDef = gql`
     firstName: String!
     lastName: String!
     verified: Boolean!
+    latestPasswordChange: Date!
   }
 
   extend type Mutation {
@@ -29,6 +30,7 @@ export const typeDef = gql`
       confirmPassword: String!
       firstName: String!
       lastName: String!
+      verified: Boolean
     ): User
     verifyUser(token: String!): User
     resendVerification(token: String!): User
@@ -39,7 +41,7 @@ export const resolvers: Resolvers = {
   Mutation: {
     createUser: async (
       _root,
-      { email, password, confirmPassword, firstName, lastName }
+      { email, password, confirmPassword, firstName, lastName, verified }
     ) => {
       try {
         parseEmail(email);
@@ -95,7 +97,8 @@ export const resolvers: Resolvers = {
         passwordHash,
         firstName,
         lastName,
-        verified: false,
+        verified: verified ?? false,
+        latestPasswordChange: new Date(),
       });
 
       try {

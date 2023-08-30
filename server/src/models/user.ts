@@ -6,8 +6,6 @@ const schema = new mongoose.Schema<User>({
   email: {
     type: String,
     required: true,
-    unique: true,
-    uniqueCaseInsensitive: true,
   },
   passwordHash: String,
   firstName: {
@@ -21,6 +19,10 @@ const schema = new mongoose.Schema<User>({
   verified: {
     type: Boolean,
     default: false,
+  },
+  latestPasswordChange: {
+    type: Date,
+    default: Date.now,
   },
 });
 

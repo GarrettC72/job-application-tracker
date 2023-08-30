@@ -5,6 +5,7 @@ export interface User {
   firstName: string;
   lastName: string;
   verified: boolean;
+  latestPasswordChange: Date;
 }
 
 export interface VerificationToken {
