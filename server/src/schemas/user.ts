@@ -50,7 +50,7 @@ export const resolvers: Resolvers = {
           throw new GraphQLError(error.message, {
             extensions: {
               code: 'BAD_USER_INPUT',
-              invalidArgs: password,
+              invalidArgs: email,
             },
           });
         }
@@ -113,7 +113,6 @@ export const resolvers: Resolvers = {
         await sendVerificationEmail(email, token);
       } catch (error: unknown) {
         if (error instanceof Error) {
-          console.log(error);
           throw new GraphQLError(error.message, {
             extensions: {
               code: 'BAD_USER_INPUT',
@@ -133,43 +132,21 @@ export const resolvers: Resolvers = {
       return user;
     },
     verifyUser: async (_root, { token }) => {
+      let decodedToken, verificationToken;
+
       try {
-        const decodedToken = jwt.verify(token, config.SECRET);
-        const verificationToken = toVerificationToken(decodedToken);
-
-        const user = await User.findOne({ email: verificationToken.email });
-        if (!user) {
-          throw new GraphQLError(
-            'Verification failed - no account found with this email',
-            {
-              extensions: {
-                code: 'USER_NOT_FOUND',
-                invalidArgs: token,
-              },
-            }
-          );
-        }
-        if (user.verified) {
-          throw new GraphQLError('This email is already verified', {
-            extensions: {
-              code: 'ALREADY_VERIFIED',
-              invalidArgs: token,
-            },
-          });
-        }
-
-        user.verified = true;
-        await user.save();
-
-        return user;
+        decodedToken = jwt.verify(token, config.SECRET);
+        verificationToken = toVerificationToken(decodedToken);
       } catch (error: unknown) {
         if (error instanceof jwt.TokenExpiredError) {
-          const decodedToken = jwt.verify(token, config.SECRET, {
+          const expiredToken = jwt.verify(token, config.SECRET, {
             ignoreExpiration: true,
           });
-          const verificationToken = toVerificationToken(decodedToken);
+          const expiredVerificationToken = toVerificationToken(expiredToken);
 
-          const user = await User.findOne({ email: verificationToken.email });
+          const user = await User.findOne({
+            email: expiredVerificationToken.email,
+          });
           if (!user) {
             throw new GraphQLError(
               'Verification failed - no account found with this email',
@@ -189,6 +166,7 @@ export const resolvers: Resolvers = {
               },
             });
           }
+
           throw new GraphQLError(
             'Verification failed - verification link expired',
             {
@@ -199,7 +177,7 @@ export const resolvers: Resolvers = {
               },
             }
           );
-        } else if (error instanceof jwt.JsonWebTokenError) {
+        } else {
           throw new GraphQLError(
             'Verification failed - invalid verification link',
             {
@@ -210,62 +188,106 @@ export const resolvers: Resolvers = {
               },
             }
           );
-        } else {
-          throw new GraphQLError('Verification failed.', {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-              error,
-            },
-          });
         }
       }
-    },
-    resendVerification: async (_root, { token }) => {
-      try {
-        const decodedToken = jwt.verify(token, config.SECRET, {
-          ignoreExpiration: true,
-        });
-        const verificationToken = toVerificationToken(decodedToken);
 
-        const user = await User.findOne({ email: verificationToken.email });
-        if (!user) {
-          throw new GraphQLError(
-            'Failed to send email - no account found with this email',
-            {
-              extensions: {
-                code: 'USER_NOT_FOUND',
-                invalidArgs: token,
-              },
-            }
-          );
-        }
-
-        if (user.verified) {
-          throw new GraphQLError('This email is already verified', {
+      const user = await User.findOne({ email: verificationToken.email });
+      if (!user) {
+        throw new GraphQLError(
+          'Verification failed - no account found with this email',
+          {
             extensions: {
-              code: 'ALREADY_VERIFIED',
+              code: 'USER_NOT_FOUND',
               invalidArgs: token,
             },
-          });
-        }
-
-        const userForToken = {
-          email: user.email,
-        };
-        const newToken = jwt.sign(userForToken, config.SECRET, {
-          expiresIn: '1d',
+          }
+        );
+      }
+      if (user.verified) {
+        throw new GraphQLError('This email is already verified', {
+          extensions: {
+            code: 'ALREADY_VERIFIED',
+            invalidArgs: token,
+          },
         });
-        await resendVerificationEmail(user.email, newToken);
+      }
 
-        return user;
+      user.verified = true;
+
+      try {
+        await user.save();
       } catch (error: unknown) {
-        throw new GraphQLError('Failed to send email.', {
+        throw new GraphQLError('Verification failed.', {
           extensions: {
             code: 'BAD_USER_INPUT',
             error,
           },
         });
       }
+
+      return user;
+    },
+    resendVerification: async (_root, { token }) => {
+      let decodedToken, verificationToken;
+
+      try {
+        decodedToken = jwt.verify(token, config.SECRET, {
+          ignoreExpiration: true,
+        });
+        verificationToken = toVerificationToken(decodedToken);
+      } catch (error: unknown) {
+        throw new GraphQLError(
+          'Verification failed - invalid verification link',
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: token,
+              error,
+            },
+          }
+        );
+      }
+
+      const user = await User.findOne({ email: verificationToken.email });
+      if (!user) {
+        throw new GraphQLError(
+          'Failed to send email - no account found with this email',
+          {
+            extensions: {
+              code: 'USER_NOT_FOUND',
+              invalidArgs: token,
+            },
+          }
+        );
+      }
+      if (user.verified) {
+        throw new GraphQLError('This email is already verified', {
+          extensions: {
+            code: 'ALREADY_VERIFIED',
+            invalidArgs: token,
+          },
+        });
+      }
+
+      const userForToken = {
+        email: user.email,
+      };
+      const newToken = jwt.sign(userForToken, config.SECRET, {
+        expiresIn: '1d',
+      });
+
+      try {
+        await resendVerificationEmail(user.email, newToken);
+      } catch (error: unknown) {
+        throw new GraphQLError('Failed to send email.', {
+          extensions: {
+            code: 'EMAIL_FAILURE',
+            error,
+          },
+        });
+      }
+
+      return user;
     },
   },
 };
