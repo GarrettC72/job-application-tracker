@@ -7,7 +7,12 @@ const LoginPage = () => {
     <div>
       <h2>Login</h2>
       <LoginForm />
-      <Link to="/signup">Sign up</Link>
+      <div>
+        <Link to="/signup">Sign up</Link>
+      </div>
+      <div>
+        <Link to="/forgot">Forgot your password?</Link>
+      </div>
     </div>
   );
 };

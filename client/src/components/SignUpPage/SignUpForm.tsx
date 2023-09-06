@@ -58,10 +58,10 @@ const SignUpForm = () => {
         Email <input {...email} required />
       </div>
       <div>
-        Password <input {...password} required />
+        Password <input {...password} minLength={8} required />
       </div>
       <div>
-        Confirm Password <input {...confirmPassword} required />
+        Confirm Password <input {...confirmPassword} minLength={8} required />
       </div>
       <div>
         First Name <input {...firstName} required />
