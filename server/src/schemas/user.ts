@@ -6,6 +6,7 @@ import gql from 'graphql-tag';
 import { parseEmail, toVerificationToken } from '../utils/parser';
 import {
   resendVerificationEmail,
+  sendPasswordResetEmail,
   sendVerificationEmail,
 } from '../utils/mailer';
 import { Resolvers } from '../__generated__/resolvers-types';
@@ -34,6 +35,7 @@ export const typeDef = gql`
     ): User
     verifyUser(token: String!): User
     resendVerification(token: String!): User
+    createPasswordReset(email: String!): User
   }
 `;
 
@@ -278,6 +280,75 @@ export const resolvers: Resolvers = {
 
       try {
         await resendVerificationEmail(user.email, newToken);
+      } catch (error: unknown) {
+        throw new GraphQLError('Failed to send email.', {
+          extensions: {
+            code: 'EMAIL_FAILURE',
+            error,
+          },
+        });
+      }
+
+      return user;
+    },
+    createPasswordReset: async (_root, { email }) => {
+      try {
+        parseEmail(email);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          throw new GraphQLError(error.message, {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: email,
+            },
+          });
+        }
+      }
+
+      const user = await User.findOne({ email });
+      if (!user) {
+        throw new GraphQLError(
+          'Failed to send email - no account found with this email',
+          {
+            extensions: {
+              code: 'USER_NOT_FOUND',
+              invalidArgs: email,
+            },
+          }
+        );
+      }
+      if (!user.verified) {
+        throw new GraphQLError('Email not verified', {
+          extensions: {
+            code: 'UNVERIFIED_EMAIL',
+            invalidArgs: email,
+          },
+        });
+      }
+      if (
+        Date.now() - user.latestPasswordChange.getTime() <
+        24 * 60 * 60 * 1000
+      ) {
+        throw new GraphQLError(
+          'Can not set a new password for 24 hours after most recent change',
+          {
+            extensions: {
+              code: 'EARLY_PASSWORD_RESET',
+              invalidArgs: email,
+            },
+          }
+        );
+      }
+
+      const userForToken = {
+        email: user.email,
+      };
+      const token = jwt.sign(userForToken, config.SECRET, {
+        expiresIn: '1d',
+      });
+
+      try {
+        await sendPasswordResetEmail(email, token);
       } catch (error: unknown) {
         throw new GraphQLError('Failed to send email.', {
           extensions: {

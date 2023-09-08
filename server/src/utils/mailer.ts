@@ -6,13 +6,6 @@ import config from './config';
 
 const OAuth2 = google.auth.OAuth2;
 
-interface EmailOptions {
-  from: string;
-  to: string;
-  subject: string;
-  html: string;
-}
-
 const createTransporter = async () => {
   const oauth2Client = new OAuth2(
     config.CLIENT_ID,
@@ -43,51 +36,60 @@ const createTransporter = async () => {
   return transporter;
 };
 
-const mailer = async (emailOptions: EmailOptions) => {
+const mailer = async (email: string, subject: string, html: string) => {
+  if (!config.EMAIL) {
+    throw new Error('Missing email for OAuth2 client');
+  }
+
+  const emailOptions = {
+    from: `Job Application Tracker <${config.EMAIL}>`,
+    to: email,
+    subject,
+    html,
+  };
+
   const emailTransporter = await createTransporter();
   await emailTransporter.sendMail(emailOptions);
 };
 
 export const sendVerificationEmail = async (email: string, token: string) => {
-  if (!config.EMAIL) {
-    throw new Error('Missing email for OAuth2 client');
-  }
-
   const link = `${config.WEB_APP_URL}/verify?token=${token}`;
+  const subject = 'Email Verification';
+  const html = `
+    <p>
+      Thank you for registering with Job Application Tracker. Please verify your email with the link below:<br /><br />
+      <a href="${link}">${link}</a><br />
+      The link will expire in 24 hours.
+    </p>
+  `;
 
-  const emailOptions = {
-    from: `Job Application Tracker <${config.EMAIL}>`,
-    to: email,
-    subject: 'Email Verification',
-    html: `
-      <p>
-        Thank you for registering with Job Application Tracker. Please verify your email with the link below:<br /><br />
-        <a href="${link}">${link}</a><br />
-        The link will expire in 24 hours.
-      </p>
-    `,
-  };
-  await mailer(emailOptions);
+  await mailer(email, subject, html);
 };
 
 export const resendVerificationEmail = async (email: string, token: string) => {
-  if (!config.EMAIL) {
-    throw new Error('Missing email for OAuth2 client');
-  }
-
   const link = `${config.WEB_APP_URL}/verify?token=${token}`;
+  const subject = 'Email Verification';
+  const html = `
+    <p>
+      A new verification link has been provided. Please verify your email by clicking the link below:<br /><br />
+      <a href="${link}">${link}</a><br />
+      The link will expire in 24 hours.
+    </p>
+  `;
 
-  const emailOptions = {
-    from: `Job Application Tracker <${config.EMAIL}>`,
-    to: email,
-    subject: 'Email Verification',
-    html: `
-      <p>
-        A new verification link has been provided. Please verify your email by clicking the link below:<br /><br />
-        <a href="${link}">${link}</a><br />
-        The link will expire in 24 hours.
-      </p>
-    `,
-  };
-  await mailer(emailOptions);
+  await mailer(email, subject, html);
+};
+
+export const sendPasswordResetEmail = async (email: string, token: string) => {
+  const link = `${config.WEB_APP_URL}/reset?token=${token}`;
+  const subject = 'Password Reset';
+  const html = `
+    <p>
+      You have requested a link to reset your password. Please set a new password for your account with the link below:<br /><br />
+      <a href="${link}">${link}</a><br />
+      The link will expire in 24 hours.
+    </p>
+  `;
+
+  await mailer(email, subject, html);
 };
