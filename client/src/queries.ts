@@ -30,3 +30,13 @@ export const VERIFY_USER = gql(`
     }
   }
 `);
+
+export const SEND_PASSWORD_RESET = gql(`
+  mutation sendPasswordReset($email: String!) {
+    createPasswordReset(email: $email) {
+      id
+      email
+      verified
+    }
+  }
+`);

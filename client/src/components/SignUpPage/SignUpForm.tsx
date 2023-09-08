@@ -1,5 +1,6 @@
 import { useMutation } from '@apollo/client';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useField } from '../../hooks';
 import { REGISTER } from '../../queries';
@@ -18,12 +19,15 @@ const SignUpForm = () => {
     },
   });
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (result.data) {
       const user = result.data.createUser;
       console.log(user);
+      navigate('');
     }
-  }, [result.data]);
+  }, [result.data, navigate]);
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
