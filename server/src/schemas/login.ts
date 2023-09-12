@@ -5,6 +5,7 @@ import gql from 'graphql-tag';
 
 import { Resolvers } from '../__generated__/resolvers-types';
 import { parseEmail } from '../utils/parser';
+import { Token, TokenType } from '../types';
 import User from '../models/user';
 import config from '../utils/config';
 
@@ -60,9 +61,10 @@ export const resolvers: Resolvers = {
         });
       }
 
-      const userForToken = {
+      const userForToken: Token = {
         email: user.email,
         id: user._id,
+        type: TokenType.Login,
       };
 
       return { value: jwt.sign(userForToken, config.SECRET) };

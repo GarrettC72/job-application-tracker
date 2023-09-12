@@ -1,4 +1,6 @@
-import { VerificationToken } from '../types';
+import { Types } from 'mongoose';
+
+import { Token, TokenType } from '../types';
 
 const isString = (text: unknown): text is string => {
   return typeof text === 'string' || text instanceof String;
@@ -9,6 +11,12 @@ const isEmail = (text: string): boolean => {
   const emailRegExp =
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
   return text.length > 0 && emailRegExp.test(text);
+};
+
+const isTokenType = (param: string): param is TokenType => {
+  return Object.values(TokenType)
+    .map((v) => v.toString())
+    .includes(param);
 };
 
 const parseStringParam = (param: unknown, field: string): string => {
@@ -27,18 +35,43 @@ export const parseEmail = (param: unknown): string => {
   return param;
 };
 
-export const toVerificationToken = (object: unknown): VerificationToken => {
+export const parseTokenType = (param: unknown): TokenType => {
+  if (!isString(param) || !isTokenType(param)) {
+    throw new Error('Value of token type incorrect: ' + param);
+  }
+
+  return param;
+};
+
+export const parseObjectIdParam = (
+  param: unknown,
+  field: string
+): Types.ObjectId => {
+  if (
+    !param ||
+    !(typeof param === 'object') ||
+    !(param instanceof Types.ObjectId)
+  ) {
+    throw new Error(`Incorrect or missing ${field}:`);
+  }
+
+  return param;
+};
+
+export const toToken = (object: unknown): Token => {
   if (!object || typeof object !== 'object') {
     throw new Error('Incorrect or missing data');
   }
 
-  if (!('email' in object)) {
+  if (!('email' in object) || !('id' in object) || !('type' in object)) {
     throw new Error('Incorrect data: some fields are missing');
   }
 
-  const verificationToken = {
+  const token = {
     email: parseStringParam(object.email, 'email'),
+    id: parseObjectIdParam(object.id, 'id'),
+    type: parseTokenType(object.type),
   };
 
-  return verificationToken;
+  return token;
 };

@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 export interface User {
   id: string;
   email: string;
@@ -8,6 +10,14 @@ export interface User {
   latestPasswordChange: Date;
 }
 
-export interface VerificationToken {
+export enum TokenType {
+  Verification = 'verification',
+  Password = 'password',
+  Login = 'login',
+}
+
+export interface Token {
   email: string;
+  id: Types.ObjectId;
+  type: TokenType;
 }

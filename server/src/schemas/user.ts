@@ -3,13 +3,14 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import gql from 'graphql-tag';
 
-import { parseEmail, toVerificationToken } from '../utils/parser';
+import { parseEmail, toToken } from '../utils/parser';
 import {
   resendVerificationEmail,
   sendPasswordResetEmail,
   sendVerificationEmail,
 } from '../utils/mailer';
 import { Resolvers } from '../__generated__/resolvers-types';
+import { TokenType } from '../types';
 import User from '../models/user';
 import config from '../utils/config';
 
@@ -138,13 +139,25 @@ export const resolvers: Resolvers = {
 
       try {
         decodedToken = jwt.verify(token, config.SECRET);
-        verificationToken = toVerificationToken(decodedToken);
+        verificationToken = toToken(decodedToken);
       } catch (error: unknown) {
         if (error instanceof jwt.TokenExpiredError) {
           const expiredToken = jwt.verify(token, config.SECRET, {
             ignoreExpiration: true,
           });
-          const expiredVerificationToken = toVerificationToken(expiredToken);
+          const expiredVerificationToken = toToken(expiredToken);
+
+          if (expiredVerificationToken.type !== TokenType.Verification) {
+            throw new GraphQLError(
+              'Verification failed - invalid verification link',
+              {
+                extensions: {
+                  code: 'BAD_USER_INPUT',
+                  invalidArgs: token,
+                },
+              }
+            );
+          }
 
           const user = await User.findOne({
             email: expiredVerificationToken.email,
@@ -193,6 +206,18 @@ export const resolvers: Resolvers = {
         }
       }
 
+      if (verificationToken.type !== TokenType.Verification) {
+        throw new GraphQLError(
+          'Verification failed - invalid verification link',
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: token,
+            },
+          }
+        );
+      }
+
       const user = await User.findOne({ email: verificationToken.email });
       if (!user) {
         throw new GraphQLError(
@@ -236,15 +261,27 @@ export const resolvers: Resolvers = {
         decodedToken = jwt.verify(token, config.SECRET, {
           ignoreExpiration: true,
         });
-        verificationToken = toVerificationToken(decodedToken);
+        verificationToken = toToken(decodedToken);
       } catch (error: unknown) {
         throw new GraphQLError(
-          'Verification failed - invalid verification link',
+          'Failed to send new email - invalid verification link',
           {
             extensions: {
               code: 'BAD_USER_INPUT',
               invalidArgs: token,
               error,
+            },
+          }
+        );
+      }
+
+      if (verificationToken.type !== TokenType.Verification) {
+        throw new GraphQLError(
+          'Failed to send new email - invalid verification link',
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: token,
             },
           }
         );
