@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { Types, isObjectIdOrHexString } from 'mongoose';
 
 import { Token, TokenType } from '../types';
 
@@ -17,6 +17,10 @@ const isTokenType = (param: string): param is TokenType => {
   return Object.values(TokenType)
     .map((v) => v.toString())
     .includes(param);
+};
+
+const isObjectIdParam = (param: unknown): param is Types.ObjectId => {
+  return isObjectIdOrHexString(param);
 };
 
 const parseStringParam = (param: unknown, field: string): string => {
@@ -47,11 +51,7 @@ export const parseObjectIdParam = (
   param: unknown,
   field: string
 ): Types.ObjectId => {
-  if (
-    !param ||
-    !(typeof param === 'object') ||
-    !(param instanceof Types.ObjectId)
-  ) {
+  if (!param || !isObjectIdParam(param)) {
     throw new Error(`Incorrect or missing ${field}:`);
   }
 

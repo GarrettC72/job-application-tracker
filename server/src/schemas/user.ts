@@ -10,7 +10,7 @@ import {
   sendVerificationEmail,
 } from '../utils/mailer';
 import { Resolvers } from '../__generated__/resolvers-types';
-import { TokenType } from '../types';
+import { Token, TokenType } from '../types';
 import User from '../models/user';
 import config from '../utils/config';
 
@@ -37,6 +37,7 @@ export const typeDef = gql`
     verifyUser(token: String!): User
     resendVerification(token: String!): User
     createPasswordReset(email: String!): User
+    verifyPasswordToken(token: String!): User
   }
 `;
 
@@ -107,8 +108,10 @@ export const resolvers: Resolvers = {
       try {
         await user.save();
 
-        const userForToken = {
+        const userForToken: Token = {
           email: user.email,
+          id: user._id,
+          type: TokenType.Verification,
         };
         const token = jwt.sign(userForToken, config.SECRET, {
           expiresIn: '1d',
@@ -159,9 +162,7 @@ export const resolvers: Resolvers = {
             );
           }
 
-          const user = await User.findOne({
-            email: expiredVerificationToken.email,
-          });
+          const user = await User.findById(expiredVerificationToken.id);
           if (!user) {
             throw new GraphQLError(
               'Verification failed - no account found with this email',
@@ -218,7 +219,7 @@ export const resolvers: Resolvers = {
         );
       }
 
-      const user = await User.findOne({ email: verificationToken.email });
+      const user = await User.findById(verificationToken.id);
       if (!user) {
         throw new GraphQLError(
           'Verification failed - no account found with this email',
@@ -287,7 +288,7 @@ export const resolvers: Resolvers = {
         );
       }
 
-      const user = await User.findOne({ email: verificationToken.email });
+      const user = await User.findById(verificationToken.id);
       if (!user) {
         throw new GraphQLError(
           'Failed to send email - no account found with this email',
@@ -308,8 +309,10 @@ export const resolvers: Resolvers = {
         });
       }
 
-      const userForToken = {
+      const userForToken: Token = {
         email: user.email,
+        id: user._id,
+        type: TokenType.Verification,
       };
       const newToken = jwt.sign(userForToken, config.SECRET, {
         expiresIn: '1d',
@@ -342,7 +345,9 @@ export const resolvers: Resolvers = {
         }
       }
 
-      const user = await User.findOne({ email });
+      const caseInsensitiveEmail = email.toLowerCase();
+
+      const user = await User.findOne({ email: caseInsensitiveEmail });
       if (!user) {
         throw new GraphQLError(
           'Failed to send email - no account found with this email',
@@ -377,8 +382,10 @@ export const resolvers: Resolvers = {
         );
       }
 
-      const userForToken = {
+      const userForToken: Token = {
         email: user.email,
+        id: user._id,
+        type: TokenType.Password,
       };
       const token = jwt.sign(userForToken, config.SECRET, {
         expiresIn: '1d',
@@ -393,6 +400,110 @@ export const resolvers: Resolvers = {
             error,
           },
         });
+      }
+
+      return user;
+    },
+    verifyPasswordToken: async (_root, { token }) => {
+      let decodedToken, passwordResetToken;
+
+      try {
+        decodedToken = jwt.verify(token, config.SECRET);
+        passwordResetToken = toToken(decodedToken);
+      } catch (error: unknown) {
+        if (error instanceof jwt.TokenExpiredError) {
+          const expiredToken = jwt.verify(token, config.SECRET, {
+            ignoreExpiration: true,
+          });
+          const expiredPasswordResetToken = toToken(expiredToken);
+
+          if (expiredPasswordResetToken.type !== TokenType.Password) {
+            throw new GraphQLError('Invalid password reset link', {
+              extensions: {
+                code: 'BAD_USER_INPUT',
+                invalidArgs: token,
+              },
+            });
+          }
+
+          const user = await User.findById(expiredPasswordResetToken.id);
+          if (!user) {
+            throw new GraphQLError('No account found with this email', {
+              extensions: {
+                code: 'USER_NOT_FOUND',
+                invalidArgs: token,
+              },
+            });
+          }
+          if (!user.verified) {
+            throw new GraphQLError('Email not verified', {
+              extensions: {
+                code: 'UNVERIFIED_EMAIL',
+                invalidArgs: token,
+              },
+            });
+          }
+
+          throw new GraphQLError('Expired password reset link', {
+            extensions: {
+              code: 'EXPIRED_TOKEN',
+              invalidArgs: token,
+              error,
+            },
+          });
+        } else {
+          throw new GraphQLError('Invalid password reset link', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: token,
+              error,
+            },
+          });
+        }
+      }
+
+      if (passwordResetToken.type !== TokenType.Password) {
+        throw new GraphQLError(
+          'Failed to send new email - invalid verification link',
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: token,
+            },
+          }
+        );
+      }
+
+      const user = await User.findById(passwordResetToken.id);
+      if (!user) {
+        throw new GraphQLError('No account found with this email', {
+          extensions: {
+            code: 'USER_NOT_FOUND',
+            invalidArgs: token,
+          },
+        });
+      }
+      if (!user.verified) {
+        throw new GraphQLError('Email not verified', {
+          extensions: {
+            code: 'UNVERIFIED_EMAIL',
+            invalidArgs: token,
+          },
+        });
+      }
+      if (
+        Date.now() - user.latestPasswordChange.getTime() <
+        24 * 60 * 60 * 1000
+      ) {
+        throw new GraphQLError(
+          'Can not set a new password for 24 hours after most recent change',
+          {
+            extensions: {
+              code: 'EARLY_PASSWORD_RESET',
+              invalidArgs: token,
+            },
+          }
+        );
       }
 
       return user;

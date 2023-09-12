@@ -36,7 +36,15 @@ export const SEND_PASSWORD_RESET = gql(`
     createPasswordReset(email: $email) {
       id
       email
-      verified
+    }
+  }
+`);
+
+export const VERIFY_PASSWORD_RESET = gql(`
+  mutation verifyPasswordReset($token: String!) {
+    verifyPasswordToken(token: $token) {
+      id
+      email
     }
   }
 `);

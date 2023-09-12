@@ -41,12 +41,12 @@ const VerificationPage = () => {
     return (
       <div>
         This verification link is invalid. Make sure the verification link is
-        correct or create a new account <Link to="signup">here</Link>.
+        correct or create a new account <Link to="/signup">here</Link>.
       </div>
     );
   }
 
-  if (result.loading) {
+  if (result.loading || status === 'LOADING') {
     return <div>loading...</div>;
   }
 
@@ -66,20 +66,17 @@ const VerificationPage = () => {
       {(status === 'BAD_USER_INPUT' || status === 'USER_NOT_FOUND') && (
         <div>
           This verification link is invalid. Make sure the verification link is
-          correct or create a new account <Link to="signup">here</Link>.
+          correct or create a new account <Link to="/signup">here</Link>.
         </div>
       )}
       {status === 'EXPIRED_TOKEN' && (
         <div>
           <div>
             This verification link is expired. Please click the button below to
-            generate a new verification link.
+            receive a new verification link.
           </div>
           <button>Resend verification email</button>
         </div>
-      )}
-      {status === 'LOADING' && (
-        <div>This is the page for verifying emails.</div>
       )}
     </div>
   );
