@@ -31,6 +31,16 @@ export const VERIFY_USER = gql(`
   }
 `);
 
+export const RESEND_VERIFICATION = gql(`
+  mutation resendVerification($token: String!) {
+    resendVerification(token: $token) {
+      id
+      email
+      verified
+    }
+  }
+`);
+
 export const SEND_PASSWORD_RESET = gql(`
   mutation sendPasswordReset($email: String!) {
     createPasswordReset(email: $email) {

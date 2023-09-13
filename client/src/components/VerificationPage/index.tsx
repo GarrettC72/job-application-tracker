@@ -2,12 +2,25 @@ import { useMutation } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
-import { VERIFY_USER } from '../../queries';
+import { RESEND_VERIFICATION, VERIFY_USER } from '../../queries';
 
 const VerificationPage = () => {
   const [status, setStatus] = useState('LOADING');
   const [searchParams] = useSearchParams();
-  const [verify, result] = useMutation(VERIFY_USER, {
+  const [verify, verifyResult] = useMutation(VERIFY_USER, {
+    onError: (error) => {
+      console.log(error);
+      console.log(error.graphQLErrors[0].message);
+      const verifyError = error.graphQLErrors[0];
+      if (
+        verifyError.extensions.code &&
+        typeof verifyError.extensions.code === 'string'
+      ) {
+        setStatus(verifyError.extensions.code);
+      }
+    },
+  });
+  const [resend, resendResult] = useMutation(RESEND_VERIFICATION, {
     onError: (error) => {
       console.log(error);
       console.log(error.graphQLErrors[0].message);
@@ -30,12 +43,26 @@ const VerificationPage = () => {
   }, [token, verify]);
 
   useEffect(() => {
-    if (result.data) {
-      const user = result.data.verifyUser;
+    if (verifyResult.data) {
+      const user = verifyResult.data.verifyUser;
       console.log(user);
       setStatus('VERIFIED');
     }
-  }, [result.data]);
+  }, [verifyResult.data]);
+
+  useEffect(() => {
+    if (resendResult.data) {
+      const user = resendResult.data.resendVerification;
+      console.log(user);
+      setStatus('SENT_NEW_VERIFICATION');
+    }
+  }, [resendResult.data]);
+
+  const sendNewVerification = () => {
+    if (token) {
+      resend({ variables: { token } });
+    }
+  };
 
   if (!token) {
     return (
@@ -46,7 +73,7 @@ const VerificationPage = () => {
     );
   }
 
-  if (result.loading || status === 'LOADING') {
+  if (verifyResult.loading || status === 'LOADING') {
     return <div>loading...</div>;
   }
 
@@ -55,6 +82,11 @@ const VerificationPage = () => {
       {status === 'VERIFIED' && (
         <div>
           Your email is now verified. Click <Link to="/">here</Link> to login.
+        </div>
+      )}
+      {status === 'SENT_NEW_VERIFICATION' && (
+        <div>
+          A new verification link has been sent. Please check your email.
         </div>
       )}
       {status === 'ALREADY_VERIFIED' && (
@@ -75,7 +107,9 @@ const VerificationPage = () => {
             This verification link is expired. Please click the button below to
             receive a new verification link.
           </div>
-          <button>Resend verification email</button>
+          <button onClick={sendNewVerification}>
+            Resend verification email
+          </button>
         </div>
       )}
     </div>
