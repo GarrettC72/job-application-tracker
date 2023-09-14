@@ -52,9 +52,15 @@ const ResetPasswordPage = () => {
 
   return (
     <div>
-      {status === 'VERIFIED' && (
+      {(status === 'VERIFIED' || status === 'BAD_USER_INPUT') && (
         <>
           <h2>Create a new password</h2>
+          {status === 'BAD_USER_INPUT' && (
+            <p>
+              Failed to save new password. Make sure your password is at least 8
+              characters long and that you enter it correctly twice.
+            </p>
+          )}
           <ResetPasswordForm token={token} setStatus={setStatus} />
         </>
       )}
