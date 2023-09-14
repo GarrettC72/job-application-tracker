@@ -95,7 +95,7 @@ const VerificationPage = () => {
           to login.
         </div>
       )}
-      {(status === 'BAD_USER_INPUT' || status === 'USER_NOT_FOUND') && (
+      {(status === 'INVALID_TOKEN' || status === 'USER_NOT_FOUND') && (
         <div>
           This verification link is invalid. Make sure the verification link is
           correct or create a new account <Link to="/signup">here</Link>.

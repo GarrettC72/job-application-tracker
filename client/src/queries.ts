@@ -58,3 +58,12 @@ export const VERIFY_PASSWORD_RESET = gql(`
     }
   }
 `);
+
+export const EDIT_PASSWORD = gql(`
+  mutation editPassword($token: String!, $password: String!, $confirmPassword: String!) {
+    updateUser(token: $token, password: $password, confirmPassword: $confirmPassword) {
+      id
+      email
+    }
+  }
+`);

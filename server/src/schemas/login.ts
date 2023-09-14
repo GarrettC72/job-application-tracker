@@ -53,7 +53,7 @@ export const resolvers: Resolvers = {
       }
 
       if (!user.verified) {
-        throw new GraphQLError('Email not verified', {
+        throw new GraphQLError('This email is not verified', {
           extensions: {
             code: 'UNVERIFIED_EMAIL',
             invalidArgs: email,

@@ -55,10 +55,16 @@ const ResetPasswordPage = () => {
       {status === 'VERIFIED' && (
         <>
           <h2>Create a new password</h2>
-          <ResetPasswordForm />
+          <ResetPasswordForm token={token} setStatus={setStatus} />
         </>
       )}
-      {(status === 'BAD_USER_INPUT' || status === 'USER_NOT_FOUND') && (
+      {status === 'UPDATED_PASSWORD' && (
+        <div>
+          Your password has been updated. Click <Link to="/">here</Link> to
+          login.
+        </div>
+      )}
+      {(status === 'INVALID_TOKEN' || status === 'USER_NOT_FOUND') && (
         <div>
           This password reset link is invalid. Make sure the link is correct or
           request a new link <Link to="/forgot">here</Link>.
@@ -66,26 +72,20 @@ const ResetPasswordPage = () => {
       )}
       {status === 'EXPIRED_TOKEN' && (
         <div>
-          <div>
-            This password reset link is expired. Please click{' '}
-            <Link to="/forgot">here</Link> to request a new password reset link.
-          </div>
+          This password reset link is expired. Please click{' '}
+          <Link to="/forgot">here</Link> to request a new password reset link.
         </div>
       )}
       {status === 'UNVERIFIED_EMAIL' && (
         <div>
-          <div>
-            Unverified accounts can not set a new password. Please verify your
-            account using the link sent to your email.
-          </div>
+          Unverified accounts can not set a new password. Please verify your
+          account using the link sent to your email.
         </div>
       )}
       {status === 'EARLY_PASSWORD_RESET' && (
         <div>
-          <div>
-            Your password has been changed recently. You can not set a new
-            password for 24 hours after when your latest password was set.
-          </div>
+          Your password has been changed recently. You can not set a new
+          password for 24 hours after when your latest password was set.
         </div>
       )}
     </div>
