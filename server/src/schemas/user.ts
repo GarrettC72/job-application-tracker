@@ -30,6 +30,10 @@ export const typeDef = gql`
     latestPasswordChange: Date!
   }
 
+  extend type Query {
+    getPasswordReset(token: String!): User
+  }
+
   extend type Mutation {
     createUser(
       email: String!
@@ -42,7 +46,6 @@ export const typeDef = gql`
     verifyUser(token: String!): User
     resendVerification(token: String!): User
     createPasswordReset(email: String!): User
-    verifyPasswordToken(token: String!): User
     updateUser(
       token: String!
       password: String!
@@ -52,6 +55,55 @@ export const typeDef = gql`
 `;
 
 export const resolvers: Resolvers = {
+  Query: {
+    getPasswordReset: async (_root, { token }) => {
+      let decodedToken, passwordResetToken;
+
+      try {
+        decodedToken = jwt.verify(token, config.SECRET);
+        passwordResetToken = toToken(decodedToken);
+      } catch (error: unknown) {
+        const tokenError = await handleTokenError(
+          error,
+          token,
+          TokenType.Password,
+          false
+        );
+        throw tokenError;
+      }
+
+      if (passwordResetToken.type !== TokenType.Password) {
+        throw new GraphQLError('Invalid password reset link', {
+          extensions: {
+            code: 'INVALID_TOKEN',
+            invalidArgs: token,
+          },
+        });
+      }
+
+      const user = await getUserWithToken(
+        passwordResetToken,
+        'No account found with this email',
+        false
+      );
+      if (
+        Date.now() - user.latestPasswordChange.getTime() <
+        24 * 60 * 60 * 1000
+      ) {
+        throw new GraphQLError(
+          'Can not set a new password for 24 hours after most recent change',
+          {
+            extensions: {
+              code: 'EARLY_PASSWORD_RESET',
+              invalidArgs: token,
+            },
+          }
+        );
+      }
+
+      return user;
+    },
+  },
   Mutation: {
     createUser: async (
       _root,
@@ -314,53 +366,6 @@ export const resolvers: Resolvers = {
             error,
           },
         });
-      }
-
-      return user;
-    },
-    verifyPasswordToken: async (_root, { token }) => {
-      let decodedToken, passwordResetToken;
-
-      try {
-        decodedToken = jwt.verify(token, config.SECRET);
-        passwordResetToken = toToken(decodedToken);
-      } catch (error: unknown) {
-        const tokenError = await handleTokenError(
-          error,
-          token,
-          TokenType.Password,
-          false
-        );
-        throw tokenError;
-      }
-
-      if (passwordResetToken.type !== TokenType.Password) {
-        throw new GraphQLError('Invalid password reset link', {
-          extensions: {
-            code: 'INVALID_TOKEN',
-            invalidArgs: token,
-          },
-        });
-      }
-
-      const user = await getUserWithToken(
-        passwordResetToken,
-        'No account found with this email',
-        false
-      );
-      if (
-        Date.now() - user.latestPasswordChange.getTime() <
-        24 * 60 * 60 * 1000
-      ) {
-        throw new GraphQLError(
-          'Can not set a new password for 24 hours after most recent change',
-          {
-            extensions: {
-              code: 'EARLY_PASSWORD_RESET',
-              invalidArgs: token,
-            },
-          }
-        );
       }
 
       return user;

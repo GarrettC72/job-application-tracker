@@ -1,13 +1,16 @@
 import { Link, useSearchParams } from 'react-router-dom';
 import ResetPasswordForm from './ResetPasswordForm';
-import { useEffect, useState } from 'react';
-import { useMutation } from '@apollo/client';
+import { useState } from 'react';
+import { useQuery } from '@apollo/client';
 import { VERIFY_PASSWORD_RESET } from '../../queries';
 
 const ResetPasswordPage = () => {
   const [status, setStatus] = useState('LOADING');
   const [searchParams] = useSearchParams();
-  const [verify, result] = useMutation(VERIFY_PASSWORD_RESET, {
+  const token = searchParams.get('token') ?? '';
+  const passwordResetResult = useQuery(VERIFY_PASSWORD_RESET, {
+    skip: !token,
+    variables: { token },
     onError: (error) => {
       console.log(error);
       console.log(error.graphQLErrors[0].message);
@@ -19,23 +22,12 @@ const ResetPasswordPage = () => {
         setStatus(verifyError.extensions.code);
       }
     },
-  });
-  const token = searchParams.get('token');
-
-  useEffect(() => {
-    console.log(token);
-    if (token) {
-      verify({ variables: { token } });
-    }
-  }, [token, verify]);
-
-  useEffect(() => {
-    if (result.data) {
-      const user = result.data.verifyPasswordToken;
+    onCompleted: (data) => {
+      const user = data.getPasswordReset;
       console.log(user);
       setStatus('VERIFIED');
-    }
-  }, [result.data]);
+    },
+  });
 
   if (!token) {
     return (
@@ -46,7 +38,7 @@ const ResetPasswordPage = () => {
     );
   }
 
-  if (result.loading) {
+  if (passwordResetResult.loading) {
     return <div>loading...</div>;
   }
 

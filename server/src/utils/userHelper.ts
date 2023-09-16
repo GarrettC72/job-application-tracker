@@ -29,10 +29,22 @@ export const handleTokenError = async (
     const expiredToken = jwt.verify(token, config.SECRET, {
       ignoreExpiration: true,
     });
-    const expiredParsedToken = toToken(expiredToken);
+    let expiredParsedToken;
+
+    try {
+      expiredParsedToken = toToken(expiredToken);
+    } catch (parseError: unknown) {
+      return new GraphQLError(invalidMessage, {
+        extensions: {
+          code: 'INVALID_TOKEN',
+          invalidArgs: token,
+          parseError,
+        },
+      });
+    }
 
     if (expiredParsedToken.type !== type) {
-      throw new GraphQLError(invalidMessage, {
+      return new GraphQLError(invalidMessage, {
         extensions: {
           code: 'INVALID_TOKEN',
           invalidArgs: token,
@@ -42,7 +54,7 @@ export const handleTokenError = async (
 
     const user = await User.findById(expiredParsedToken.id);
     if (!user) {
-      throw new GraphQLError('No account found with this email', {
+      return new GraphQLError('No account found with this email', {
         extensions: {
           code: 'USER_NOT_FOUND',
           invalidArgs: token,
@@ -53,7 +65,7 @@ export const handleTokenError = async (
       const errorMessage = verified
         ? 'This email is already verified'
         : 'This email is not verified';
-      throw new GraphQLError(errorMessage, {
+      return new GraphQLError(errorMessage, {
         extensions: {
           code: 'ALREADY_VERIFIED',
           invalidArgs: token,
@@ -61,7 +73,7 @@ export const handleTokenError = async (
       });
     }
 
-    throw new GraphQLError(expiredMessage, {
+    return new GraphQLError(expiredMessage, {
       extensions: {
         code: 'EXPIRED_TOKEN',
         invalidArgs: token,
@@ -69,9 +81,9 @@ export const handleTokenError = async (
       },
     });
   } else {
-    throw new GraphQLError(invalidMessage, {
+    return new GraphQLError(invalidMessage, {
       extensions: {
-        code: 'BAD_USER_INPUT',
+        code: 'INVALID_TOKEN',
         invalidArgs: token,
         error,
       },
