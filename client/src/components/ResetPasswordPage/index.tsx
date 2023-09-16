@@ -12,8 +12,6 @@ const ResetPasswordPage = () => {
     skip: !token,
     variables: { token },
     onError: (error) => {
-      console.log(error);
-      console.log(error.graphQLErrors[0].message);
       const verifyError = error.graphQLErrors[0];
       if (
         verifyError.extensions.code &&
@@ -22,9 +20,7 @@ const ResetPasswordPage = () => {
         setStatus(verifyError.extensions.code);
       }
     },
-    onCompleted: (data) => {
-      const user = data.getPasswordReset;
-      console.log(user);
+    onCompleted: () => {
       setStatus('VERIFIED');
     },
   });

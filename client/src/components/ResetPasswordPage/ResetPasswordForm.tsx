@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client';
-import { useEffect } from 'react';
 
 import { useField } from '../../hooks';
 import { EDIT_PASSWORD } from '../../queries';
@@ -13,10 +12,8 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
   const { reset: resetPassword, ...password } = useField('password');
   const { reset: resetConfirmPassword, ...confirmPassword } =
     useField('password');
-  const [updatePassword, result] = useMutation(EDIT_PASSWORD, {
+  const [updatePassword] = useMutation(EDIT_PASSWORD, {
     onError: (error) => {
-      console.log(error);
-      console.log(error.graphQLErrors[0].message);
       const verifyError = error.graphQLErrors[0];
       if (
         verifyError.extensions.code &&
@@ -25,19 +22,13 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
         setStatus(verifyError.extensions.code);
       }
     },
-  });
-
-  useEffect(() => {
-    if (result.data) {
-      const user = result.data.updateUser;
-      console.log(user);
+    onCompleted: () => {
       setStatus('UPDATED_PASSWORD');
-    }
-  }, [result.data, setStatus]);
+    },
+  });
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    console.log(password.value, confirmPassword.value);
 
     updatePassword({
       variables: {

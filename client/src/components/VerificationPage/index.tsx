@@ -7,10 +7,8 @@ import { RESEND_VERIFICATION, VERIFY_USER } from '../../queries';
 const VerificationPage = () => {
   const [status, setStatus] = useState('LOADING');
   const [searchParams] = useSearchParams();
-  const [verify, verifyResult] = useMutation(VERIFY_USER, {
+  const [verify] = useMutation(VERIFY_USER, {
     onError: (error) => {
-      console.log(error);
-      console.log(error.graphQLErrors[0].message);
       const verifyError = error.graphQLErrors[0];
       if (
         verifyError.extensions.code &&
@@ -19,11 +17,12 @@ const VerificationPage = () => {
         setStatus(verifyError.extensions.code);
       }
     },
+    onCompleted: () => {
+      setStatus('VERIFIED');
+    },
   });
-  const [resend, resendResult] = useMutation(RESEND_VERIFICATION, {
+  const [resend] = useMutation(RESEND_VERIFICATION, {
     onError: (error) => {
-      console.log(error);
-      console.log(error.graphQLErrors[0].message);
       const verifyError = error.graphQLErrors[0];
       if (
         verifyError.extensions.code &&
@@ -31,32 +30,18 @@ const VerificationPage = () => {
       ) {
         setStatus(verifyError.extensions.code);
       }
+    },
+    onCompleted: () => {
+      setStatus('SENT_NEW_VERIFICATION');
     },
   });
   const token = searchParams.get('token');
 
   useEffect(() => {
-    console.log(token);
     if (token) {
       verify({ variables: { token } });
     }
   }, [token, verify]);
-
-  useEffect(() => {
-    if (verifyResult.data) {
-      const user = verifyResult.data.verifyUser;
-      console.log(user);
-      setStatus('VERIFIED');
-    }
-  }, [verifyResult.data]);
-
-  useEffect(() => {
-    if (resendResult.data) {
-      const user = resendResult.data.resendVerification;
-      console.log(user);
-      setStatus('SENT_NEW_VERIFICATION');
-    }
-  }, [resendResult.data]);
 
   const sendNewVerification = () => {
     if (token) {
@@ -73,7 +58,7 @@ const VerificationPage = () => {
     );
   }
 
-  if (verifyResult.loading || status === 'LOADING') {
+  if (status === 'LOADING') {
     return <div>loading...</div>;
   }
 

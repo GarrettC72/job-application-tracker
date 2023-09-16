@@ -1,36 +1,34 @@
 import { useMutation } from '@apollo/client';
-import { useEffect } from 'react';
 
 import { LOGIN } from '../../queries';
 import { useField } from '../../hooks';
 import { useAppDispatch } from '../../app/hooks';
 import { loginUser } from '../../features/user/userSlice';
 
-const LoginForm = () => {
+interface Props {
+  setMessage: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const LoginForm = ({ setMessage }: Props) => {
   const { reset: resetEmail, ...email } = useField('email');
   const { reset: resetPassword, ...password } = useField('password');
 
   const dispatch = useAppDispatch();
 
-  const [login, result] = useMutation(LOGIN, {
+  const [login] = useMutation(LOGIN, {
     onError: (error) => {
-      console.log(error.graphQLErrors[0].message);
+      setMessage(error.graphQLErrors[0].message);
     },
-  });
-
-  useEffect(() => {
-    if (result.data) {
-      const user = result.data.login;
-      console.log(user);
+    onCompleted: (data) => {
+      const user = data.login;
       if (user) {
         dispatch(loginUser(user));
       }
-    }
-  }, [result.data, dispatch]);
+    },
+  });
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    console.log(email.value, password.value);
 
     login({
       variables: {
