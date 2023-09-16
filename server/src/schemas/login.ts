@@ -10,12 +10,14 @@ import User from '../models/user';
 import config from '../utils/config';
 
 export const typeDef = gql`
-  type Token {
-    value: String!
+  type LoginData {
+    token: String!
+    email: String!
+    name: String!
   }
 
   extend type Mutation {
-    login(email: String!, password: String!): Token
+    login(email: String!, password: String!): LoginData
   }
 `;
 
@@ -67,7 +69,13 @@ export const resolvers: Resolvers = {
         type: TokenType.Login,
       };
 
-      return { value: jwt.sign(userForToken, config.SECRET) };
+      const token = jwt.sign(userForToken, config.SECRET);
+
+      return {
+        token,
+        email: user.email,
+        name: `${user.firstName} ${user.lastName}`,
+      };
     },
   },
 };

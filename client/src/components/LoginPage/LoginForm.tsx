@@ -3,10 +3,14 @@ import { useEffect } from 'react';
 
 import { LOGIN } from '../../queries';
 import { useField } from '../../hooks';
+import { useAppDispatch } from '../../app/hooks';
+import { loginUser } from '../../features/user/userSlice';
 
 const LoginForm = () => {
   const { reset: resetEmail, ...email } = useField('email');
   const { reset: resetPassword, ...password } = useField('password');
+
+  const dispatch = useAppDispatch();
 
   const [login, result] = useMutation(LOGIN, {
     onError: (error) => {
@@ -16,10 +20,13 @@ const LoginForm = () => {
 
   useEffect(() => {
     if (result.data) {
-      const token = result.data.login ? result.data.login.value : '';
-      console.log(token);
+      const user = result.data.login;
+      console.log(user);
+      if (user) {
+        dispatch(loginUser(user));
+      }
     }
-  }, [result.data]);
+  }, [result.data, dispatch]);
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
