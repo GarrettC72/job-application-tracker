@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
 import { useEffect } from 'react';
 
 import { useClearUser, useInitialization, useNotification } from './hooks';
@@ -37,6 +42,7 @@ const App = () => {
           <Route path="/verify" element={<VerificationPage />} />
           <Route path="/forgot" element={<ForgotPasswordPage />} />
           <Route path="/reset" element={<ResetPasswordPage />} />
+          <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </Router>
     );
@@ -57,6 +63,7 @@ const App = () => {
           }
         />
         <Route path="/reset" element={<ResetPasswordPage />} />
+        <Route path="*" element={<Navigate replace to="/" />} />
       </Routes>
     </Router>
   );
