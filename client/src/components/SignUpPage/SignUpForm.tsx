@@ -1,13 +1,9 @@
 import { useMutation } from '@apollo/client';
 
-import { useField } from '../../hooks';
+import { useField, useNotification } from '../../hooks';
 import { REGISTER } from '../../queries';
 
-interface Props {
-  setMessage: React.Dispatch<React.SetStateAction<string>>;
-}
-
-const SignUpForm = ({ setMessage }: Props) => {
+const SignUpForm = () => {
   const { reset: resetEmail, ...email } = useField('email');
   const { reset: resetPassword, ...password } = useField('password');
   const { reset: resetConfirmPassword, ...confirmPassword } =
@@ -15,13 +11,16 @@ const SignUpForm = ({ setMessage }: Props) => {
   const { reset: resetFirstName, ...firstName } = useField('text');
   const { reset: resetLastName, ...lastName } = useField('text');
 
+  const notifyWith = useNotification();
+
   const [register] = useMutation(REGISTER, {
     onError: (error) => {
-      setMessage(error.graphQLErrors[0].message);
+      notifyWith(error.graphQLErrors[0].message, 'error');
     },
     onCompleted: () => {
-      setMessage(
-        'Account successfully created. Please check your email for a link to verify your account.'
+      notifyWith(
+        'Account successfully created. Please check your email for a link to verify your account.',
+        'success'
       );
 
       resetEmail();

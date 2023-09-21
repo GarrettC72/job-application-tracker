@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 
 import { useAppDispatch } from '../app/hooks';
 import { clearUser, initializeUser } from '../features/user/userSlice';
+import { setNotification } from '../features/notification/notificationSlice';
 
 export const useInitialization = () => {
   const dispatch = useAppDispatch();
@@ -16,6 +17,14 @@ export const useClearUser = () => {
 
   return () => {
     dispatch(clearUser());
+  };
+};
+
+export const useNotification = () => {
+  const dispatch = useAppDispatch();
+
+  return (message: string, type: 'success' | 'error') => {
+    dispatch(setNotification(message, type));
   };
 };
 

@@ -1,6 +1,6 @@
 import { useMutation } from '@apollo/client';
 
-import { useField } from '../../hooks';
+import { useClearUser, useField, useNotification } from '../../hooks';
 import { EDIT_PASSWORD } from '../../queries';
 
 interface Props {
@@ -12,6 +12,10 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
   const { reset: resetPassword, ...password } = useField('password');
   const { reset: resetConfirmPassword, ...confirmPassword } =
     useField('password');
+
+  const clearUser = useClearUser();
+  const notifyWith = useNotification();
+
   const [updatePassword] = useMutation(EDIT_PASSWORD, {
     onError: (error) => {
       const verifyError = error.graphQLErrors[0];
@@ -20,10 +24,17 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
         typeof verifyError.extensions.code === 'string'
       ) {
         setStatus(verifyError.extensions.code);
+        if (verifyError.extensions.code === 'BAD_USER_INPUT') {
+          notifyWith(
+            'Failed to save new password. Make sure your password is at least 8 characters long and that you enter it correctly twice.',
+            'error'
+          );
+        }
       }
     },
     onCompleted: () => {
       setStatus('UPDATED_PASSWORD');
+      clearUser();
     },
   });
 

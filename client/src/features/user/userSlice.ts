@@ -4,23 +4,19 @@ import { LoginData } from '../../types';
 import { AppDispatch } from '../../app/store';
 import storageService from '../../services/storage';
 
-interface UserState {
-  value: LoginData | null;
-}
+type UserState = LoginData | null;
 
-const initialState: UserState = {
-  value: null,
-};
+const initialState: UserState = null as UserState;
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    set(state, action: PayloadAction<LoginData>) {
-      state.value = action.payload;
+    set(_state, action: PayloadAction<LoginData>) {
+      return action.payload;
     },
-    clear(state) {
-      state.value = null;
+    clear() {
+      return initialState;
     },
   },
 });
