@@ -1,26 +1,26 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from "@apollo/client";
 
-import { LOGIN } from '../../queries';
-import { useField, useNotification } from '../../hooks';
-import { useAppDispatch } from '../../app/hooks';
-import { loginUser } from '../../features/user/userSlice';
+import { LOGIN } from "../../queries";
+import { useField, useNotification } from "../../hooks";
+import { useAppDispatch } from "../../app/hooks";
+import { loginUser } from "../../features/user/userSlice";
 
 const LoginForm = () => {
-  const { reset: resetEmail, ...email } = useField('email');
-  const { reset: resetPassword, ...password } = useField('password');
+  const { reset: resetEmail, ...email } = useField("email");
+  const { reset: resetPassword, ...password } = useField("password");
 
   const dispatch = useAppDispatch();
   const notifyWith = useNotification();
 
   const [login] = useMutation(LOGIN, {
     onError: (error) => {
-      notifyWith(error.graphQLErrors[0].message, 'error');
+      notifyWith(error.graphQLErrors[0].message, "error");
     },
     onCompleted: (data) => {
       const user = data.login;
       if (user) {
         dispatch(loginUser(user));
-        notifyWith('Successfully logged in!', 'success');
+        notifyWith("Successfully logged in!", "success");
       }
     },
   });

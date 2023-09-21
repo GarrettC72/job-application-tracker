@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { Types } from "mongoose";
 
 export interface User {
   id: string;
@@ -11,9 +11,9 @@ export interface User {
 }
 
 export enum TokenType {
-  Verification = 'verification',
-  Password = 'password',
-  Login = 'login',
+  Verification = "verification",
+  Password = "password",
+  Login = "login",
 }
 
 export interface Token {

@@ -1,14 +1,14 @@
-import { CodegenConfig } from '@graphql-codegen/cli';
+import { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
-  schema: 'http://localhost:4000',
-  documents: ['src/**/!(*.d).{ts,tsx}'],
+  schema: "http://localhost:4000",
+  documents: ["src/**/!(*.d).{ts,tsx}"],
   generates: {
-    './src/__generated__/': {
-      preset: 'client',
+    "./src/__generated__/": {
+      preset: "client",
       plugins: [],
       presetConfig: {
-        gqlTagName: 'gql',
+        gqlTagName: "gql",
       },
     },
   },

@@ -1,13 +1,13 @@
-import { GraphQLError } from 'graphql';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import gql from 'graphql-tag';
+import { GraphQLError } from "graphql";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import gql from "graphql-tag";
 
-import { Resolvers } from '../__generated__/resolvers-types';
-import { parseEmail } from '../utils/parser';
-import { Token, TokenType } from '../types';
-import User from '../models/user';
-import config from '../utils/config';
+import { Resolvers } from "../__generated__/resolvers-types";
+import { parseEmail } from "../utils/parser";
+import { Token, TokenType } from "../types";
+import User from "../models/user";
+import config from "../utils/config";
 
 export const typeDef = gql`
   type LoginData {
@@ -30,7 +30,7 @@ export const resolvers: Resolvers = {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {
             extensions: {
-              code: 'BAD_USER_INPUT',
+              code: "BAD_USER_INPUT",
               invalidArgs: password,
             },
           });
@@ -46,18 +46,18 @@ export const resolvers: Resolvers = {
           : await bcrypt.compare(password, user.passwordHash);
 
       if (!(user && passwordCorrect)) {
-        throw new GraphQLError('Invalid email or password', {
+        throw new GraphQLError("Invalid email or password", {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: "BAD_USER_INPUT",
             invalidArgs: email,
           },
         });
       }
 
       if (!user.verified) {
-        throw new GraphQLError('This email is not verified', {
+        throw new GraphQLError("This email is not verified", {
           extensions: {
-            code: 'UNVERIFIED_EMAIL',
+            code: "UNVERIFIED_EMAIL",
             invalidArgs: email,
           },
         });

@@ -1,23 +1,23 @@
-import { GraphQLError } from 'graphql';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import gql from 'graphql-tag';
+import { GraphQLError } from "graphql";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import gql from "graphql-tag";
 
-import { parseEmail, toToken } from '../utils/parser';
+import { parseEmail, toToken } from "../utils/parser";
 import {
   resendVerificationEmail,
   sendPasswordResetEmail,
   sendVerificationEmail,
-} from '../utils/mailer';
-import { Resolvers } from '../__generated__/resolvers-types';
-import { Token, TokenType } from '../types';
+} from "../utils/mailer";
+import { Resolvers } from "../__generated__/resolvers-types";
+import { Token, TokenType } from "../types";
 import {
   getUserWithEmail,
   getUserWithToken,
   handleTokenError,
-} from '../utils/userHelper';
-import User from '../models/user';
-import config from '../utils/config';
+} from "../utils/userHelper";
+import User from "../models/user";
+import config from "../utils/config";
 
 export const typeDef = gql`
   type User {
@@ -73,9 +73,9 @@ export const resolvers: Resolvers = {
       }
 
       if (passwordResetToken.type !== TokenType.Password) {
-        throw new GraphQLError('Invalid password reset link', {
+        throw new GraphQLError("Invalid password reset link", {
           extensions: {
-            code: 'INVALID_TOKEN',
+            code: "INVALID_TOKEN",
             invalidArgs: token,
           },
         });
@@ -83,7 +83,7 @@ export const resolvers: Resolvers = {
 
       const user = await getUserWithToken(
         passwordResetToken,
-        'No account found with this email',
+        "No account found with this email",
         false
       );
       if (
@@ -91,10 +91,10 @@ export const resolvers: Resolvers = {
         24 * 60 * 60 * 1000
       ) {
         throw new GraphQLError(
-          'Can not set a new password for 24 hours after most recent change',
+          "Can not set a new password for 24 hours after most recent change",
           {
             extensions: {
-              code: 'EARLY_PASSWORD_RESET',
+              code: "EARLY_PASSWORD_RESET",
               invalidArgs: token,
             },
           }
@@ -115,7 +115,7 @@ export const resolvers: Resolvers = {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {
             extensions: {
-              code: 'BAD_USER_INPUT',
+              code: "BAD_USER_INPUT",
               invalidArgs: email,
             },
           });
@@ -123,18 +123,18 @@ export const resolvers: Resolvers = {
       }
 
       if (password.length < 8) {
-        throw new GraphQLError('Password must be least 8 characters long', {
+        throw new GraphQLError("Password must be least 8 characters long", {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: "BAD_USER_INPUT",
             invalidArgs: password,
           },
         });
       }
 
       if (password !== confirmPassword) {
-        throw new GraphQLError('Please enter the same password twice', {
+        throw new GraphQLError("Please enter the same password twice", {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: "BAD_USER_INPUT",
             invalidArgs: {
               password,
               confirmPassword,
@@ -148,10 +148,10 @@ export const resolvers: Resolvers = {
       const existingUser = await User.findOne({ email: caseInsensitiveEmail });
       if (existingUser) {
         throw new GraphQLError(
-          'An account with this email address already exists',
+          "An account with this email address already exists",
           {
             extensions: {
-              code: 'BAD_USER_INPUT',
+              code: "BAD_USER_INPUT",
               invalidArgs: email,
             },
           }
@@ -179,14 +179,14 @@ export const resolvers: Resolvers = {
           type: TokenType.Verification,
         };
         const token = jwt.sign(userForToken, config.SECRET, {
-          expiresIn: '1d',
+          expiresIn: "1d",
         });
         await sendVerificationEmail(email, token);
       } catch (error: unknown) {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {
             extensions: {
-              code: 'BAD_USER_INPUT',
+              code: "BAD_USER_INPUT",
               invalidArgs: {
                 email,
                 password,
@@ -220,10 +220,10 @@ export const resolvers: Resolvers = {
 
       if (verificationToken.type !== TokenType.Verification) {
         throw new GraphQLError(
-          'Verification failed - invalid verification link',
+          "Verification failed - invalid verification link",
           {
             extensions: {
-              code: 'INVALID_TOKEN',
+              code: "INVALID_TOKEN",
               invalidArgs: token,
             },
           }
@@ -232,7 +232,7 @@ export const resolvers: Resolvers = {
 
       const user = await getUserWithToken(
         verificationToken,
-        'Verification failed - no account found with this email',
+        "Verification failed - no account found with this email",
         true
       );
 
@@ -241,9 +241,9 @@ export const resolvers: Resolvers = {
       try {
         await user.save();
       } catch (error: unknown) {
-        throw new GraphQLError('Verification failed.', {
+        throw new GraphQLError("Verification failed.", {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: "BAD_USER_INPUT",
             error,
           },
         });
@@ -261,10 +261,10 @@ export const resolvers: Resolvers = {
         verificationToken = toToken(decodedToken);
       } catch (error: unknown) {
         throw new GraphQLError(
-          'Failed to send new verification email - invalid verification link',
+          "Failed to send new verification email - invalid verification link",
           {
             extensions: {
-              code: 'INVALID_TOKEN',
+              code: "INVALID_TOKEN",
               invalidArgs: token,
               error,
             },
@@ -274,10 +274,10 @@ export const resolvers: Resolvers = {
 
       if (verificationToken.type !== TokenType.Verification) {
         throw new GraphQLError(
-          'Failed to send new verification email - invalid verification link',
+          "Failed to send new verification email - invalid verification link",
           {
             extensions: {
-              code: 'INVALID_TOKEN',
+              code: "INVALID_TOKEN",
               invalidArgs: token,
             },
           }
@@ -286,7 +286,7 @@ export const resolvers: Resolvers = {
 
       const user = await getUserWithToken(
         verificationToken,
-        'Failed to send email - no account found with this email',
+        "Failed to send email - no account found with this email",
         true
       );
 
@@ -296,15 +296,15 @@ export const resolvers: Resolvers = {
         type: TokenType.Verification,
       };
       const newToken = jwt.sign(userForToken, config.SECRET, {
-        expiresIn: '1d',
+        expiresIn: "1d",
       });
 
       try {
         await resendVerificationEmail(user.email, newToken);
       } catch (error: unknown) {
-        throw new GraphQLError('Failed to send verification email.', {
+        throw new GraphQLError("Failed to send verification email.", {
           extensions: {
-            code: 'EMAIL_FAILURE',
+            code: "EMAIL_FAILURE",
             error,
           },
         });
@@ -319,7 +319,7 @@ export const resolvers: Resolvers = {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {
             extensions: {
-              code: 'BAD_USER_INPUT',
+              code: "BAD_USER_INPUT",
               invalidArgs: email,
             },
           });
@@ -330,7 +330,7 @@ export const resolvers: Resolvers = {
 
       const user = await getUserWithEmail(
         caseInsensitiveEmail,
-        'Failed to send password reset email - no account found with this email',
+        "Failed to send password reset email - no account found with this email",
         false
       );
       if (
@@ -338,10 +338,10 @@ export const resolvers: Resolvers = {
         24 * 60 * 60 * 1000
       ) {
         throw new GraphQLError(
-          'Can not set a new password for 24 hours after most recent change',
+          "Can not set a new password for 24 hours after most recent change",
           {
             extensions: {
-              code: 'EARLY_PASSWORD_RESET',
+              code: "EARLY_PASSWORD_RESET",
               invalidArgs: email,
             },
           }
@@ -354,15 +354,15 @@ export const resolvers: Resolvers = {
         type: TokenType.Password,
       };
       const token = jwt.sign(userForToken, config.SECRET, {
-        expiresIn: '1d',
+        expiresIn: "1d",
       });
 
       try {
         await sendPasswordResetEmail(email, token);
       } catch (error: unknown) {
-        throw new GraphQLError('Failed to send password reset email', {
+        throw new GraphQLError("Failed to send password reset email", {
           extensions: {
-            code: 'EMAIL_FAILURE',
+            code: "EMAIL_FAILURE",
             error,
           },
         });
@@ -387,9 +387,9 @@ export const resolvers: Resolvers = {
       }
 
       if (passwordResetToken.type !== TokenType.Password) {
-        throw new GraphQLError('Invalid password reset link', {
+        throw new GraphQLError("Invalid password reset link", {
           extensions: {
-            code: 'INVALID_TOKEN',
+            code: "INVALID_TOKEN",
             invalidArgs: token,
           },
         });
@@ -397,7 +397,7 @@ export const resolvers: Resolvers = {
 
       const user = await getUserWithToken(
         passwordResetToken,
-        'No account found with this email',
+        "No account found with this email",
         false
       );
       if (
@@ -405,10 +405,10 @@ export const resolvers: Resolvers = {
         24 * 60 * 60 * 1000
       ) {
         throw new GraphQLError(
-          'Can not set a new password for 24 hours after most recent change',
+          "Can not set a new password for 24 hours after most recent change",
           {
             extensions: {
-              code: 'EARLY_PASSWORD_RESET',
+              code: "EARLY_PASSWORD_RESET",
               invalidArgs: token,
             },
           }
@@ -416,18 +416,18 @@ export const resolvers: Resolvers = {
       }
 
       if (password.length < 8) {
-        throw new GraphQLError('Password must be least 8 characters long', {
+        throw new GraphQLError("Password must be least 8 characters long", {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: "BAD_USER_INPUT",
             invalidArgs: password,
           },
         });
       }
 
       if (password !== confirmPassword) {
-        throw new GraphQLError('Please enter the same password twice', {
+        throw new GraphQLError("Please enter the same password twice", {
           extensions: {
-            code: 'BAD_USER_INPUT',
+            code: "BAD_USER_INPUT",
             invalidArgs: {
               password,
               confirmPassword,
@@ -446,9 +446,9 @@ export const resolvers: Resolvers = {
         await user.save();
       } catch (error: unknown) {
         if (error instanceof Error) {
-          throw new GraphQLError('Failed to set new password', {
+          throw new GraphQLError("Failed to set new password", {
             extensions: {
-              code: 'BAD_USER_INPUT',
+              code: "BAD_USER_INPUT",
               invalidArgs: {
                 token,
                 password,

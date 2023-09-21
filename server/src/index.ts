@@ -1,21 +1,21 @@
-import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
-import mongoose from 'mongoose';
+import { ApolloServer } from "@apollo/server";
+import { startStandaloneServer } from "@apollo/server/standalone";
+import mongoose from "mongoose";
 
-import config from './utils/config';
-import { typeDefs, resolvers } from './schemas';
+import config from "./utils/config";
+import { typeDefs, resolvers } from "./schemas";
 
-mongoose.set('strictQuery', false);
+mongoose.set("strictQuery", false);
 
-console.log('Connecting to', config.MONGODB_URI);
+console.log("Connecting to", config.MONGODB_URI);
 
 mongoose
-  .connect(config.MONGODB_URI ?? '')
+  .connect(config.MONGODB_URI ?? "")
   .then(() => {
-    console.log('connected to MongoDB');
+    console.log("connected to MongoDB");
   })
   .catch((error) => {
-    console.log('error connection to MongoDB:', error.message);
+    console.log("error connection to MongoDB:", error.message);
   });
 
 // The ApolloServer constructor requires two parameters: your schema

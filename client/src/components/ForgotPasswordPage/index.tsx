@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-import ForgotPasswordForm from './ForgotPasswordForm';
+import ForgotPasswordForm from "./ForgotPasswordForm";
 
 const ForgotPasswordPage = () => {
   return (

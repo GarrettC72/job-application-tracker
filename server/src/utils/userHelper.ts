@@ -1,10 +1,10 @@
-import { GraphQLError } from 'graphql';
-import jwt from 'jsonwebtoken';
+import { GraphQLError } from "graphql";
+import jwt from "jsonwebtoken";
 
-import { Token, TokenType } from '../types';
-import { toToken } from './parser';
-import config from './config';
-import User from '../models/user';
+import { Token, TokenType } from "../types";
+import { toToken } from "./parser";
+import config from "./config";
+import User from "../models/user";
 
 export const handleTokenError = async (
   error: unknown,
@@ -16,12 +16,12 @@ export const handleTokenError = async (
 
   switch (type) {
     case TokenType.Verification:
-      invalidMessage = 'Verification failed - invalid verification link';
-      expiredMessage = 'Verification failed - expired verification link';
+      invalidMessage = "Verification failed - invalid verification link";
+      expiredMessage = "Verification failed - expired verification link";
       break;
     case TokenType.Password:
-      invalidMessage = 'Invalid password reset link';
-      expiredMessage = 'Expired password reset link';
+      invalidMessage = "Invalid password reset link";
+      expiredMessage = "Expired password reset link";
       break;
   }
 
@@ -36,7 +36,7 @@ export const handleTokenError = async (
     } catch (parseError: unknown) {
       return new GraphQLError(invalidMessage, {
         extensions: {
-          code: 'INVALID_TOKEN',
+          code: "INVALID_TOKEN",
           invalidArgs: token,
           parseError,
         },
@@ -46,7 +46,7 @@ export const handleTokenError = async (
     if (expiredParsedToken.type !== type) {
       return new GraphQLError(invalidMessage, {
         extensions: {
-          code: 'INVALID_TOKEN',
+          code: "INVALID_TOKEN",
           invalidArgs: token,
         },
       });
@@ -54,20 +54,20 @@ export const handleTokenError = async (
 
     const user = await User.findById(expiredParsedToken.id);
     if (!user) {
-      return new GraphQLError('No account found with this email', {
+      return new GraphQLError("No account found with this email", {
         extensions: {
-          code: 'USER_NOT_FOUND',
+          code: "USER_NOT_FOUND",
           invalidArgs: token,
         },
       });
     }
     if (user.verified === verified) {
       const errorMessage = verified
-        ? 'This email is already verified'
-        : 'This email is not verified';
+        ? "This email is already verified"
+        : "This email is not verified";
       return new GraphQLError(errorMessage, {
         extensions: {
-          code: 'ALREADY_VERIFIED',
+          code: "ALREADY_VERIFIED",
           invalidArgs: token,
         },
       });
@@ -75,7 +75,7 @@ export const handleTokenError = async (
 
     return new GraphQLError(expiredMessage, {
       extensions: {
-        code: 'EXPIRED_TOKEN',
+        code: "EXPIRED_TOKEN",
         invalidArgs: token,
         error,
       },
@@ -83,7 +83,7 @@ export const handleTokenError = async (
   } else {
     return new GraphQLError(invalidMessage, {
       extensions: {
-        code: 'INVALID_TOKEN',
+        code: "INVALID_TOKEN",
         invalidArgs: token,
         error,
       },
@@ -100,18 +100,18 @@ export const getUserWithToken = async (
   if (!user) {
     throw new GraphQLError(missingUserMessage, {
       extensions: {
-        code: 'USER_NOT_FOUND',
+        code: "USER_NOT_FOUND",
         invalidArgs: token,
       },
     });
   }
   if (user.verified === verified) {
     const errorMessage = verified
-      ? 'This email is already verified'
-      : 'This email is not verified';
+      ? "This email is already verified"
+      : "This email is not verified";
     throw new GraphQLError(errorMessage, {
       extensions: {
-        code: 'ALREADY_VERIFIED',
+        code: "ALREADY_VERIFIED",
         invalidArgs: token,
       },
     });
@@ -129,18 +129,18 @@ export const getUserWithEmail = async (
   if (!user) {
     throw new GraphQLError(missingUserMessage, {
       extensions: {
-        code: 'USER_NOT_FOUND',
+        code: "USER_NOT_FOUND",
         invalidArgs: email,
       },
     });
   }
   if (user.verified === verified) {
     const errorMessage = verified
-      ? 'This email is already verified'
-      : 'This email is not verified';
+      ? "This email is already verified"
+      : "This email is not verified";
     throw new GraphQLError(errorMessage, {
       extensions: {
-        code: 'ALREADY_VERIFIED',
+        code: "ALREADY_VERIFIED",
         invalidArgs: email,
       },
     });

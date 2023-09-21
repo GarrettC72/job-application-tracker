@@ -1,7 +1,7 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from "@apollo/client";
 
-import { useClearUser, useField, useNotification } from '../../hooks';
-import { EDIT_PASSWORD } from '../../queries';
+import { useClearUser, useField, useNotification } from "../../hooks";
+import { EDIT_PASSWORD } from "../../queries";
 
 interface Props {
   token: string;
@@ -9,9 +9,9 @@ interface Props {
 }
 
 const ResetPasswordForm = ({ token, setStatus }: Props) => {
-  const { reset: resetPassword, ...password } = useField('password');
+  const { reset: resetPassword, ...password } = useField("password");
   const { reset: resetConfirmPassword, ...confirmPassword } =
-    useField('password');
+    useField("password");
 
   const clearUser = useClearUser();
   const notifyWith = useNotification();
@@ -21,19 +21,19 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
       const verifyError = error.graphQLErrors[0];
       if (
         verifyError.extensions.code &&
-        typeof verifyError.extensions.code === 'string'
+        typeof verifyError.extensions.code === "string"
       ) {
         setStatus(verifyError.extensions.code);
-        if (verifyError.extensions.code === 'BAD_USER_INPUT') {
+        if (verifyError.extensions.code === "BAD_USER_INPUT") {
           notifyWith(
-            'Failed to save new password. Make sure your password is at least 8 characters long and that you enter it correctly twice.',
-            'error'
+            "Failed to save new password. Make sure your password is at least 8 characters long and that you enter it correctly twice.",
+            "error"
           );
         }
       }
     },
     onCompleted: () => {
-      setStatus('UPDATED_PASSWORD');
+      setStatus("UPDATED_PASSWORD");
       clearUser();
     },
   });

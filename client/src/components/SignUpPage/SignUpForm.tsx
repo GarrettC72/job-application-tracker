@@ -1,26 +1,26 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from "@apollo/client";
 
-import { useField, useNotification } from '../../hooks';
-import { REGISTER } from '../../queries';
+import { useField, useNotification } from "../../hooks";
+import { REGISTER } from "../../queries";
 
 const SignUpForm = () => {
-  const { reset: resetEmail, ...email } = useField('email');
-  const { reset: resetPassword, ...password } = useField('password');
+  const { reset: resetEmail, ...email } = useField("email");
+  const { reset: resetPassword, ...password } = useField("password");
   const { reset: resetConfirmPassword, ...confirmPassword } =
-    useField('password');
-  const { reset: resetFirstName, ...firstName } = useField('text');
-  const { reset: resetLastName, ...lastName } = useField('text');
+    useField("password");
+  const { reset: resetFirstName, ...firstName } = useField("text");
+  const { reset: resetLastName, ...lastName } = useField("text");
 
   const notifyWith = useNotification();
 
   const [register] = useMutation(REGISTER, {
     onError: (error) => {
-      notifyWith(error.graphQLErrors[0].message, 'error');
+      notifyWith(error.graphQLErrors[0].message, "error");
     },
     onCompleted: () => {
       notifyWith(
-        'Account successfully created. Please check your email for a link to verify your account.',
-        'success'
+        "Account successfully created. Please check your email for a link to verify your account.",
+        "success"
       );
 
       resetEmail();

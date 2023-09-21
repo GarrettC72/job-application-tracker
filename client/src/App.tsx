@@ -3,17 +3,17 @@ import {
   Routes,
   Route,
   Navigate,
-} from 'react-router-dom';
-import { useEffect } from 'react';
+} from "react-router-dom";
+import { useEffect } from "react";
 
-import { useClearUser, useInitialization, useNotification } from './hooks';
-import { useAppSelector } from './app/hooks';
-import LoginPage from './components/LoginPage';
-import SignUpPage from './components/SignUpPage';
-import VerificationPage from './components/VerificationPage';
-import ForgotPasswordPage from './components/ForgotPasswordPage';
-import ResetPasswordPage from './components/ResetPasswordPage';
-import Notification from './components/Notification';
+import { useClearUser, useInitialization, useNotification } from "./hooks";
+import { useAppSelector } from "./app/hooks";
+import LoginPage from "./components/LoginPage";
+import SignUpPage from "./components/SignUpPage";
+import VerificationPage from "./components/VerificationPage";
+import ForgotPasswordPage from "./components/ForgotPasswordPage";
+import ResetPasswordPage from "./components/ResetPasswordPage";
+import Notification from "./components/Notification";
 
 const App = () => {
   const initializeState = useInitialization();
@@ -28,7 +28,7 @@ const App = () => {
 
   const logout = () => {
     clearUser();
-    notifyWith('Logged out', 'success');
+    notifyWith("Logged out", "success");
   };
 
   if (!user) {

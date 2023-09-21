@@ -1,21 +1,21 @@
-import { useMutation } from '@apollo/client';
+import { useMutation } from "@apollo/client";
 
-import { useField, useNotification } from '../../hooks';
-import { SEND_PASSWORD_RESET } from '../../queries';
+import { useField, useNotification } from "../../hooks";
+import { SEND_PASSWORD_RESET } from "../../queries";
 
 const ForgotPasswordForm = () => {
-  const { reset: resetEmail, ...email } = useField('email');
+  const { reset: resetEmail, ...email } = useField("email");
 
   const notifyWith = useNotification();
 
   const [sendPasswordReset] = useMutation(SEND_PASSWORD_RESET, {
     onError: (error) => {
-      notifyWith(error.graphQLErrors[0].message, 'error');
+      notifyWith(error.graphQLErrors[0].message, "error");
     },
     onCompleted: () => {
       notifyWith(
-        'Please check your email for a link to set a new password.',
-        'success'
+        "Please check your email for a link to set a new password.",
+        "success"
       );
     },
   });

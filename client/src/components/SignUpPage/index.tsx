@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-import SignUpForm from './SignUpForm';
+import SignUpForm from "./SignUpForm";
 
 const SignUpPage = () => {
   return (

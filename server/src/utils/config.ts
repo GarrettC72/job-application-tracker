@@ -1,12 +1,12 @@
-import { Secret } from 'jsonwebtoken';
-import 'dotenv/config';
+import { Secret } from "jsonwebtoken";
+import "dotenv/config";
 
 const PORT = Number(process.env.PORT) ?? 4000;
 const MONGODB_URI =
-  process.env.NODE_ENV === 'test'
+  process.env.NODE_ENV === "test"
     ? process.env.TEST_MONGODB_URI
     : process.env.MONGODB_URI;
-const SECRET: Secret = process.env.SECRET ?? 'privateKeyForToken';
+const SECRET: Secret = process.env.SECRET ?? "privateKeyForToken";
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;

@@ -1,8 +1,8 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from "react";
 
-import { useAppDispatch } from '../app/hooks';
-import { clearUser, initializeUser } from '../features/user/userSlice';
-import { setNotification } from '../features/notification/notificationSlice';
+import { useAppDispatch } from "../app/hooks";
+import { clearUser, initializeUser } from "../features/user/userSlice";
+import { setNotification } from "../features/notification/notificationSlice";
 
 export const useInitialization = () => {
   const dispatch = useAppDispatch();
@@ -23,20 +23,20 @@ export const useClearUser = () => {
 export const useNotification = () => {
   const dispatch = useAppDispatch();
 
-  return (message: string, type: 'success' | 'error') => {
+  return (message: string, type: "success" | "error") => {
     dispatch(setNotification(message, type));
   };
 };
 
 export const useField = (type: string) => {
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
   };
 
   const reset = () => {
-    setValue('');
+    setValue("");
   };
 
   return {

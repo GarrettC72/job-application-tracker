@@ -1,15 +1,15 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { LoginData } from '../../types';
-import { AppDispatch } from '../../app/store';
-import storageService from '../../services/storage';
+import { LoginData } from "../../types";
+import { AppDispatch } from "../../app/store";
+import storageService from "../../services/storage";
 
 type UserState = LoginData | null;
 
 const initialState: UserState = null as UserState;
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     set(_state, action: PayloadAction<LoginData>) {
