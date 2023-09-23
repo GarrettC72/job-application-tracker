@@ -32,6 +32,7 @@ export const typeDef = gql`
 
   extend type Query {
     getPasswordReset(token: String!): User
+    me: User
   }
 
   extend type Mutation {
@@ -102,6 +103,9 @@ export const resolvers: Resolvers = {
       }
 
       return user;
+    },
+    me: (_root, _args, { currentUser }) => {
+      return currentUser ?? null;
     },
   },
   Mutation: {

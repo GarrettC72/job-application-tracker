@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-import { JobApplication } from "../types";
+import { Job } from "../types";
 
-const schema = new mongoose.Schema<JobApplication>({
+const schema = new mongoose.Schema<Job>({
   companyName: {
     type: String,
     required: true,
@@ -26,11 +26,8 @@ const schema = new mongoose.Schema<JobApplication>({
   },
   activities: [
     {
-      date: {
-        type: Date,
-        default: Date.now,
-      },
-      type: String,
+      date: String,
+      activityType: String,
       description: String,
     },
   ],
@@ -40,4 +37,4 @@ const schema = new mongoose.Schema<JobApplication>({
   },
 });
 
-export default mongoose.model<JobApplication>("Job", schema);
+export default mongoose.model<Job>("Job", schema);

@@ -11,7 +11,10 @@ const dateScalar = new GraphQLScalarType({
   description: "Date custom scalar type",
   serialize(value) {
     if (value instanceof Date) {
-      return value.getTime();
+      const offset = value.getTimezoneOffset();
+      const convertedDate = new Date(value.getTime() - offset * 60 * 1000);
+      return convertedDate.toISOString().split("T")[0];
+      // return value.getTime();
     }
     throw Error("GraphQL Date Scalar serializer expected a `Date` object");
   },
@@ -19,7 +22,12 @@ const dateScalar = new GraphQLScalarType({
     if (typeof value === "number") {
       return new Date(value);
     }
-    throw new Error("GraphQL Date Scalar parser expected a `number`");
+    if (typeof value === "string" && Boolean(Date.parse(value))) {
+      return new Date(value);
+    }
+    throw new Error(
+      "GraphQL Date Scalar parser expected a `number` or properly formatted `string`"
+    );
   },
   parseLiteral(ast) {
     if (ast.kind === Kind.INT) {

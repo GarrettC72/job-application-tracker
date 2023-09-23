@@ -23,6 +23,10 @@ const isObjectIdParam = (param: unknown): param is Types.ObjectId => {
   return isObjectIdOrHexString(param);
 };
 
+const isDate = (date: string): boolean => {
+  return Boolean(Date.parse(date));
+};
+
 const parseStringParam = (param: unknown, field: string): string => {
   if (!isString(param)) {
     throw new Error(`Incorrect or missing ${field}`);
@@ -56,6 +60,14 @@ export const parseObjectIdParam = (
   }
 
   return param;
+};
+
+export const parseDateParam = (date: unknown, field: string): string => {
+  if (!isString(date) || !isDate(date)) {
+    throw new Error(`Value of ${field} incorrect: ${date}`);
+  }
+
+  return date;
 };
 
 export const toToken = (object: unknown): Token => {

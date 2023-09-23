@@ -13,12 +13,13 @@ export enum ActivityType {
 }
 
 interface Activity {
-  type: ActivityType;
-  date: Date;
-  description: string;
+  activityType: ActivityType;
+  date: string;
+  description?: string;
 }
 
-export interface JobApplication {
+export interface Job {
+  id: string;
   companyName: string;
   companyWebsite?: string;
   jobTitle: string;
@@ -33,6 +34,7 @@ export interface JobApplication {
 }
 
 export interface User {
+  _id: Types.ObjectId;
   id: string;
   email: string;
   passwordHash: string;
@@ -52,4 +54,8 @@ export interface Token {
   email: string;
   id: Types.ObjectId;
   type: TokenType;
+}
+
+export interface MyContext {
+  currentUser?: User;
 }
