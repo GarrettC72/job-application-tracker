@@ -92,17 +92,41 @@ export const resolvers: Resolvers = {
       { currentUser }
     ) => {
       const user = verifyCurrentUser(currentUser);
-      const newJob = toNewJob({
-        companyName,
-        jobTitle,
-        companyWebsite,
-        jobPostingLink,
-        contactName,
-        contactTitle,
-        activities,
-        notes,
-      });
       const date = new Date();
+      let newJob;
+
+      try {
+        newJob = toNewJob({
+          companyName,
+          jobTitle,
+          companyWebsite,
+          jobPostingLink,
+          contactName,
+          contactTitle,
+          activities,
+          notes,
+        });
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          throw new GraphQLError(error.message, {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: {
+                companyName,
+                jobTitle,
+                companyWebsite,
+                jobPostingLink,
+                contactName,
+                contactTitle,
+                activities,
+                notes,
+              },
+              error,
+            },
+          });
+        }
+      }
+
       const job = new Job({
         ...newJob,
         dateCreated: date,
