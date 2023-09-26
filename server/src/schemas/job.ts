@@ -3,32 +3,32 @@ import gql from "graphql-tag";
 
 import { Resolvers } from "../__generated__/resolvers-types";
 import Job from "../models/job";
-import { parseDateParam } from "../utils/parser";
+import { toNewJob } from "../utils/parser";
 import { verifyCurrentUser } from "../utils/userHelper";
 
 export const typeDef = gql`
   type Activity {
     activityType: String!
     date: String!
-    description: String
+    description: String!
   }
 
   input ActivityInput {
     activityType: String!
     date: String!
-    description: String
+    description: String!
   }
 
   type Job {
     id: ID!
     companyName: String!
     jobTitle: String!
-    companyWebsite: String
-    jobPostingLink: String
-    contactName: String
-    contactTitle: String
-    activities: [Activity!]
-    notes: String
+    companyWebsite: String!
+    jobPostingLink: String!
+    contactName: String!
+    contactTitle: String!
+    activities: [Activity!]!
+    notes: String!
     dateCreated: Date!
     lastModified: Date!
   }
@@ -42,12 +42,12 @@ export const typeDef = gql`
     addJob(
       companyName: String!
       jobTitle: String!
-      companyWebsite: String
-      jobPostingLink: String
-      contactName: String
-      contactTitle: String
-      activities: [ActivityInput!]
-      notes: String
+      companyWebsite: String!
+      jobPostingLink: String!
+      contactName: String!
+      contactTitle: String!
+      activities: [ActivityInput!]!
+      notes: String!
     ): Job
   }
 `;
@@ -92,25 +92,7 @@ export const resolvers: Resolvers = {
       { currentUser }
     ) => {
       const user = verifyCurrentUser(currentUser);
-
-      if (activities) {
-        for (let i = 0; i < activities.length; i++) {
-          const activity = activities[i];
-          try {
-            parseDateParam(activity.date, "activity.date");
-          } catch (error: unknown) {
-            throw new GraphQLError(
-              "Activity dates are not formatted properly",
-              {
-                extensions: { code: "BAD_USER_INPUT" },
-              }
-            );
-          }
-        }
-      }
-
-      const date = new Date();
-      const job = new Job({
+      const newJob = toNewJob({
         companyName,
         jobTitle,
         companyWebsite,
@@ -119,6 +101,10 @@ export const resolvers: Resolvers = {
         contactTitle,
         activities,
         notes,
+      });
+      const date = new Date();
+      const job = new Job({
+        ...newJob,
         dateCreated: date,
         lastModified: date,
         user: user._id,

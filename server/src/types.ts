@@ -12,26 +12,28 @@ export enum ActivityType {
   DeclinedOffer = "Declined Job Offer",
 }
 
-interface Activity {
+export interface Activity {
   activityType: ActivityType;
   date: string;
-  description?: string;
+  description: string;
 }
 
 export interface Job {
   id: string;
   companyName: string;
-  companyWebsite?: string;
+  companyWebsite: string;
   jobTitle: string;
-  jobPostingLink?: string;
-  contactName?: string;
-  contactTitle?: string;
-  activities?: Array<Activity>;
-  notes?: string;
+  jobPostingLink: string;
+  contactName: string;
+  contactTitle: string;
+  activities: Array<Activity>;
+  notes: string;
   dateCreated: Date;
   lastModified: Date;
   user: Types.ObjectId;
 }
+
+export type NewJob = Omit<Job, "id" | "dateCreated" | "lastModified" | "user">;
 
 export interface User {
   _id: Types.ObjectId;

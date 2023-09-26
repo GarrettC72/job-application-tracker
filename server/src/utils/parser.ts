@@ -1,6 +1,6 @@
 import { Types, isObjectIdOrHexString } from "mongoose";
 
-import { Token, TokenType } from "../types";
+import { NewJob, Token, TokenType, Activity, ActivityType } from "../types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;
@@ -27,9 +27,27 @@ const isDate = (date: string): boolean => {
   return Boolean(Date.parse(date));
 };
 
+const isActivityType = (param: string): param is ActivityType => {
+  return Object.values(ActivityType)
+    .map((v) => v.toString())
+    .includes(param);
+};
+
 const parseStringParam = (param: unknown, field: string): string => {
   if (!isString(param)) {
     throw new Error(`Incorrect or missing ${field}`);
+  }
+
+  return param;
+};
+
+const parseNonEmptyStringParam = (param: unknown, field: string): string => {
+  if (!isString(param)) {
+    throw new Error(`Incorrect or missing ${field}`);
+  }
+
+  if (param.trim() === "") {
+    throw new Error(`${field} must be filled in`);
   }
 
   return param;
@@ -70,6 +88,52 @@ export const parseDateParam = (date: unknown, field: string): string => {
   return date;
 };
 
+export const parseActivityType = (param: unknown): ActivityType => {
+  if (!isString(param) || !isActivityType(param)) {
+    throw new Error("Incorrect or missing Activity Type");
+  }
+
+  return param;
+};
+
+export const parseActivities = (object: unknown): Array<Activity> => {
+  if (!Array.isArray(object)) {
+    // we will just trust the data to be in correct form
+    return [] as Array<Activity>;
+  }
+
+  const activities: Array<Activity> = object.map(
+    (activity: unknown): Activity => {
+      if (!activity || typeof activity !== "object") {
+        throw new Error("Incorrect or missing data in activities");
+      }
+
+      if (
+        !("activityType" in activity) ||
+        !("date" in activity) ||
+        !("description" in activity)
+      ) {
+        throw new Error(
+          "Incorrect data: some fields are missing in activities"
+        );
+      }
+
+      const parsedActivity: Activity = {
+        activityType: parseActivityType(activity.activityType),
+        date: parseDateParam(activity.date, "Activity Date"),
+        description: parseStringParam(
+          activity.description,
+          "Activity Description"
+        ),
+      };
+
+      return parsedActivity;
+    }
+  );
+
+  return activities;
+};
+
 export const toToken = (object: unknown): Token => {
   if (!object || typeof object !== "object") {
     throw new Error("Incorrect or missing data");
@@ -86,4 +150,36 @@ export const toToken = (object: unknown): Token => {
   };
 
   return token;
+};
+
+export const toNewJob = (object: unknown): NewJob => {
+  if (!object || typeof object !== "object") {
+    throw new Error("Incorrect or missing data");
+  }
+
+  if (
+    !("companyName" in object) ||
+    !("jobTitle" in object) ||
+    !("companyWebsite" in object) ||
+    !("jobPostingLink" in object) ||
+    !("contactName" in object) ||
+    !("contactTitle" in object) ||
+    !("activities" in object) ||
+    !("notes" in object)
+  ) {
+    throw new Error("Incorrect data: some fields are missing");
+  }
+
+  const newJob: NewJob = {
+    companyName: parseNonEmptyStringParam(object.companyName, "Company Name"),
+    jobTitle: parseNonEmptyStringParam(object.jobTitle, "Job Title"),
+    companyWebsite: parseStringParam(object.companyWebsite, "Company Website"),
+    jobPostingLink: parseStringParam(object.jobPostingLink, "Job Posting Link"),
+    contactName: parseStringParam(object.contactName, "Contact Name"),
+    contactTitle: parseStringParam(object.contactTitle, "Contact Title"),
+    activities: parseActivities(object.activities),
+    notes: parseStringParam(object.notes, "Notes"),
+  };
+
+  return newJob;
 };
