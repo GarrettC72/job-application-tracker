@@ -4,6 +4,7 @@ import gql from "graphql-tag";
 import { Resolvers } from "../__generated__/resolvers-types";
 import Job from "../models/job";
 import { parseDateParam } from "../utils/parser";
+import { verifyCurrentUser } from "../utils/userHelper";
 
 export const typeDef = gql`
   type Activity {
@@ -54,33 +55,11 @@ export const typeDef = gql`
 export const resolvers: Resolvers = {
   Query: {
     allJobs: async (_root, _args, { currentUser }) => {
-      if (!currentUser) {
-        throw new GraphQLError("Must be signed in", {
-          extensions: { code: "BAD_USER_INPUT" },
-        });
-      }
-
-      if (!currentUser.verified) {
-        throw new GraphQLError("This user is not verified", {
-          extensions: { code: "UNVERIFIED_EMAIL" },
-        });
-      }
-
-      return Job.find({ user: currentUser._id });
+      const user = verifyCurrentUser(currentUser);
+      return Job.find({ user: user._id });
     },
     getJob: async (_root, { id }, { currentUser }) => {
-      if (!currentUser) {
-        throw new GraphQLError("Must be signed in", {
-          extensions: { code: "BAD_USER_INPUT" },
-        });
-      }
-
-      if (!currentUser.verified) {
-        throw new GraphQLError("This user is not verified", {
-          extensions: { code: "UNVERIFIED_EMAIL" },
-        });
-      }
-
+      const user = verifyCurrentUser(currentUser);
       const job = await Job.findById(id);
 
       if (!job) {
@@ -88,8 +67,7 @@ export const resolvers: Resolvers = {
           extensions: { code: "JOB_NOT_FOUND" },
         });
       }
-
-      if (job.user.toString() !== currentUser._id.toString()) {
+      if (job.user.toString() !== user._id.toString()) {
         throw new GraphQLError("User is not authorized to view this job", {
           extensions: { code: "NOT_PERMITTED" },
         });
@@ -113,17 +91,7 @@ export const resolvers: Resolvers = {
       },
       { currentUser }
     ) => {
-      if (!currentUser) {
-        throw new GraphQLError("Must be signed in", {
-          extensions: { code: "BAD_USER_INPUT" },
-        });
-      }
-
-      if (!currentUser.verified) {
-        throw new GraphQLError("This user is not verified", {
-          extensions: { code: "UNVERIFIED_EMAIL" },
-        });
-      }
+      const user = verifyCurrentUser(currentUser);
 
       if (activities) {
         for (let i = 0; i < activities.length; i++) {
@@ -142,7 +110,6 @@ export const resolvers: Resolvers = {
       }
 
       const date = new Date();
-
       const job = new Job({
         companyName,
         jobTitle,
@@ -154,7 +121,7 @@ export const resolvers: Resolvers = {
         notes,
         dateCreated: date,
         lastModified: date,
-        user: currentUser._id,
+        user: user._id,
       });
 
       try {

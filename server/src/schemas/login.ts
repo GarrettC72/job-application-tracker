@@ -38,7 +38,6 @@ export const resolvers: Resolvers = {
       }
 
       const caseInsensitiveEmail = email.toLowerCase();
-
       const user = await User.findOne({ email: caseInsensitiveEmail });
       const passwordCorrect =
         user === null
@@ -53,7 +52,6 @@ export const resolvers: Resolvers = {
           },
         });
       }
-
       if (!user.verified) {
         throw new GraphQLError("This email is not verified", {
           extensions: {
@@ -68,13 +66,12 @@ export const resolvers: Resolvers = {
         id: user._id,
         type: TokenType.Login,
       };
-
       const token = jwt.sign(userForToken, config.SECRET);
 
       return {
         token,
         email: user.email,
-        name: `${user.firstName} ${user.lastName}`,
+        name: user.fullName(),
       };
     },
   },

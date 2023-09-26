@@ -11,7 +11,7 @@ export const handleTokenError = async (
   token: string,
   type: TokenType.Password | TokenType.Verification,
   verified: boolean
-) => {
+): Promise<GraphQLError> => {
   let invalidMessage, expiredMessage;
 
   switch (type) {
@@ -53,6 +53,7 @@ export const handleTokenError = async (
     }
 
     const user = await User.findById(expiredParsedToken.id);
+
     if (!user) {
       return new GraphQLError("No account found with this email", {
         extensions: {
@@ -65,9 +66,10 @@ export const handleTokenError = async (
       const errorMessage = verified
         ? "This email is already verified"
         : "This email is not verified";
+      const code = verified ? "ALREADY_VERIFIED" : "UNVERIFIED_EMAIL";
       return new GraphQLError(errorMessage, {
         extensions: {
-          code: "ALREADY_VERIFIED",
+          code,
           invalidArgs: token,
         },
       });
@@ -91,46 +93,51 @@ export const handleTokenError = async (
   }
 };
 
-export const getUserWithToken = async (
-  token: Token,
+export const getUser = async (
+  param: string | Token,
   missingUserMessage: string,
   verified: boolean
-) => {
-  const user = await User.findById(token.id);
-  if (!user) {
-    throw new GraphQLError(missingUserMessage, {
-      extensions: {
-        code: "USER_NOT_FOUND",
-        invalidArgs: token,
-      },
-    });
-  }
-  if (user.verified === verified) {
-    const errorMessage = verified
-      ? "This email is already verified"
-      : "This email is not verified";
-    throw new GraphQLError(errorMessage, {
-      extensions: {
-        code: "ALREADY_VERIFIED",
-        invalidArgs: token,
-      },
-    });
+): Promise<InstanceType<typeof User>> => {
+  let user, invalidArgs;
+
+  switch (typeof param) {
+    case "object":
+      user = await User.findById(param.id);
+      invalidArgs = { token: param };
+      break;
+    case "string":
+      user = await User.findOne({ email: param });
+      invalidArgs = { email: param };
+      break;
   }
 
-  return user;
+  const verifiedUser = verifyUser(
+    user,
+    missingUserMessage,
+    verified,
+    invalidArgs
+  );
+
+  return verifiedUser;
 };
 
-export const getUserWithEmail = async (
-  email: string,
+export const verifyCurrentUser = (
+  currentUser: InstanceType<typeof User> | null | undefined
+): InstanceType<typeof User> => {
+  return verifyUser(currentUser, "Must be signed in", false, { currentUser });
+};
+
+export const verifyUser = (
+  user: InstanceType<typeof User> | null | undefined,
   missingUserMessage: string,
-  verified: boolean
-) => {
-  const user = await User.findOne({ email });
+  verified: boolean,
+  invalidArgs: object
+): InstanceType<typeof User> => {
   if (!user) {
     throw new GraphQLError(missingUserMessage, {
       extensions: {
         code: "USER_NOT_FOUND",
-        invalidArgs: email,
+        invalidArgs,
       },
     });
   }
@@ -138,10 +145,11 @@ export const getUserWithEmail = async (
     const errorMessage = verified
       ? "This email is already verified"
       : "This email is not verified";
+    const code = verified ? "ALREADY_VERIFIED" : "UNVERIFIED_EMAIL";
     throw new GraphQLError(errorMessage, {
       extensions: {
-        code: "ALREADY_VERIFIED",
-        invalidArgs: email,
+        code,
+        invalidArgs,
       },
     });
   }

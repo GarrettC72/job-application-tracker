@@ -40,9 +40,10 @@ const start = async () => {
     context: async ({ req }) => {
       const auth = req ? req.headers.authorization : null;
       if (auth && auth.startsWith("Bearer ")) {
-        const decodedToken = jwt.verify(auth.substring(7), config.SECRET);
-        let loginToken;
+        let decodedToken, loginToken;
+
         try {
+          decodedToken = jwt.verify(auth.substring(7), config.SECRET);
           loginToken = toToken(decodedToken);
         } catch (error: unknown) {
           throw new GraphQLError("Invalid login token", {
@@ -64,6 +65,7 @@ const start = async () => {
         }
 
         const currentUser = await User.findById(loginToken.id);
+
         return { currentUser };
       }
 

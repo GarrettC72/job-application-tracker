@@ -11,11 +11,7 @@ import {
 } from "../utils/mailer";
 import { Resolvers } from "../__generated__/resolvers-types";
 import { Token, TokenType } from "../types";
-import {
-  getUserWithEmail,
-  getUserWithToken,
-  handleTokenError,
-} from "../utils/userHelper";
+import { getUser, handleTokenError } from "../utils/userHelper";
 import User from "../models/user";
 import config from "../utils/config";
 
@@ -82,11 +78,12 @@ export const resolvers: Resolvers = {
         });
       }
 
-      const user = await getUserWithToken(
+      const user = await getUser(
         passwordResetToken,
         "No account found with this email",
         false
       );
+
       if (
         Date.now() - user.latestPasswordChange.getTime() <
         24 * 60 * 60 * 1000
@@ -134,7 +131,6 @@ export const resolvers: Resolvers = {
           },
         });
       }
-
       if (password !== confirmPassword) {
         throw new GraphQLError("Please enter the same password twice", {
           extensions: {
@@ -148,8 +144,8 @@ export const resolvers: Resolvers = {
       }
 
       const caseInsensitiveEmail = email.toLowerCase();
-
       const existingUser = await User.findOne({ email: caseInsensitiveEmail });
+
       if (existingUser) {
         throw new GraphQLError(
           "An account with this email address already exists",
@@ -164,7 +160,6 @@ export const resolvers: Resolvers = {
 
       const saltRounds = 10;
       const passwordHash = await bcrypt.hash(password, saltRounds);
-
       const user = new User({
         email: caseInsensitiveEmail,
         passwordHash,
@@ -185,6 +180,7 @@ export const resolvers: Resolvers = {
         const token = jwt.sign(userForToken, config.SECRET, {
           expiresIn: "1d",
         });
+
         await sendVerificationEmail(email, token);
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -234,7 +230,7 @@ export const resolvers: Resolvers = {
         );
       }
 
-      const user = await getUserWithToken(
+      const user = await getUser(
         verificationToken,
         "Verification failed - no account found with this email",
         true
@@ -288,12 +284,11 @@ export const resolvers: Resolvers = {
         );
       }
 
-      const user = await getUserWithToken(
+      const user = await getUser(
         verificationToken,
         "Failed to send email - no account found with this email",
         true
       );
-
       const userForToken: Token = {
         email: user.email,
         id: user._id,
@@ -331,12 +326,12 @@ export const resolvers: Resolvers = {
       }
 
       const caseInsensitiveEmail = email.toLowerCase();
-
-      const user = await getUserWithEmail(
+      const user = await getUser(
         caseInsensitiveEmail,
         "Failed to send password reset email - no account found with this email",
         false
       );
+
       if (
         Date.now() - user.latestPasswordChange.getTime() <
         24 * 60 * 60 * 1000
@@ -399,11 +394,12 @@ export const resolvers: Resolvers = {
         });
       }
 
-      const user = await getUserWithToken(
+      const user = await getUser(
         passwordResetToken,
         "No account found with this email",
         false
       );
+
       if (
         Date.now() - user.latestPasswordChange.getTime() <
         24 * 60 * 60 * 1000
@@ -418,7 +414,6 @@ export const resolvers: Resolvers = {
           }
         );
       }
-
       if (password.length < 8) {
         throw new GraphQLError("Password must be least 8 characters long", {
           extensions: {
@@ -427,7 +422,6 @@ export const resolvers: Resolvers = {
           },
         });
       }
-
       if (password !== confirmPassword) {
         throw new GraphQLError("Please enter the same password twice", {
           extensions: {

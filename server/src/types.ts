@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Model, Types } from "mongoose";
 
 export enum ActivityType {
   Applied = "Submitted Job Application",
@@ -44,6 +44,12 @@ export interface User {
   latestPasswordChange: Date;
 }
 
+export interface UserMethods {
+  fullName(): string;
+}
+
+export type UserModel = Model<User, Record<string, never>, UserMethods>;
+
 export enum TokenType {
   Verification = "verification",
   Password = "password",
@@ -57,5 +63,5 @@ export interface Token {
 }
 
 export interface MyContext {
-  currentUser?: User;
+  currentUser?: InstanceType<UserModel>;
 }
