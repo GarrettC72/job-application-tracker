@@ -31,6 +31,7 @@ export const typeDef = gql`
     notes: String!
     dateCreated: Date!
     lastModified: Date!
+    latestActivity: String!
   }
 
   extend type Query {
@@ -53,6 +54,23 @@ export const typeDef = gql`
 `;
 
 export const resolvers: Resolvers = {
+  Job: {
+    latestActivity: (root) => {
+      if (root.activities.length === 0) {
+        return "";
+      }
+
+      const activity = root.activities.reduce((result, activity) => {
+        return new Date(activity.date).getTime() -
+          new Date(result.date).getTime() >=
+          0
+          ? activity
+          : result;
+      }, root.activities[0]);
+
+      return activity.activityType;
+    },
+  },
   Query: {
     allJobs: async (_root, _args, { currentUser }) => {
       const user = verifyCurrentUser(currentUser);

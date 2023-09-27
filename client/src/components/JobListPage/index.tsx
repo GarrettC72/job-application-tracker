@@ -19,6 +19,7 @@ const JobListPage = () => {
           <tr>
             <th>Company Name</th>
             <th>Job Title</th>
+            <th>Latest Activity</th>
             <th>Date Created</th>
             <th>Last Modified</th>
           </tr>
@@ -26,6 +27,7 @@ const JobListPage = () => {
             <tr key={job.id}>
               <td>{job.companyName}</td>
               <td>{job.jobTitle}</td>
+              <td>{job.latestActivity}</td>
               <td>{job.dateCreated}</td>
               <td>{job.lastModified}</td>
             </tr>

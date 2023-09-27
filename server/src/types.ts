@@ -30,10 +30,14 @@ export interface Job {
   notes: string;
   dateCreated: Date;
   lastModified: Date;
+  latestActivity: ActivityType;
   user: Types.ObjectId;
 }
 
-export type NewJob = Omit<Job, "id" | "dateCreated" | "lastModified" | "user">;
+export type NewJob = Omit<
+  Job,
+  "id" | "dateCreated" | "lastModified" | "latestActivity" | "user"
+>;
 
 export interface User {
   _id: Types.ObjectId;

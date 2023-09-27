@@ -75,6 +75,7 @@ export const USER_JOBS = gql(`
     allJobs {
       companyName
       jobTitle
+      latestActivity
       dateCreated
       lastModified
       id
