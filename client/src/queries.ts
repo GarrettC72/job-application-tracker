@@ -69,3 +69,15 @@ export const EDIT_PASSWORD = gql(`
     }
   }
 `);
+
+export const USER_JOBS = gql(`
+  query userJobs {
+    allJobs {
+      companyName
+      jobTitle
+      dateCreated
+      lastModified
+      id
+    }
+  }
+`);

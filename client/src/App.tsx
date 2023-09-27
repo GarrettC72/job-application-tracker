@@ -5,6 +5,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { useEffect } from "react";
+import { useApolloClient } from "@apollo/client";
 
 import { useClearUser, useInitialization, useNotification } from "./hooks";
 import { useAppSelector } from "./app/hooks";
@@ -14,11 +15,13 @@ import VerificationPage from "./components/VerificationPage";
 import ForgotPasswordPage from "./components/ForgotPasswordPage";
 import ResetPasswordPage from "./components/ResetPasswordPage";
 import Notification from "./components/Notification";
+import JobListPage from "./components/JobListPage";
 
 const App = () => {
   const initializeState = useInitialization();
   const clearUser = useClearUser();
   const notifyWith = useNotification();
+  const client = useApolloClient();
 
   const user = useAppSelector(({ user }) => user);
 
@@ -29,6 +32,7 @@ const App = () => {
   const logout = () => {
     clearUser();
     notifyWith("Logged out", "success");
+    client.resetStore();
   };
 
   if (!user) {
@@ -52,16 +56,11 @@ const App = () => {
     <Router>
       <h1>Job Application Tracker</h1>
       <Notification />
+      <div>
+        {user.name} logged in <button onClick={logout}>Logout</button>
+      </div>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <div>
-              <button onClick={logout}>Logout</button>
-              <div>Logged in as {user.name}</div>
-            </div>
-          }
-        />
+        <Route path="/" element={<JobListPage />} />
         <Route path="/reset" element={<ResetPasswordPage />} />
         <Route path="*" element={<Navigate replace to="/" />} />
       </Routes>

@@ -144,7 +144,7 @@ export const toToken = (object: unknown): Token => {
   }
 
   const token = {
-    email: parseStringParam(object.email, "email"),
+    email: parseEmail(object.email),
     id: parseObjectIdParam(object.id, "id"),
     type: parseTokenType(object.type),
   };

@@ -1,4 +1,5 @@
 import { LoginData } from "../types";
+import { toLoginData } from "../utils";
 
 const KEY = "loggedJobappUser";
 
@@ -7,7 +8,22 @@ const saveUser = (user: LoginData) => {
 };
 
 const loadUser = () => {
-  return JSON.parse(window.localStorage.getItem(KEY) ?? "null");
+  const user = JSON.parse(window.localStorage.getItem(KEY) ?? "null");
+
+  if (user === null) {
+    return null;
+  }
+
+  try {
+    const parsedUser = toLoginData(user);
+    return parsedUser;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
+    removeUser();
+    return null;
+  }
 };
 
 const removeUser = () => {

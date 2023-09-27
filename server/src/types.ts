@@ -65,5 +65,5 @@ export interface Token {
 }
 
 export interface MyContext {
-  currentUser?: InstanceType<UserModel>;
+  currentUser?: InstanceType<UserModel> | null;
 }
