@@ -16,6 +16,8 @@ import ForgotPasswordPage from "./components/ForgotPasswordPage";
 import ResetPasswordPage from "./components/ResetPasswordPage";
 import Notification from "./components/Notification";
 import JobListPage from "./components/JobListPage";
+import AddJobPage from "./components/AddJobPage";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   const initializeState = useInitialization();
@@ -55,6 +57,7 @@ const App = () => {
   return (
     <Router>
       <h1>Job Application Tracker</h1>
+      <Navbar />
       <Notification />
       <div>
         {user.name} logged in <button onClick={logout}>Logout</button>
@@ -62,6 +65,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<JobListPage />} />
         <Route path="/reset" element={<ResetPasswordPage />} />
+        <Route path="/create" element={<AddJobPage />} />
         <Route path="*" element={<Navigate replace to="/" />} />
       </Routes>
     </Router>

@@ -26,7 +26,7 @@ export interface Job {
   jobPostingLink: string;
   contactName: string;
   contactTitle: string;
-  activities: Array<Activity>;
+  activities: Activity[];
   notes: string;
   dateCreated: Date;
   lastModified: Date;

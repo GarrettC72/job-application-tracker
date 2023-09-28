@@ -1,4 +1,5 @@
 import { useQuery } from "@apollo/client";
+
 import { USER_JOBS } from "../../queries";
 
 const JobListPage = () => {

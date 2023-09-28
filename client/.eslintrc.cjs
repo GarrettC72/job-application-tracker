@@ -23,6 +23,7 @@ module.exports = {
     "@typescript-eslint/explicit-function-return-type": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "@typescript-eslint/semi": ["error"],
+    "@typescript-eslint/array-type": ["error", { default: "array-simple" }],
     "react/react-in-jsx-scope": 0,
     indent: ["error", 2, { SwitchCase: 1 }],
     quotes: ["error", "double"],

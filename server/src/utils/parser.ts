@@ -96,40 +96,36 @@ export const parseActivityType = (param: unknown): ActivityType => {
   return param;
 };
 
-export const parseActivities = (object: unknown): Array<Activity> => {
+export const parseActivities = (object: unknown): Activity[] => {
   if (!Array.isArray(object)) {
     // we will just trust the data to be in correct form
-    return [] as Array<Activity>;
+    return [] as Activity[];
   }
 
-  const activities: Array<Activity> = object.map(
-    (activity: unknown): Activity => {
-      if (!activity || typeof activity !== "object") {
-        throw new Error("Incorrect or missing data in activities");
-      }
-
-      if (
-        !("activityType" in activity) ||
-        !("date" in activity) ||
-        !("description" in activity)
-      ) {
-        throw new Error(
-          "Incorrect data: some fields are missing in activities"
-        );
-      }
-
-      const parsedActivity: Activity = {
-        activityType: parseActivityType(activity.activityType),
-        date: parseDateParam(activity.date, "Activity Date"),
-        description: parseStringParam(
-          activity.description,
-          "Activity Description"
-        ),
-      };
-
-      return parsedActivity;
+  const activities: Activity[] = object.map((activity: unknown): Activity => {
+    if (!activity || typeof activity !== "object") {
+      throw new Error("Incorrect or missing data in activities");
     }
-  );
+
+    if (
+      !("activityType" in activity) ||
+      !("date" in activity) ||
+      !("description" in activity)
+    ) {
+      throw new Error("Incorrect data: some fields are missing in activities");
+    }
+
+    const parsedActivity: Activity = {
+      activityType: parseActivityType(activity.activityType),
+      date: parseDateParam(activity.date, "Activity Date"),
+      description: parseStringParam(
+        activity.description,
+        "Activity Description"
+      ),
+    };
+
+    return parsedActivity;
+  });
 
   return activities;
 };

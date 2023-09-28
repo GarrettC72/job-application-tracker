@@ -31,7 +31,9 @@ export const useNotification = () => {
 export const useField = (type: string) => {
   const [value, setValue] = useState("");
 
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setValue(event.target.value);
   };
 

@@ -19,6 +19,7 @@ module.exports = {
     "@typescript-eslint/restrict-plus-operands": "off",
     "@typescript-eslint/no-unsafe-member-access": "off",
     "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    "@typescript-eslint/array-type": ["error", { default: "array-simple" }],
     "no-case-declarations": "off",
     indent: ["error", 2, { SwitchCase: 1 }],
     quotes: ["error", "double"],
