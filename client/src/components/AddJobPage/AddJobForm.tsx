@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 
-import { useField } from "../../hooks";
+import { useField, useNotification } from "../../hooks";
 import { ActivityType } from "../../types";
 import { Activity } from "../../types";
+import { CREATE_JOB, USER_JOBS } from "../../queries";
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -26,26 +29,48 @@ const AddJobForm = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const { reset: resetNotes, ...notes } = useField("text");
 
+  const notifyWith = useNotification();
+  const navigate = useNavigate();
+
+  const [createJob] = useMutation(CREATE_JOB, {
+    refetchQueries: [{ query: USER_JOBS }],
+    onError: (error) => {
+      notifyWith(error.graphQLErrors[0].message, "error");
+    },
+    onCompleted: (result) => {
+      const job = result.addJob;
+      if (job) {
+        notifyWith(
+          `New job '${job.jobTitle} at ${job.companyName}' successfully saved`,
+          "success"
+        );
+        resetCompanyName();
+        resetCompanyWebsite();
+        resetJobTitle();
+        resetJobPostingLink();
+        resetContactName();
+        resetContactTitle();
+        resetNotes();
+        navigate("/");
+      }
+    },
+  });
+
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    console.log(
-      companyName.value,
-      companyWebsite.value,
-      jobTitle.value,
-      jobPostingLink.value,
-      contactName.value,
-      contactTitle.value,
-      activities,
-      notes.value
-    );
 
-    resetCompanyName();
-    resetCompanyWebsite();
-    resetJobTitle();
-    resetJobPostingLink();
-    resetContactName();
-    resetContactTitle();
-    resetNotes();
+    createJob({
+      variables: {
+        companyName: companyName.value,
+        companyWebsite: companyWebsite.value,
+        jobTitle: jobTitle.value,
+        jobPostingLink: jobPostingLink.value,
+        contactName: contactName.value,
+        contactTitle: contactTitle.value,
+        activities,
+        notes: notes.value,
+      },
+    });
   };
 
   const addAcitivity = () => {
