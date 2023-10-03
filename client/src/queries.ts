@@ -92,6 +92,25 @@ export const USER_JOBS = gql(`#graphql
   }
 `);
 
+export const JOB_BY_ID = gql(`#graphql
+  query jobById($id: ID!) {
+    getJob(id: $id) {
+      companyName
+      companyWebsite
+      jobTitle
+      jobPostingLink
+      contactName
+      contactTitle
+      activities {
+        activityType
+        date
+        description
+      }
+      notes
+    }
+  }
+`);
+
 export const CREATE_JOB = gql(`#graphql
   mutation createJob($companyName: String!, $companyWebsite: String!,
   $jobTitle: String!, $jobPostingLink: String!, $contactName: String!,

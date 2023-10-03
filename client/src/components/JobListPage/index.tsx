@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 
 import { USER_JOBS } from "../../queries";
+import { Link } from "react-router-dom";
 
 const JobListPage = () => {
   const jobs = useQuery(USER_JOBS);
@@ -23,6 +24,7 @@ const JobListPage = () => {
             <th>Latest Activity</th>
             <th>Date Created</th>
             <th>Last Modified</th>
+            <th>Action</th>
           </tr>
           {jobs.data.allJobs.map((job) => (
             <tr key={job.id}>
@@ -31,6 +33,9 @@ const JobListPage = () => {
               <td>{job.latestActivity}</td>
               <td>{job.dateCreated}</td>
               <td>{job.lastModified}</td>
+              <td>
+                <Link to={`/jobs/${job.id}`}>Edit</Link> | Delete
+              </td>
             </tr>
           ))}
         </tbody>

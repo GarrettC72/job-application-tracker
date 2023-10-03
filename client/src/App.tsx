@@ -18,6 +18,7 @@ import Notification from "./components/Notification";
 import JobListPage from "./components/JobListPage";
 import AddJobPage from "./components/AddJobPage";
 import Navbar from "./components/Navbar";
+import EditJobPage from "./components/EditJobPage";
 
 const App = () => {
   const initializeState = useInitialization();
@@ -66,6 +67,7 @@ const App = () => {
         <Route path="/" element={<JobListPage />} />
         <Route path="/reset" element={<ResetPasswordPage />} />
         <Route path="/create" element={<AddJobPage />} />
+        <Route path="/jobs/:id" element={<EditJobPage />} />
         <Route path="*" element={<Navigate replace to="/" />} />
       </Routes>
     </Router>

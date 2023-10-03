@@ -36,7 +36,7 @@ export const typeDef = gql`
 
   extend type Query {
     allJobs: [Job!]
-    getJob(id: String!): Job
+    getJob(id: ID!): Job
   }
 
   extend type Mutation {
