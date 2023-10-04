@@ -50,6 +50,17 @@ export const typeDef = gql`
       activities: [ActivityInput!]!
       notes: String!
     ): Job
+    updateJob(
+      id: ID!
+      companyName: String!
+      jobTitle: String!
+      companyWebsite: String!
+      jobPostingLink: String!
+      contactName: String!
+      contactTitle: String!
+      activities: [ActivityInput!]!
+      notes: String!
+    ): Job
   }
 `;
 
@@ -156,6 +167,94 @@ export const resolvers: Resolvers = {
         await job.save();
       } catch (error: unknown) {
         throw new GraphQLError("Failed to save job", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: {
+              companyName,
+              jobTitle,
+              companyWebsite,
+              jobPostingLink,
+              contactName,
+              contactTitle,
+              activities,
+              notes,
+            },
+            error,
+          },
+        });
+      }
+
+      return job;
+    },
+    updateJob: async (
+      _root,
+      {
+        id,
+        companyName,
+        jobTitle,
+        companyWebsite,
+        jobPostingLink,
+        contactName,
+        contactTitle,
+        activities,
+        notes,
+      },
+      { currentUser }
+    ) => {
+      const user = verifyCurrentUser(currentUser);
+      const date = new Date();
+      const job = await Job.findById(id);
+      let jobUpdate;
+
+      if (!job) {
+        throw new GraphQLError("Job could not be found", {
+          extensions: { code: "JOB_NOT_FOUND" },
+        });
+      }
+      if (job.user.toString() !== user._id.toString()) {
+        throw new GraphQLError("User is not authorized to update this job", {
+          extensions: { code: "NOT_PERMITTED" },
+        });
+      }
+
+      try {
+        jobUpdate = toNewJob({
+          companyName,
+          jobTitle,
+          companyWebsite,
+          jobPostingLink,
+          contactName,
+          contactTitle,
+          activities,
+          notes,
+        });
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          throw new GraphQLError(error.message, {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: {
+                companyName,
+                jobTitle,
+                companyWebsite,
+                jobPostingLink,
+                contactName,
+                contactTitle,
+                activities,
+                notes,
+              },
+              error,
+            },
+          });
+        }
+      }
+
+      Object.assign(job, jobUpdate, { lastModified: date });
+
+      try {
+        await job.save();
+      } catch (error: unknown) {
+        throw new GraphQLError("Failed to update job", {
           extensions: {
             code: "BAD_USER_INPUT",
             invalidArgs: {
