@@ -112,19 +112,8 @@ export const JOB_BY_ID = gql(`#graphql
 `);
 
 export const CREATE_JOB = gql(`#graphql
-  mutation createJob($companyName: String!, $companyWebsite: String!,
-  $jobTitle: String!, $jobPostingLink: String!, $contactName: String!,
-  $contactTitle: String!, $activities: [ActivityInput!]!, $notes: String!) {
-    addJob(
-      companyName: $companyName,
-      companyWebsite: $companyWebsite
-      jobTitle: $jobTitle,
-      jobPostingLink: $jobPostingLink,
-      contactName: $contactName,
-      contactTitle: $contactTitle,
-      activities: $activities,
-      notes: $notes
-    ) {
+  mutation createJob($jobParams: JobInput!) {
+    addJob(jobParams: $jobParams) {
       companyName
       jobTitle
       latestActivity
@@ -136,20 +125,8 @@ export const CREATE_JOB = gql(`#graphql
 `);
 
 export const UPDATE_JOB = gql(`#graphql
-  mutation updateJob($id: ID!, $companyName: String!, $companyWebsite: String!,
-  $jobTitle: String!, $jobPostingLink: String!, $contactName: String!,
-  $contactTitle: String!, $activities: [ActivityInput!]!, $notes: String!) {
-    updateJob(
-      id: $id,
-      companyName: $companyName,
-      companyWebsite: $companyWebsite
-      jobTitle: $jobTitle,
-      jobPostingLink: $jobPostingLink,
-      contactName: $contactName,
-      contactTitle: $contactTitle,
-      activities: $activities,
-      notes: $notes
-    ) {
+  mutation updateJob($id: ID!, $jobParams: JobInput!) {
+    updateJob(id: $id, jobParams: $jobParams) {
       companyName
       jobTitle
       latestActivity

@@ -58,19 +58,17 @@ const AddJobForm = () => {
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-
-    createJob({
-      variables: {
-        companyName: companyName.value,
-        companyWebsite: companyWebsite.value,
-        jobTitle: jobTitle.value,
-        jobPostingLink: jobPostingLink.value,
-        contactName: contactName.value,
-        contactTitle: contactTitle.value,
-        activities,
-        notes: notes.value,
-      },
-    });
+    const jobParams = {
+      companyName: companyName.value,
+      companyWebsite: companyWebsite.value,
+      jobTitle: jobTitle.value,
+      jobPostingLink: jobPostingLink.value,
+      contactName: contactName.value,
+      contactTitle: contactTitle.value,
+      activities,
+      notes: notes.value,
+    };
+    createJob({ variables: { jobParams } });
   };
 
   const addAcitivity = () => {

@@ -72,7 +72,7 @@ const EditJobForm = () => {
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    console.log(
+    const jobParams = {
       companyName,
       companyWebsite,
       jobTitle,
@@ -80,22 +80,9 @@ const EditJobForm = () => {
       contactName,
       contactTitle,
       activities,
-      notes
-    );
-
-    updateJob({
-      variables: {
-        id,
-        companyName,
-        companyWebsite,
-        jobTitle,
-        jobPostingLink,
-        contactName,
-        contactTitle,
-        activities,
-        notes,
-      },
-    });
+      notes,
+    };
+    updateJob({ variables: { id, jobParams } });
   };
 
   const addAcitivity = () => {

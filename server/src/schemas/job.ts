@@ -34,33 +34,25 @@ export const typeDef = gql`
     latestActivity: String!
   }
 
+  input JobInput {
+    companyName: String!
+    jobTitle: String!
+    companyWebsite: String!
+    jobPostingLink: String!
+    contactName: String!
+    contactTitle: String!
+    activities: [ActivityInput!]!
+    notes: String!
+  }
+
   extend type Query {
     allJobs: [Job!]
     getJob(id: ID!): Job
   }
 
   extend type Mutation {
-    addJob(
-      companyName: String!
-      jobTitle: String!
-      companyWebsite: String!
-      jobPostingLink: String!
-      contactName: String!
-      contactTitle: String!
-      activities: [ActivityInput!]!
-      notes: String!
-    ): Job
-    updateJob(
-      id: ID!
-      companyName: String!
-      jobTitle: String!
-      companyWebsite: String!
-      jobPostingLink: String!
-      contactName: String!
-      contactTitle: String!
-      activities: [ActivityInput!]!
-      notes: String!
-    ): Job
+    addJob(jobParams: JobInput!): Job
+    updateJob(id: ID!, jobParams: JobInput!): Job
   }
 `;
 
@@ -106,58 +98,36 @@ export const resolvers: Resolvers = {
     },
   },
   Mutation: {
-    addJob: async (
-      _root,
-      {
-        companyName,
-        jobTitle,
-        companyWebsite,
-        jobPostingLink,
-        contactName,
-        contactTitle,
-        activities,
-        notes,
-      },
-      { currentUser }
-    ) => {
+    addJob: async (_root, { jobParams }, { currentUser }) => {
       const user = verifyCurrentUser(currentUser);
       const date = new Date();
       let newJob;
 
       try {
-        newJob = toNewJob({
-          companyName,
-          jobTitle,
-          companyWebsite,
-          jobPostingLink,
-          contactName,
-          contactTitle,
-          activities,
-          notes,
-        });
+        newJob = toNewJob(jobParams);
       } catch (error: unknown) {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {
             extensions: {
               code: "BAD_USER_INPUT",
-              invalidArgs: {
-                companyName,
-                jobTitle,
-                companyWebsite,
-                jobPostingLink,
-                contactName,
-                contactTitle,
-                activities,
-                notes,
-              },
+              invalidArgs: jobParams,
+              error,
+            },
+          });
+        } else {
+          throw new GraphQLError("All required fields must be filled in", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: jobParams,
               error,
             },
           });
         }
       }
 
-      const job = new Job({
-        ...newJob,
+      const job = new Job(newJob);
+
+      Object.assign(job, {
         dateCreated: date,
         lastModified: date,
         user: user._id,
@@ -169,16 +139,7 @@ export const resolvers: Resolvers = {
         throw new GraphQLError("Failed to save job", {
           extensions: {
             code: "BAD_USER_INPUT",
-            invalidArgs: {
-              companyName,
-              jobTitle,
-              companyWebsite,
-              jobPostingLink,
-              contactName,
-              contactTitle,
-              activities,
-              notes,
-            },
+            invalidArgs: jobParams,
             error,
           },
         });
@@ -186,21 +147,7 @@ export const resolvers: Resolvers = {
 
       return job;
     },
-    updateJob: async (
-      _root,
-      {
-        id,
-        companyName,
-        jobTitle,
-        companyWebsite,
-        jobPostingLink,
-        contactName,
-        contactTitle,
-        activities,
-        notes,
-      },
-      { currentUser }
-    ) => {
+    updateJob: async (_root, { id, jobParams }, { currentUser }) => {
       const user = verifyCurrentUser(currentUser);
       const date = new Date();
       const job = await Job.findById(id);
@@ -218,31 +165,21 @@ export const resolvers: Resolvers = {
       }
 
       try {
-        jobUpdate = toNewJob({
-          companyName,
-          jobTitle,
-          companyWebsite,
-          jobPostingLink,
-          contactName,
-          contactTitle,
-          activities,
-          notes,
-        });
+        jobUpdate = toNewJob(jobParams);
       } catch (error: unknown) {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {
             extensions: {
               code: "BAD_USER_INPUT",
-              invalidArgs: {
-                companyName,
-                jobTitle,
-                companyWebsite,
-                jobPostingLink,
-                contactName,
-                contactTitle,
-                activities,
-                notes,
-              },
+              invalidArgs: jobParams,
+              error,
+            },
+          });
+        } else {
+          throw new GraphQLError("All required fields must be filled in", {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: jobParams,
               error,
             },
           });
@@ -257,16 +194,7 @@ export const resolvers: Resolvers = {
         throw new GraphQLError("Failed to update job", {
           extensions: {
             code: "BAD_USER_INPUT",
-            invalidArgs: {
-              companyName,
-              jobTitle,
-              companyWebsite,
-              jobPostingLink,
-              contactName,
-              contactTitle,
-              activities,
-              notes,
-            },
+            invalidArgs: jobParams,
             error,
           },
         });
