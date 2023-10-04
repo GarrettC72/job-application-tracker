@@ -7,18 +7,20 @@ import {
 import { useEffect } from "react";
 import { useApolloClient } from "@apollo/client";
 
+import {
+  LoginPage,
+  SignUpPage,
+  VerificationPage,
+  ForgotPasswordPage,
+  ResetPasswordPage,
+  JobListPage,
+  AddJobPage,
+  EditJobPage,
+  Notification,
+  Navbar,
+} from "./components";
 import { useClearUser, useInitialization, useNotification } from "./hooks";
 import { useAppSelector } from "./app/hooks";
-import LoginPage from "./components/LoginPage";
-import SignUpPage from "./components/SignUpPage";
-import VerificationPage from "./components/VerificationPage";
-import ForgotPasswordPage from "./components/ForgotPasswordPage";
-import ResetPasswordPage from "./components/ResetPasswordPage";
-import Notification from "./components/Notification";
-import JobListPage from "./components/JobListPage";
-import AddJobPage from "./components/AddJobPage";
-import Navbar from "./components/Navbar";
-import EditJobPage from "./components/EditJobPage";
 
 const App = () => {
   const initializeState = useInitialization();
@@ -65,7 +67,6 @@ const App = () => {
       </div>
       <Routes>
         <Route path="/" element={<JobListPage />} />
-        <Route path="/reset" element={<ResetPasswordPage />} />
         <Route path="/create" element={<AddJobPage />} />
         <Route path="/jobs/:id" element={<EditJobPage />} />
         <Route path="*" element={<Navigate replace to="/" />} />

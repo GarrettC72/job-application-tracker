@@ -134,3 +134,28 @@ export const CREATE_JOB = gql(`#graphql
     }
   }
 `);
+
+export const UPDATE_JOB = gql(`#graphql
+  mutation updateJob($id: ID!, $companyName: String!, $companyWebsite: String!,
+  $jobTitle: String!, $jobPostingLink: String!, $contactName: String!,
+  $contactTitle: String!, $activities: [ActivityInput!]!, $notes: String!) {
+    updateJob(
+      id: $id,
+      companyName: $companyName,
+      companyWebsite: $companyWebsite
+      jobTitle: $jobTitle,
+      jobPostingLink: $jobPostingLink,
+      contactName: $contactName,
+      contactTitle: $contactTitle,
+      activities: $activities,
+      notes: $notes
+    ) {
+      companyName
+      jobTitle
+      latestActivity
+      dateCreated
+      lastModified
+      id
+    }
+  }
+`);

@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { useQuery } from "@apollo/client";
+import { useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery } from "@apollo/client";
 
 import { Activity, ActivityType } from "../../types";
-import { JOB_BY_ID } from "../../queries";
+import { JOB_BY_ID, UPDATE_JOB, USER_JOBS } from "../../queries";
 import { parseActivities } from "../../utils";
+import { useNotification } from "../../hooks";
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -27,7 +28,10 @@ const EditJobForm = () => {
   const [contactTitle, setContactTitle] = useState("");
   const [activities, setActivities] = useState<Activity[]>([]);
   const [notes, setNotes] = useState("");
+
   const id = useParams().id ?? "";
+  const notifyWith = useNotification();
+  const navigate = useNavigate();
 
   const job = useQuery(JOB_BY_ID, {
     skip: !id,
@@ -46,6 +50,25 @@ const EditJobForm = () => {
       }
     },
   });
+  const [updateJob] = useMutation(UPDATE_JOB, {
+    refetchQueries: [
+      { query: USER_JOBS },
+      { query: JOB_BY_ID, variables: { id } },
+    ],
+    onError: (error) => {
+      notifyWith(error.graphQLErrors[0].message, "error");
+    },
+    onCompleted: (result) => {
+      const job = result.updateJob;
+      if (job) {
+        notifyWith(
+          `Job '${job.jobTitle} at ${job.companyName}' successfully updated`,
+          "success"
+        );
+        navigate("/");
+      }
+    },
+  });
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
@@ -59,6 +82,20 @@ const EditJobForm = () => {
       activities,
       notes
     );
+
+    updateJob({
+      variables: {
+        id,
+        companyName,
+        companyWebsite,
+        jobTitle,
+        jobPostingLink,
+        contactName,
+        contactTitle,
+        activities,
+        notes,
+      },
+    });
   };
 
   const addAcitivity = () => {
