@@ -17,7 +17,6 @@ import {
   AddJobPage,
   EditJobPage,
   Notification,
-  Navbar,
 } from "./components";
 import { useClearUser, useInitialization, useNotification } from "./hooks";
 import { useAppSelector } from "./app/hooks";
@@ -60,7 +59,6 @@ const App = () => {
   return (
     <Router>
       <h1>Job Application Tracker</h1>
-      <Navbar />
       <Notification />
       <div>
         {user.name} logged in <button onClick={logout}>Logout</button>

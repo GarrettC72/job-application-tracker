@@ -218,6 +218,7 @@ const EditJobForm = () => {
           style={{ resize: "none" }}
         />
       </div>
+      <button onClick={() => navigate("/")}>Cancel</button>
       <button type="submit">Save</button>
     </form>
   );

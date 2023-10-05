@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { DELETE_JOB, USER_JOBS } from "../../queries";
 import { SimpleJob } from "../../types";
@@ -9,6 +9,7 @@ const JobListPage = () => {
   const jobs = useQuery(USER_JOBS);
 
   const notifyWith = useNotification();
+  const navigate = useNavigate();
 
   const [deleteJob] = useMutation(DELETE_JOB, {
     refetchQueries: [{ query: USER_JOBS }],
@@ -78,6 +79,7 @@ const JobListPage = () => {
   return (
     <div>
       <h2>Jobs</h2>
+      <button onClick={() => navigate("/create")}>Add New Job</button>
       {jobsTable()}
     </div>
   );

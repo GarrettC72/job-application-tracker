@@ -168,6 +168,7 @@ const AddJobForm = () => {
         <span style={{ verticalAlign: "top" }}>Notes </span>
         <textarea {...notes} cols={60} rows={10} style={{ resize: "none" }} />
       </div>
+      <button onClick={() => navigate("/")}>Cancel</button>
       <button type="submit">Save</button>
     </form>
   );
