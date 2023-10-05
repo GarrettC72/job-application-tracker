@@ -53,6 +53,7 @@ export const typeDef = gql`
   extend type Mutation {
     addJob(jobParams: JobInput!): Job
     updateJob(id: ID!, jobParams: JobInput!): Job
+    deleteJob(id: ID!): Job
   }
 `;
 
@@ -200,6 +201,24 @@ export const resolvers: Resolvers = {
         });
       }
 
+      return job;
+    },
+    deleteJob: async (_root, { id }, { currentUser }) => {
+      const user = verifyCurrentUser(currentUser);
+      const job = await Job.findById(id);
+
+      if (!job) {
+        throw new GraphQLError("Job could not be found", {
+          extensions: { code: "JOB_NOT_FOUND" },
+        });
+      }
+      if (job.user.toString() !== user._id.toString()) {
+        throw new GraphQLError("User is not authorized to delete this job", {
+          extensions: { code: "NOT_PERMITTED" },
+        });
+      }
+
+      await job.deleteOne();
       return job;
     },
   },

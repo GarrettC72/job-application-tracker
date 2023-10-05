@@ -136,3 +136,13 @@ export const UPDATE_JOB = gql(`#graphql
     }
   }
 `);
+
+export const DELETE_JOB = gql(`#graphql
+  mutation deleteJob($id: ID!) {
+    deleteJob(id: $id) {
+      companyName
+      jobTitle
+      id
+    }
+  }
+`);

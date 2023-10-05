@@ -21,3 +21,12 @@ export interface Activity {
   date: string;
   description: string;
 }
+
+export interface SimpleJob {
+  id: string;
+  companyName: string;
+  jobTitle: string;
+  latestActivity: string;
+  dateCreated: Date;
+  lastModified: Date;
+}
