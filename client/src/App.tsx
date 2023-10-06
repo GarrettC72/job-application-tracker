@@ -4,6 +4,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { Button, Container, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { useApolloClient } from "@apollo/client";
 
@@ -57,19 +58,26 @@ const App = () => {
   }
 
   return (
-    <Router>
-      <h1>Job Application Tracker</h1>
-      <Notification />
-      <div>
-        {user.name} logged in <button onClick={logout}>Logout</button>
-      </div>
-      <Routes>
-        <Route path="/" element={<JobListPage />} />
-        <Route path="/create" element={<AddJobPage />} />
-        <Route path="/jobs/:id" element={<EditJobPage />} />
-        <Route path="*" element={<Navigate replace to="/" />} />
-      </Routes>
-    </Router>
+    <Container maxWidth="xl">
+      <Router>
+        <Typography variant="h3" gutterBottom>
+          Job Application Tracker
+        </Typography>
+        <Notification />
+        <Typography variant="body1">
+          {user.name} logged in{" "}
+          <Button onClick={logout} variant="contained">
+            Logout
+          </Button>
+        </Typography>
+        <Routes>
+          <Route path="/" element={<JobListPage />} />
+          <Route path="/create" element={<AddJobPage />} />
+          <Route path="/jobs/:id" element={<EditJobPage />} />
+          <Route path="*" element={<Navigate replace to="/" />} />
+        </Routes>
+      </Router>
+    </Container>
   );
 };
 
