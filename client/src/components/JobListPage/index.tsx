@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import {
   Button,
   Paper,
@@ -17,6 +18,7 @@ import {
 import { DELETE_JOB, USER_JOBS } from "../../queries";
 import { SimpleJob } from "../../types";
 import { useNotification } from "../../hooks";
+import DeleteJobDialog from "./DeleteJobDialog";
 
 const StyledTableCell = styled(TableCell)(() => ({
   [`&.${tableCellClasses.head}`]: {
@@ -40,10 +42,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const JobListPage = () => {
-  const jobs = useQuery(USER_JOBS);
+  const [selectedJob, setSelectedJob] = useState<SimpleJob | null>(null);
 
   const notifyWith = useNotification();
 
+  const jobs = useQuery(USER_JOBS);
   const [deleteJob] = useMutation(DELETE_JOB, {
     refetchQueries: [{ query: USER_JOBS }],
     onError: (error) => {
@@ -64,15 +67,11 @@ const JobListPage = () => {
     return <div>loading...</div>;
   }
 
-  const removeJob = (job: SimpleJob) => {
-    if (
-      window.confirm(
-        `Are you sure you want to remove ${job.jobTitle} at ${job.companyName}?`
-      )
-    ) {
-      console.log(job);
+  const handleDelete = (job: SimpleJob | null) => {
+    if (job) {
       deleteJob({ variables: { id: job.id } });
     }
+    setSelectedJob(null);
   };
 
   const jobsTable = () => {
@@ -110,7 +109,10 @@ const JobListPage = () => {
                     Edit
                   </Button>{" "}
                   |{" "}
-                  <Button onClick={() => removeJob(job)} variant="contained">
+                  <Button
+                    onClick={() => setSelectedJob(job)}
+                    variant="contained"
+                  >
                     Delete
                   </Button>
                 </StyledTableCell>
@@ -136,6 +138,16 @@ const JobListPage = () => {
         Add New Job
       </Button>
       {jobsTable()}
+      <DeleteJobDialog
+        open={selectedJob !== null}
+        onClose={() => setSelectedJob(null)}
+        onConfirm={() => handleDelete(selectedJob)}
+        dialogText={
+          selectedJob
+            ? `Delete job '${selectedJob.jobTitle} at ${selectedJob.companyName}'?`
+            : ""
+        }
+      />
     </div>
   );
 };

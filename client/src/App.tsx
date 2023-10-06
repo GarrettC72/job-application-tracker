@@ -42,18 +42,22 @@ const App = () => {
 
   if (!user) {
     return (
-      <Router>
-        <h1>Job Application Tracker</h1>
-        <Notification />
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/verify" element={<VerificationPage />} />
-          <Route path="/forgot" element={<ForgotPasswordPage />} />
-          <Route path="/reset" element={<ResetPasswordPage />} />
-          <Route path="*" element={<Navigate replace to="/" />} />
-        </Routes>
-      </Router>
+      <Container maxWidth="xl">
+        <Router>
+          <Typography variant="h3" gutterBottom>
+            Job Application Tracker
+          </Typography>
+          <Notification />
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/verify" element={<VerificationPage />} />
+            <Route path="/forgot" element={<ForgotPasswordPage />} />
+            <Route path="/reset" element={<ResetPasswordPage />} />
+            <Route path="*" element={<Navigate replace to="/" />} />
+          </Routes>
+        </Router>
+      </Container>
     );
   }
 
