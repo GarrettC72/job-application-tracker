@@ -1,3 +1,5 @@
+import { Alert } from "@mui/material";
+
 import { useAppSelector } from "../app/hooks";
 
 const Notification = () => {
@@ -5,11 +7,7 @@ const Notification = () => {
 
   if (!notification.message) return null;
 
-  const style = {
-    color: notification.type === "error" ? "red" : "green",
-  };
-
-  return <div style={style}>{notification.message}</div>;
+  return <Alert severity={notification.type}>{notification.message}</Alert>;
 };
 
 export default Notification;

@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import { AppDispatch } from "../../app/store";
+import { AlertColor } from "@mui/material";
 
 interface NotificationState {
   message: string | null;
-  type?: "success" | "error";
+  type?: AlertColor;
 }
 
 const initialState: NotificationState = {
@@ -26,7 +27,7 @@ export const notificationSlice = createSlice({
 
 export const { set, clear } = notificationSlice.actions;
 
-export const setNotification = (message: string, type: "success" | "error") => {
+export const setNotification = (message: string, type: AlertColor) => {
   return async (dispatch: AppDispatch) => {
     dispatch(set({ message, type }));
     setTimeout(() => {

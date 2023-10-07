@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { AlertColor } from "@mui/material";
 
 import { useAppDispatch } from "../app/hooks";
 import { clearUser, initializeUser } from "../features/user/userSlice";
@@ -23,7 +24,7 @@ export const useClearUser = () => {
 export const useNotification = () => {
   const dispatch = useAppDispatch();
 
-  return (message: string, type: "success" | "error") => {
+  return (message: string, type: AlertColor) => {
     dispatch(setNotification(message, type));
   };
 };

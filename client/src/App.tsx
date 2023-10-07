@@ -36,7 +36,7 @@ const App = () => {
 
   const logout = () => {
     clearUser();
-    notifyWith("Logged out", "success");
+    notifyWith("Logged out", "info");
     client.resetStore();
   };
 

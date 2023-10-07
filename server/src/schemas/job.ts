@@ -78,7 +78,7 @@ export const resolvers: Resolvers = {
   Query: {
     allJobs: async (_root, _args, { currentUser }) => {
       const user = verifyCurrentUser(currentUser);
-      return Job.find({ user: user._id }).sort("-dateCreated");
+      return Job.find({ user: user._id }).sort("-dateCreated -_id");
     },
     getJob: async (_root, { id }, { currentUser }) => {
       const user = verifyCurrentUser(currentUser);
