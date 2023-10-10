@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { useMutation } from "@apollo/client";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Input,
+  InputLabel,
+  MenuItem,
+  TextField,
+} from "@mui/material";
 
 import { useField, useNotification } from "../../hooks";
 import { ActivityType } from "../../types";
@@ -94,83 +102,120 @@ const AddJobForm = () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
+    <Box
+      component="form"
+      onSubmit={onSubmit}
+      sx={{
+        "& .MuiTextField-root": { m: 1, width: "25ch" },
+        "& .JobForm-textarea": { width: "50ch" },
+        "& .MuiButton-root": { m: 1 },
+      }}
+    >
       <div>
-        Company Name <input {...companyName} required />
+        <TextField
+          required
+          label="Company Name"
+          {...companyName}
+          error={companyName.value === ""}
+        />
+        <TextField label="Company Website" {...companyWebsite} />
+        <TextField
+          required
+          label="Job Title"
+          {...jobTitle}
+          error={jobTitle.value === ""}
+        />
+        <TextField label="Job Posting Link" {...jobPostingLink} />
+        <TextField label="Contact Name" {...contactName} />
+        <TextField label="Contact Title" {...contactTitle} />
       </div>
-      <div>
-        Company Website <input {...companyWebsite} />
-      </div>
-      <div>
-        Job Title <input {...jobTitle} required />
-      </div>
-      <div>
-        Job Posting Link <input {...jobPostingLink} />
-      </div>
-      <div>
-        Contact Name <input {...contactName} />
-      </div>
-      <div>
-        Contact Title <input {...contactTitle} />
-      </div>
-      <button type="button" onClick={addAcitivity}>
+      <Button type="button" onClick={addAcitivity} variant="contained">
         Add New Activity
-      </button>
+      </Button>
       {activities.map((activity, index) => (
-        <div style={{ border: "solid" }} key={index}>
-          <div>
-            Activity{" "}
-            <select
+        <div
+          style={{
+            border: "solid",
+            borderRadius: "8px",
+            borderColor: "gray",
+            width: "max-content",
+            paddingTop: "8px",
+            margin: "8px",
+          }}
+          key={index}
+        >
+          <div style={{ display: "flex" }}>
+            <TextField
               name="activityType"
+              label="Activity"
+              select
               value={activity.activityType}
               onChange={({ target }) =>
                 editActivity(target.name, target.value, index)
               }
+              required
             >
               {activityTypeOptions.map((option) => (
-                <option key={option.label} value={option.value}>
+                <MenuItem key={option.label} value={option.value}>
                   {option.label}
-                </option>
+                </MenuItem>
               ))}
-            </select>
+            </TextField>
+            <div style={{ margin: "8px" }}>
+              <InputLabel>Date</InputLabel>
+              <Input
+                name="date"
+                type="date"
+                value={activity.date}
+                onChange={({ target }) =>
+                  editActivity(target.name, target.value, index)
+                }
+                error={activity.date === ""}
+                required
+              />
+            </div>
           </div>
-          <div>
-            Date{" "}
-            <input
-              name="date"
-              type="date"
-              value={activity.date}
-              onChange={({ target }) =>
-                editActivity(target.name, target.value, index)
-              }
-              required
-            />
-          </div>
-          <div>
-            <span style={{ verticalAlign: "top" }}>Description </span>
-            <textarea
+          <div style={{ width: "min-content" }}>
+            <TextField
+              className="JobForm-textarea"
               name="description"
+              label="Description"
+              {...notes}
+              multiline
+              minRows={4}
+              maxRows={4}
               value={activity.description}
               onChange={({ target }) =>
                 editActivity(target.name, target.value, index)
               }
-              cols={30}
-              rows={5}
-              style={{ resize: "none" }}
             />
           </div>
-          <button type="button" onClick={() => removeActivity(index)}>
+          <Button
+            type="button"
+            onClick={() => removeActivity(index)}
+            variant="contained"
+          >
             Remove
-          </button>
+          </Button>
         </div>
       ))}
       <div>
-        <span style={{ verticalAlign: "top" }}>Notes </span>
-        <textarea {...notes} cols={60} rows={10} style={{ resize: "none" }} />
+        <TextField
+          className="JobForm-textarea"
+          label="Notes"
+          {...notes}
+          multiline
+          minRows={5}
+          maxRows={5}
+        />
       </div>
-      <button onClick={() => navigate("/")}>Cancel</button>
-      <button type="submit">Save</button>
-    </form>
+      <Button type="button" component={Link} to="/" variant="contained">
+        Cancel
+      </Button>
+      <Button type="submit" variant="contained">
+        Save
+      </Button>
+    </Box>
   );
 };
 

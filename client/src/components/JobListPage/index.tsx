@@ -126,7 +126,7 @@ const JobListPage = () => {
 
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom sx={{ mt: 1.5 }}>
         Your Jobs
       </Typography>
       <Button

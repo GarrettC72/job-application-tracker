@@ -1,9 +1,13 @@
+import { Typography } from "@mui/material";
+
 import AddJobForm from "./AddJobForm";
 
 const AddJobPage = () => {
   return (
     <div>
-      <h2>Add A New Job</h2>
+      <Typography variant="h4" gutterBottom sx={{ mt: 1.5 }}>
+        Add A New Job
+      </Typography>
       <AddJobForm />
     </div>
   );
