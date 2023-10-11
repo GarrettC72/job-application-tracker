@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 
 import { useField, useNotification } from "../../hooks";
-import { SEND_PASSWORD_RESET } from "../../queries";
+import { SEND_PASSWORD_RESET } from "../../graphql/mutations";
 
 const ForgotPasswordForm = () => {
   const { reset: resetEmail, ...email } = useField("email");

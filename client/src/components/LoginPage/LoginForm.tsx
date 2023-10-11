@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 
-import { LOGIN } from "../../queries";
+import { LOGIN } from "../../graphql/mutations";
 import { useField, useNotification } from "../../hooks";
 import { useAppDispatch } from "../../app/hooks";
 import { loginUser } from "../../features/user/userSlice";

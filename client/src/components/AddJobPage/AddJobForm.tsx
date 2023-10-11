@@ -13,7 +13,8 @@ import {
 import { useField, useNotification } from "../../hooks";
 import { ActivityType } from "../../types";
 import { Activity } from "../../types";
-import { CREATE_JOB, USER_JOBS } from "../../queries";
+import { USER_JOBS } from "../../graphql/queries";
+import { CREATE_JOB } from "../../graphql/mutations";
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -180,7 +181,6 @@ const AddJobForm = () => {
               className="JobForm-textarea"
               name="description"
               label="Description"
-              {...notes}
               multiline
               minRows={4}
               maxRows={4}

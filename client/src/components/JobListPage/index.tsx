@@ -15,7 +15,8 @@ import {
   Typography,
 } from "@mui/material";
 
-import { DELETE_JOB, USER_JOBS } from "../../queries";
+import { USER_JOBS } from "../../graphql/queries";
+import { DELETE_JOB } from "../../graphql/mutations";
 import { SimpleJob } from "../../types";
 import { useNotification } from "../../hooks";
 import DeleteJobDialog from "./DeleteJobDialog";

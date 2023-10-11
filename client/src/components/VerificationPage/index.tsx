@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
-import { RESEND_VERIFICATION, VERIFY_USER } from "../../queries";
+import { RESEND_VERIFICATION, VERIFY_USER } from "../../graphql/mutations";
 
 const VerificationPage = () => {
   const [status, setStatus] = useState("LOADING");

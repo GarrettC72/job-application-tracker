@@ -2,7 +2,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import ResetPasswordForm from "./ResetPasswordForm";
 import { useState } from "react";
 import { useQuery } from "@apollo/client";
-import { VERIFY_PASSWORD_RESET } from "../../queries";
+import { VERIFY_PASSWORD_RESET } from "../../graphql/queries";
 
 const ResetPasswordPage = () => {
   const [status, setStatus] = useState("LOADING");

@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 
 import { useClearUser, useField, useNotification } from "../../hooks";
-import { EDIT_PASSWORD } from "../../queries";
+import { EDIT_PASSWORD } from "../../graphql/mutations";
 
 interface Props {
   token: string;

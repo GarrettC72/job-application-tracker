@@ -1,4 +1,4 @@
-import { gql } from "../src/__generated__/gql";
+import { gql } from "../../src/__generated__/gql";
 
 export const LOGIN = gql(`#graphql
   mutation login($email: String!, $password: String!) {
@@ -56,15 +56,6 @@ export const SEND_PASSWORD_RESET = gql(`#graphql
   }
 `);
 
-export const VERIFY_PASSWORD_RESET = gql(`#graphql
-  query verifyPasswordReset($token: String!) {
-    getPasswordReset(token: $token) {
-      id
-      email
-    }
-  }
-`);
-
 export const EDIT_PASSWORD = gql(`#graphql
   mutation editPassword($token: String!, $password: String!,
   $confirmPassword: String!) {
@@ -75,38 +66,6 @@ export const EDIT_PASSWORD = gql(`#graphql
     ) {
       id
       email
-    }
-  }
-`);
-
-export const USER_JOBS = gql(`#graphql
-  query userJobs {
-    allJobs {
-      companyName
-      jobTitle
-      latestActivity
-      dateCreated
-      lastModified
-      id
-    }
-  }
-`);
-
-export const JOB_BY_ID = gql(`#graphql
-  query jobById($id: ID!) {
-    getJob(id: $id) {
-      companyName
-      companyWebsite
-      jobTitle
-      jobPostingLink
-      contactName
-      contactTitle
-      activities {
-        activityType
-        date
-        description
-      }
-      notes
     }
   }
 `);

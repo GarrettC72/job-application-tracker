@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 
 import { useField, useNotification } from "../../hooks";
-import { REGISTER } from "../../queries";
+import { REGISTER } from "../../graphql/mutations";
 
 const SignUpForm = () => {
   const { reset: resetEmail, ...email } = useField("email");
