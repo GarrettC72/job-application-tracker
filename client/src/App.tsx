@@ -44,7 +44,7 @@ const App = () => {
     return (
       <Container maxWidth="xl">
         <Router>
-          <Typography variant="h3" gutterBottom>
+          <Typography variant="h3" gutterBottom align="center" sx={{ mt: 2 }}>
             Job Application Tracker
           </Typography>
           <Notification />
@@ -64,11 +64,11 @@ const App = () => {
   return (
     <Container maxWidth="xl">
       <Router>
-        <Typography variant="h3" gutterBottom>
+        <Typography variant="h3" gutterBottom align="center" sx={{ mt: 2 }}>
           Job Application Tracker
         </Typography>
         <Notification />
-        <Typography variant="body1">
+        <Typography variant="body1" align="center">
           {user.name} logged in{" "}
           <Button onClick={logout} variant="contained">
             Logout

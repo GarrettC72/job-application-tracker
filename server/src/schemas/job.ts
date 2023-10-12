@@ -46,7 +46,7 @@ export const typeDef = gql`
   }
 
   extend type Query {
-    allJobs: [Job!]
+    allJobs: [Job!]!
     getJob(id: ID!): Job
   }
 
@@ -77,8 +77,12 @@ export const resolvers: Resolvers = {
   },
   Query: {
     allJobs: async (_root, _args, { currentUser }) => {
-      const user = verifyCurrentUser(currentUser);
-      return Job.find({ user: user._id }).sort("-dateCreated -_id");
+      try {
+        const user = verifyCurrentUser(currentUser);
+        return Job.find({ user: user._id }).sort("-dateCreated -_id");
+      } catch {
+        return [];
+      }
     },
     getJob: async (_root, { id }, { currentUser }) => {
       const user = verifyCurrentUser(currentUser);
