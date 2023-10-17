@@ -6,8 +6,7 @@ import LoginPage from "./LoginPage";
 import ResetPasswordPage from "./ResetPasswordPage";
 import SignUpPage from "./SignUpPage";
 import VerificationPage from "./VerificationPage";
-import Notification from "./Notification";
-import Navbar from "./Navbar";
+import Notification from "../features/notification/Notification";
 
 export {
   LoginPage,
@@ -19,5 +18,4 @@ export {
   AddJobPage,
   EditJobPage,
   Notification,
-  Navbar,
 };

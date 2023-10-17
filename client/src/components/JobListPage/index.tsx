@@ -1,4 +1,4 @@
-import { useMutation /*, useQuery*/ } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -13,13 +13,13 @@ import {
   styled,
   tableCellClasses,
   Typography,
-  TablePagination,
 } from "@mui/material";
 
 import { USER_JOBS } from "../../graphql/queries";
 import { DELETE_JOB } from "../../graphql/mutations";
 import { SimpleJob } from "../../types";
-import { useJobs, useNotification } from "../../hooks";
+import { useJobsQuery, useNotification } from "../../hooks";
+import Pagination from "../../features/pagination/Pagination";
 import DeleteJobDialog from "./DeleteJobDialog";
 
 const StyledTableCell = styled(TableCell)(() => ({
@@ -48,8 +48,7 @@ const JobListPage = () => {
 
   const notifyWith = useNotification();
 
-  // const jobs = useQuery(USER_JOBS);
-  const { currentJobs, jobsPaginationInfo, loading } = useJobs();
+  const { currentJobs, loading } = useJobsQuery();
   const [deleteJob] = useMutation(DELETE_JOB, {
     refetchQueries: [{ query: USER_JOBS }],
     onError: (error) => {
@@ -135,7 +134,7 @@ const JobListPage = () => {
             {jobsTableBody()}
           </Table>
         </TableContainer>
-        <TablePagination component="div" {...jobsPaginationInfo} />
+        <Pagination />
       </Paper>
       <DeleteJobDialog
         open={selectedJob !== null}

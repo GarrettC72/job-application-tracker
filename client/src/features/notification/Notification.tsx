@@ -1,6 +1,6 @@
 import { Alert } from "@mui/material";
 
-import { useAppSelector } from "../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 
 const Notification = () => {
   const notification = useAppSelector(({ notification }) => notification);
