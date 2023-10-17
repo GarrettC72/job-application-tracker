@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation /*, useQuery*/ } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import {
@@ -13,12 +13,13 @@ import {
   styled,
   tableCellClasses,
   Typography,
+  TablePagination,
 } from "@mui/material";
 
 import { USER_JOBS } from "../../graphql/queries";
 import { DELETE_JOB } from "../../graphql/mutations";
 import { SimpleJob } from "../../types";
-import { useNotification } from "../../hooks";
+import { useJobs, useNotification } from "../../hooks";
 import DeleteJobDialog from "./DeleteJobDialog";
 
 const StyledTableCell = styled(TableCell)(() => ({
@@ -47,7 +48,8 @@ const JobListPage = () => {
 
   const notifyWith = useNotification();
 
-  const jobs = useQuery(USER_JOBS);
+  // const jobs = useQuery(USER_JOBS);
+  const { currentJobs, jobsPaginationInfo, loading } = useJobs();
   const [deleteJob] = useMutation(DELETE_JOB, {
     refetchQueries: [{ query: USER_JOBS }],
     onError: (error) => {
@@ -64,7 +66,7 @@ const JobListPage = () => {
     },
   });
 
-  if (jobs.loading) {
+  if (loading) {
     return <div>loading...</div>;
   }
 
@@ -75,53 +77,32 @@ const JobListPage = () => {
     setSelectedJob(null);
   };
 
-  const jobsTable = () => {
-    if (!jobs.data || !jobs.data.allJobs) {
-      return <div>No jobs found</div>;
-    }
-
+  const jobsTableBody = () => {
     return (
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Company Name</StyledTableCell>
-              <StyledTableCell>Job Title</StyledTableCell>
-              <StyledTableCell>Latest Activity</StyledTableCell>
-              <StyledTableCell>Date Created</StyledTableCell>
-              <StyledTableCell>Last Modified</StyledTableCell>
-              <StyledTableCell>Action</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {jobs.data.allJobs.map((job) => (
-              <StyledTableRow key={job.id}>
-                <StyledTableCell>{job.companyName}</StyledTableCell>
-                <StyledTableCell>{job.jobTitle}</StyledTableCell>
-                <StyledTableCell>{job.latestActivity}</StyledTableCell>
-                <StyledTableCell>{job.dateCreated}</StyledTableCell>
-                <StyledTableCell>{job.lastModified}</StyledTableCell>
-                <StyledTableCell>
-                  <Button
-                    component={Link}
-                    to={`/jobs/${job.id}`}
-                    variant="contained"
-                  >
-                    Edit
-                  </Button>{" "}
-                  |{" "}
-                  <Button
-                    onClick={() => setSelectedJob(job)}
-                    variant="contained"
-                  >
-                    Delete
-                  </Button>
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <TableBody>
+        {currentJobs.map((job) => (
+          <StyledTableRow key={job.id}>
+            <StyledTableCell>{job.companyName}</StyledTableCell>
+            <StyledTableCell>{job.jobTitle}</StyledTableCell>
+            <StyledTableCell>{job.latestActivity}</StyledTableCell>
+            <StyledTableCell>{job.dateCreated}</StyledTableCell>
+            <StyledTableCell>{job.lastModified}</StyledTableCell>
+            <StyledTableCell>
+              <Button
+                component={Link}
+                to={`/jobs/${job.id}`}
+                variant="contained"
+              >
+                Edit
+              </Button>{" "}
+              |{" "}
+              <Button onClick={() => setSelectedJob(job)} variant="contained">
+                Delete
+              </Button>
+            </StyledTableCell>
+          </StyledTableRow>
+        ))}
+      </TableBody>
     );
   };
 
@@ -138,7 +119,24 @@ const JobListPage = () => {
       >
         Add New Job
       </Button>
-      {jobsTable()}
+      <Paper sx={{ width: "100%" }}>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Company Name</StyledTableCell>
+                <StyledTableCell>Job Title</StyledTableCell>
+                <StyledTableCell>Latest Activity</StyledTableCell>
+                <StyledTableCell>Date Created</StyledTableCell>
+                <StyledTableCell>Last Modified</StyledTableCell>
+                <StyledTableCell>Action</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            {jobsTableBody()}
+          </Table>
+        </TableContainer>
+        <TablePagination component="div" {...jobsPaginationInfo} />
+      </Paper>
       <DeleteJobDialog
         open={selectedJob !== null}
         onClose={() => setSelectedJob(null)}

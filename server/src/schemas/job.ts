@@ -2,9 +2,9 @@ import { GraphQLError } from "graphql";
 import gql from "graphql-tag";
 
 import { Resolvers } from "../__generated__/resolvers-types";
-import Job from "../models/job";
 import { toNewJob } from "../utils/parser";
 import { verifyCurrentUser } from "../utils/userHelper";
+import Job from "../models/job";
 
 export const typeDef = gql`
   type Activity {
@@ -34,7 +34,7 @@ export const typeDef = gql`
     latestActivity: String!
   }
 
-  input JobInput {
+  input JobMutationInput {
     companyName: String!
     jobTitle: String!
     companyWebsite: String!
@@ -51,8 +51,8 @@ export const typeDef = gql`
   }
 
   extend type Mutation {
-    addJob(jobParams: JobInput!): Job
-    updateJob(id: ID!, jobParams: JobInput!): Job
+    addJob(jobParams: JobMutationInput!): Job
+    updateJob(id: ID!, jobParams: JobMutationInput!): Job
     deleteJob(id: ID!): Job
   }
 `;
