@@ -1,7 +1,9 @@
 import { useMutation } from "@apollo/client";
+import { Box, Button, Grid, TextField } from "@mui/material";
 
 import { useField, useNotification } from "../../hooks";
 import { REGISTER } from "../../graphql/mutations";
+import { isEmail } from "../../utils";
 
 const SignUpForm = () => {
   const { reset: resetEmail, ...email } = useField("email");
@@ -46,24 +48,53 @@ const SignUpForm = () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <div>
-        Email <input {...email} required />
-      </div>
-      <div>
-        Password <input {...password} minLength={8} required />
-      </div>
-      <div>
-        Confirm Password <input {...confirmPassword} minLength={8} required />
-      </div>
-      <div>
-        First Name <input {...firstName} required />
-      </div>
-      <div>
-        Last Name <input {...lastName} required />
-      </div>
-      <button type="submit">Sign up</button>
-    </form>
+    <Box
+      component="form"
+      onSubmit={onSubmit}
+      sx={{
+        "& .MuiTextField-root": { mb: 2 },
+        "& .MuiButton-root": { mb: 2 },
+      }}
+    >
+      <Grid container direction="column">
+        <TextField
+          label="Email"
+          {...email}
+          required
+          sx={{ mb: 2 }}
+          error={!isEmail(email.value)}
+        />
+        <TextField
+          label="Password"
+          {...password}
+          inputProps={{ minLength: 8 }}
+          required
+          error={password.value.length < 8}
+        />
+        <TextField
+          label="Confirm Password"
+          {...confirmPassword}
+          inputProps={{ minLength: 8 }}
+          required
+          error={confirmPassword.value.length < 8}
+        />
+        <TextField
+          label="First Name"
+          {...firstName}
+          required
+          error={firstName.value === ""}
+        />
+        <TextField
+          label="Last Name"
+          {...lastName}
+          required
+          error={lastName.value === ""}
+        />
+        <Button type="submit" variant="contained">
+          Sign up
+        </Button>
+      </Grid>
+    </Box>
   );
 };
 

@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import gql from "graphql-tag";
 
-import { parseEmail, toToken } from "../utils/parser";
+import { parseEmail, parseNames, toToken } from "../utils/parser";
 import {
   resendVerificationEmail,
   sendPasswordResetEmail,
@@ -112,6 +112,7 @@ export const resolvers: Resolvers = {
     ) => {
       try {
         parseEmail(email);
+        parseNames(firstName, lastName);
       } catch (error: unknown) {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {

@@ -130,6 +130,11 @@ export const parseActivities = (object: unknown): Activity[] => {
   return activities;
 };
 
+export const parseNames = (firstName: string, lastName: string) => {
+  parseNonEmptyStringParam(firstName, "firstName");
+  parseNonEmptyStringParam(lastName, "lastName");
+};
+
 export const toToken = (object: unknown): Token => {
   if (!object || typeof object !== "object") {
     throw new Error("Incorrect or missing data");
