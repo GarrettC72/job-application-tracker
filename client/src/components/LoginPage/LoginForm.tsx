@@ -53,7 +53,7 @@ const LoginForm = () => {
       }}
     >
       <Grid container direction="column">
-        <TextField label="Email" {...email} required sx={{ mb: 2 }} />
+        <TextField label="Email" {...email} required />
         <TextField label="Password" {...password} required />
         <Button type="submit" variant="contained">
           Login

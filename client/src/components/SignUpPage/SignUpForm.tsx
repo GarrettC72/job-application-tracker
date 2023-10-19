@@ -61,7 +61,6 @@ const SignUpForm = () => {
           label="Email"
           {...email}
           required
-          sx={{ mb: 2 }}
           error={!isEmail(email.value)}
         />
         <TextField

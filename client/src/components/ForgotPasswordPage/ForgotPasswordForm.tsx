@@ -1,7 +1,9 @@
 import { useMutation } from "@apollo/client";
+import { Box, Button, Grid, TextField } from "@mui/material";
 
 import { useField, useNotification } from "../../hooks";
 import { SEND_PASSWORD_RESET } from "../../graphql/mutations";
+import { isEmail } from "../../utils";
 
 const ForgotPasswordForm = () => {
   const { reset: resetEmail, ...email } = useField("email");
@@ -32,12 +34,27 @@ const ForgotPasswordForm = () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <div>
-        Email <input {...email} required />
-      </div>
-      <button type="submit">Send reset email</button>
-    </form>
+    <Box
+      component="form"
+      onSubmit={onSubmit}
+      sx={{
+        "& .MuiTextField-root": { mb: 2 },
+        "& .MuiButton-root": { mb: 2 },
+      }}
+    >
+      <Grid container direction="column">
+        <TextField
+          label="Email"
+          {...email}
+          required
+          sx={{ mt: 2 }}
+          error={!isEmail(email.value)}
+        />
+        <Button type="submit" variant="contained">
+          Send reset email
+        </Button>
+      </Grid>
+    </Box>
   );
 };
 
