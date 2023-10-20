@@ -1,6 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { Button, Typography } from "@mui/material";
 
 import { RESEND_VERIFICATION, VERIFY_USER } from "../../graphql/mutations";
 
@@ -52,50 +53,86 @@ const VerificationPage = () => {
   if (!token) {
     return (
       <div>
-        This verification link is invalid. Make sure the verification link is
-        correct or create a new account <Link to="/signup">here</Link>.
+        <Typography variant="h4" align="center" gutterBottom>
+          Invalid Verification Link
+        </Typography>
+        <Typography variant="body1" align="center">
+          This verification link is invalid. Make sure the verification link is
+          correct or create a new account <Link to="/signup">here</Link>.
+        </Typography>
       </div>
     );
   }
 
   if (status === "LOADING") {
-    return <div>loading...</div>;
+    return (
+      <Typography variant="body1" align="center">
+        Loading...
+      </Typography>
+    );
   }
 
   return (
     <div>
       {status === "VERIFIED" && (
-        <div>
-          Your email is now verified. Click <Link to="/">here</Link> to login.
-        </div>
+        <>
+          <Typography variant="h4" align="center" gutterBottom>
+            Email Successfully Verified
+          </Typography>
+          <Typography variant="body1" align="center">
+            Your email is now verified. Click <Link to="/">here</Link> to login.
+          </Typography>
+        </>
       )}
       {status === "SENT_NEW_VERIFICATION" && (
-        <div>
-          A new verification link has been sent. Please check your email.
-        </div>
+        <>
+          <Typography variant="h4" align="center" gutterBottom>
+            Expired Verification Link
+          </Typography>
+          <Typography variant="body1" align="center">
+            A new verification link has been sent. Please check your email.
+          </Typography>
+        </>
       )}
       {status === "ALREADY_VERIFIED" && (
-        <div>
-          Your email has already been verified. Click <Link to="/">here</Link>{" "}
-          to login.
-        </div>
+        <>
+          <Typography variant="h4" align="center" gutterBottom>
+            Email Already Verified
+          </Typography>
+          <Typography variant="body1" align="center">
+            Your email has already been verified. Click <Link to="/">here</Link>{" "}
+            to login.
+          </Typography>
+        </>
       )}
       {(status === "INVALID_TOKEN" || status === "USER_NOT_FOUND") && (
-        <div>
-          This verification link is invalid. Make sure the verification link is
-          correct or create a new account <Link to="/signup">here</Link>.
-        </div>
+        <>
+          <Typography variant="h4" align="center" gutterBottom>
+            Invalid Verification Link
+          </Typography>
+          <Typography variant="body1" align="center">
+            This verification link is invalid. Make sure the verification link
+            is correct or create a new account <Link to="/signup">here</Link>.
+          </Typography>
+        </>
       )}
       {status === "EXPIRED_TOKEN" && (
-        <div>
-          <div>
+        <>
+          <Typography variant="h4" align="center" gutterBottom>
+            Expired Verification Link
+          </Typography>
+          <Typography variant="body1" align="center">
             This verification link is expired. Please click the button below to
             receive a new verification link.
-          </div>
-          <button onClick={sendNewVerification}>
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={sendNewVerification}
+            sx={{ display: "flex", mx: "auto", mt: 2 }}
+          >
             Resend verification email
-          </button>
-        </div>
+          </Button>
+        </>
       )}
     </div>
   );
