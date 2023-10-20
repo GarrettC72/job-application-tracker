@@ -1,4 +1,5 @@
 import { useMutation } from "@apollo/client";
+import { Box, Button, Grid, TextField } from "@mui/material";
 
 import { useClearUser, useField, useNotification } from "../../hooks";
 import { EDIT_PASSWORD } from "../../graphql/mutations";
@@ -19,6 +20,7 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
   const [updatePassword] = useMutation(EDIT_PASSWORD, {
     onError: (error) => {
       const verifyError = error.graphQLErrors[0];
+      console.log(verifyError.extensions.code);
       if (
         verifyError.extensions.code &&
         typeof verifyError.extensions.code === "string"
@@ -54,16 +56,36 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <div>
-        Password <input {...password} minLength={8} required />
-      </div>
-      <div>
-        Confirm Password
-        <input {...confirmPassword} minLength={8} required />
-      </div>
-      <button type="submit">Set new password</button>
-    </form>
+    <Box
+      component="form"
+      onSubmit={onSubmit}
+      sx={{
+        width: "fit-content",
+        mx: "auto",
+        "& .MuiTextField-root": { mb: 2 },
+        "& .MuiButton-root": { mb: 2 },
+      }}
+    >
+      <Grid container direction="column">
+        <TextField
+          label="Password"
+          {...password}
+          inputProps={{ minLength: 8 }}
+          required
+          error={password.value.length < 8}
+        />
+        <TextField
+          label="Confirm Password"
+          {...confirmPassword}
+          inputProps={{ minLength: 8 }}
+          required
+          error={confirmPassword.value.length < 8}
+        />
+        <Button type="submit" variant="contained">
+          Set New Password
+        </Button>
+      </Grid>
+    </Box>
   );
 };
 
