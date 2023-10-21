@@ -8,6 +8,7 @@ import {
   InputLabel,
   MenuItem,
   TextField,
+  Typography,
 } from "@mui/material";
 
 import { Activity, ActivityType } from "../../types";
@@ -117,7 +118,11 @@ const EditJobForm = () => {
   };
 
   if (job.loading) {
-    return <div>loading...</div>;
+    return (
+      <Typography variant="body1" align="center">
+        Loading...
+      </Typography>
+    );
   }
 
   return (
@@ -143,6 +148,8 @@ const EditJobForm = () => {
           value={companyWebsite}
           onChange={({ target }) => setCompanyWebsite(target.value)}
         />
+      </div>
+      <div>
         <TextField
           required
           label="Job Title"
@@ -155,6 +162,8 @@ const EditJobForm = () => {
           value={jobPostingLink}
           onChange={({ target }) => setJobPostingLink(target.value)}
         />
+      </div>
+      <div>
         <TextField
           label="Contact Name"
           value={contactName}

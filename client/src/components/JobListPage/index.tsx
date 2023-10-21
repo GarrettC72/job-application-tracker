@@ -66,7 +66,11 @@ const JobListPage = () => {
   });
 
   if (loading) {
-    return <div>loading...</div>;
+    return (
+      <Typography variant="body1" align="center">
+        Loading...
+      </Typography>
+    );
   }
 
   const handleDelete = (job: SimpleJob | null) => {

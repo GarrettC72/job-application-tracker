@@ -120,6 +120,8 @@ const AddJobForm = () => {
           error={companyName.value === ""}
         />
         <TextField label="Company Website" {...companyWebsite} />
+      </div>
+      <div>
         <TextField
           required
           label="Job Title"
@@ -127,6 +129,8 @@ const AddJobForm = () => {
           error={jobTitle.value === ""}
         />
         <TextField label="Job Posting Link" {...jobPostingLink} />
+      </div>
+      <div>
         <TextField label="Contact Name" {...contactName} />
         <TextField label="Contact Title" {...contactTitle} />
       </div>
