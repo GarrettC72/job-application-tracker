@@ -110,12 +110,7 @@ const JobListPage = () => {
       <Typography variant="h4" gutterBottom sx={{ mt: 1.5 }}>
         Your Jobs
       </Typography>
-      <Button
-        component={Link}
-        to="/create"
-        variant="contained"
-        sx={{ marginBottom: "1em" }}
-      >
+      <Button component={Link} to="/create" variant="contained" sx={{ mb: 2 }}>
         Add New Job
       </Button>
       <Paper sx={{ width: "100%" }}>

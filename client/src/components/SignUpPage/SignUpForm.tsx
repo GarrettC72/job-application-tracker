@@ -52,6 +52,8 @@ const SignUpForm = () => {
       component="form"
       onSubmit={onSubmit}
       sx={{
+        width: "fit-content",
+        mx: "auto",
         "& .MuiTextField-root": { mb: 2 },
         "& .MuiButton-root": { mb: 2 },
       }}
@@ -93,6 +95,7 @@ const SignUpForm = () => {
           Sign up
         </Button>
       </Grid>
+      <hr />
     </Box>
   );
 };

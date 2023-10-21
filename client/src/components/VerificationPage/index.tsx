@@ -52,13 +52,15 @@ const VerificationPage = () => {
 
   if (!token) {
     return (
-      <div>
-        <Typography variant="h4" align="center" gutterBottom>
+      <div style={{ textAlign: "center" }}>
+        <Typography variant="h4" gutterBottom>
           Invalid Verification Link
         </Typography>
-        <Typography variant="body1" align="center">
-          This verification link is invalid. Make sure the verification link is
-          correct or create a new account <Link to="/signup">here</Link>.
+        <Typography variant="body1">
+          This verification link is invalid.
+          <br />
+          Make sure the verification link is correct or create a new account{" "}
+          <Link to="/signup">here</Link>.
         </Typography>
       </div>
     );
@@ -73,62 +75,70 @@ const VerificationPage = () => {
   }
 
   return (
-    <div>
+    <div style={{ textAlign: "center" }}>
       {status === "VERIFIED" && (
         <>
-          <Typography variant="h4" align="center" gutterBottom>
+          <Typography variant="h4" gutterBottom>
             Email Successfully Verified
           </Typography>
-          <Typography variant="body1" align="center">
-            Your email is now verified. Click <Link to="/">here</Link> to login.
+          <Typography variant="body1">
+            Your email is now verified.
+            <br />
+            Click <Link to="/">here</Link> to login.
           </Typography>
         </>
       )}
       {status === "SENT_NEW_VERIFICATION" && (
         <>
-          <Typography variant="h4" align="center" gutterBottom>
+          <Typography variant="h4" gutterBottom>
             Expired Verification Link
           </Typography>
-          <Typography variant="body1" align="center">
-            A new verification link has been sent. Please check your email.
+          <Typography variant="body1">
+            A new verification link has been sent.
+            <br />
+            Please check your email.
           </Typography>
         </>
       )}
       {status === "ALREADY_VERIFIED" && (
         <>
-          <Typography variant="h4" align="center" gutterBottom>
+          <Typography variant="h4" gutterBottom>
             Email Already Verified
           </Typography>
-          <Typography variant="body1" align="center">
-            Your email has already been verified. Click <Link to="/">here</Link>{" "}
-            to login.
+          <Typography variant="body1">
+            Your email has already been verified.
+            <br />
+            Click <Link to="/">here</Link> to login.
           </Typography>
         </>
       )}
       {(status === "INVALID_TOKEN" || status === "USER_NOT_FOUND") && (
         <>
-          <Typography variant="h4" align="center" gutterBottom>
+          <Typography variant="h4" gutterBottom>
             Invalid Verification Link
           </Typography>
-          <Typography variant="body1" align="center">
-            This verification link is invalid. Make sure the verification link
-            is correct or create a new account <Link to="/signup">here</Link>.
+          <Typography variant="body1">
+            This verification link is invalid.
+            <br />
+            Make sure the verification link is correct or create a new account{" "}
+            <Link to="/signup">here</Link>.
           </Typography>
         </>
       )}
       {status === "EXPIRED_TOKEN" && (
         <>
-          <Typography variant="h4" align="center" gutterBottom>
+          <Typography variant="h4" gutterBottom>
             Expired Verification Link
           </Typography>
-          <Typography variant="body1" align="center">
-            This verification link is expired. Please click the button below to
-            receive a new verification link.
+          <Typography variant="body1">
+            This verification link is expired.
+            <br />
+            Please click the button below to receive a new verification link.
           </Typography>
           <Button
             variant="contained"
             onClick={sendNewVerification}
-            sx={{ display: "flex", mx: "auto", mt: 2 }}
+            sx={{ mt: 2 }}
           >
             Resend verification email
           </Button>

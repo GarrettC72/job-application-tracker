@@ -89,7 +89,7 @@ const ResetPasswordPage = () => {
       {status === "EXPIRED_TOKEN" && (
         <>
           <Typography variant="h4" gutterBottom>
-            Email Not Verified
+            Expired Password Reset Link
           </Typography>
           <Typography variant="body1">
             This password reset link is expired.
