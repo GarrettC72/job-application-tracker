@@ -6,6 +6,8 @@
   "scripts": {
     "tsc": "rm -rf build && tsc",
     "dev": "ts-node-dev src/index.ts",
+    "build": "npm run compile && npm run tsc",
+    "build:ui": "rm -rf dist && cd ../client/ && npm run build && cp -r dist ../server/",
     "start": "node build/src/index.js",
     "lint": "eslint --ext .ts .",
     "prettier": "npx prettier --write .",
