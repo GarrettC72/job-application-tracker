@@ -41,6 +41,7 @@ const start = async () => {
   app.use(
     "/graphql",
     cors(),
+    express.static("dist"),
     express.json(),
     expressMiddleware(server, {
       context: async ({ req }) => {
@@ -80,6 +81,10 @@ const start = async () => {
       },
     })
   );
+
+  if (config.NODE_ENV === "production") {
+    app.use(express.static("dist"));
+  }
 
   httpServer.listen(config.PORT, () =>
     console.log(`🚀  Server is now running on http://localhost:${config.PORT}`)

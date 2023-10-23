@@ -13,6 +13,7 @@ const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 const REDIRECT_URI = process.env.REDIRECT_URI;
 const EMAIL = process.env.EMAIL;
 const WEB_APP_URL = process.env.WEB_APP_URL;
+const NODE_ENV = process.env.NODE_ENV ?? "development";
 
 export default {
   PORT,
@@ -24,4 +25,5 @@ export default {
   REDIRECT_URI,
   EMAIL,
   WEB_APP_URL,
+  NODE_ENV,
 };
