@@ -1,11 +1,10 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
+import { Box, Button, Grid, TextField } from "@mui/material";
 
-import { USER_JOBS } from "../../graphql/queries";
 import { LOGIN } from "../../graphql/mutations";
-import { useField, useNotification } from "../../hooks";
+import { useField, useJobsQuery, useNotification } from "../../hooks";
 import { useAppDispatch } from "../../app/hooks";
 import { loginUser } from "../../features/user/userSlice";
-import { Box, Button, Grid, TextField } from "@mui/material";
 
 const LoginForm = () => {
   const { reset: resetEmail, ...email } = useField("email");
@@ -14,7 +13,7 @@ const LoginForm = () => {
   const dispatch = useAppDispatch();
   const notifyWith = useNotification();
 
-  const { refetch: refetchUserJobs } = useQuery(USER_JOBS);
+  const { refetch: refetchUserJobs } = useJobsQuery();
   const [login] = useMutation(LOGIN, {
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");

@@ -1,7 +1,7 @@
 import { Secret } from "jsonwebtoken";
 import "dotenv/config";
 
-const PORT = Number(process.env.PORT) ?? 4000;
+const PORT = Number(process.env.PORT) || 4000;
 const MONGODB_URI =
   process.env.NODE_ENV === "test"
     ? process.env.TEST_MONGODB_URI

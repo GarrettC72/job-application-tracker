@@ -33,7 +33,7 @@ export const useNotification = () => {
 
 export const useJobsQuery = () => {
   const { page, rowsPerPage } = useAppSelector(({ pagination }) => pagination);
-  const { data, loading } = useQuery(USER_JOBS);
+  const { data, loading, refetch } = useQuery(USER_JOBS);
 
   const allJobs = data ? data.allJobs : [];
   const currentJobs = allJobs.slice(
@@ -46,6 +46,7 @@ export const useJobsQuery = () => {
     count,
     currentJobs,
     loading,
+    refetch,
   };
 };
 

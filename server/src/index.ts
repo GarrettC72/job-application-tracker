@@ -1,10 +1,14 @@
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
+import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { GraphQLError } from "graphql";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import express from "express";
+import cors from "cors";
+import http from "http";
 
-import { typeDefs, resolvers } from "./schemas";
+import schema from "./schemas";
 import { MyContext, TokenType } from "./types";
 import { toToken } from "./utils/parser";
 import config from "./utils/config";
@@ -23,57 +27,63 @@ mongoose
     console.log("error connection to MongoDB:", error.message);
   });
 
-// The ApolloServer constructor requires two parameters: your schema
-// definition and your set of resolvers.
-const server = new ApolloServer<MyContext>({
-  typeDefs,
-  resolvers,
-});
-
 const start = async () => {
-  // Passing an ApolloServer instance to the `startStandaloneServer` function:
-  //  1. creates an Express app
-  //  2. installs your ApolloServer instance as middleware
-  //  3. prepares your app to handle incoming requests
-  const { url } = await startStandaloneServer(server, {
-    listen: { port: config.PORT },
-    context: async ({ req }) => {
-      const auth = req ? req.headers.authorization : null;
-      if (auth && auth.startsWith("Bearer ")) {
-        let decodedToken, loginToken;
+  const app = express();
+  const httpServer = http.createServer(app);
 
-        try {
-          decodedToken = jwt.verify(auth.substring(7), config.SECRET);
-          loginToken = toToken(decodedToken);
-        } catch (error: unknown) {
-          throw new GraphQLError("Invalid login token", {
-            extensions: {
-              code: "INVALID_TOKEN",
-              invalidArgs: decodedToken,
-              error,
-            },
-          });
-        }
-
-        if (loginToken.type !== TokenType.Login) {
-          throw new GraphQLError("Invalid login token", {
-            extensions: {
-              code: "INVALID_TOKEN",
-              invalidArgs: decodedToken,
-            },
-          });
-        }
-
-        const currentUser = await User.findById(loginToken.id);
-
-        return { currentUser };
-      }
-
-      return {};
-    },
+  const server = new ApolloServer<MyContext>({
+    schema,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
-  console.log(`🚀  Server ready at: ${url}`);
+  await server.start();
+
+  app.use(
+    "/graphql",
+    cors(),
+    express.json(),
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const auth = req.get("authorization") ?? null;
+        // const clientOrigin = req.get("origin") ?? "http://localhost:5173";
+        if (auth && auth.startsWith("Bearer ")) {
+          let decodedToken, loginToken;
+
+          try {
+            decodedToken = jwt.verify(auth.substring(7), config.SECRET);
+            loginToken = toToken(decodedToken);
+          } catch (error: unknown) {
+            throw new GraphQLError("Invalid login token", {
+              extensions: {
+                code: "INVALID_TOKEN",
+                invalidArgs: decodedToken,
+                error,
+              },
+            });
+          }
+
+          if (loginToken.type !== TokenType.Login) {
+            throw new GraphQLError("Invalid login token", {
+              extensions: {
+                code: "INVALID_TOKEN",
+                invalidArgs: decodedToken,
+              },
+            });
+          }
+
+          const currentUser = await User.findById(loginToken.id);
+
+          return { currentUser };
+        }
+
+        return {};
+      },
+    })
+  );
+
+  httpServer.listen(config.PORT, () =>
+    console.log(`🚀  Server is now running on http://localhost:${config.PORT}`)
+  );
 };
 
 void start();
