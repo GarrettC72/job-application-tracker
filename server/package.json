@@ -7,8 +7,7 @@
     "tsc": "rm -rf build && tsc",
     "dev": "ts-node-dev src/index.ts",
     "build": "npm run compile && npm run tsc",
-    "build:ui": "rm -rf dist && cd ../client/ && npm run build && cp -r dist ../server/",
-    "start": "cross-env NODE_ENV=production node build/src/index.js",
+    "start": "node build/src/index.js",
     "lint": "eslint --ext .ts .",
     "prettier": "npx prettier --write .",
     "compile": "graphql-codegen"
@@ -25,7 +24,6 @@
     "@types/nodemailer": "^6.4.9",
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.2.1",
-    "cross-env": "^7.0.3",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^8.9.0",
     "prettier": "3.0.0",

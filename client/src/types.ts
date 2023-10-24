@@ -27,6 +27,6 @@ export interface SimpleJob {
   companyName: string;
   jobTitle: string;
   latestActivity: string;
-  dateCreated: Date;
-  lastModified: Date;
+  dateCreated: string;
+  lastModified: string;
 }

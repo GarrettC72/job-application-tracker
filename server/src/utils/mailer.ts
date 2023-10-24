@@ -52,12 +52,8 @@ const mailer = async (email: string, subject: string, html: string) => {
   await emailTransporter.sendMail(emailOptions);
 };
 
-export const sendVerificationEmail = async (
-  email: string,
-  token: string,
-  clientOrigin: string
-) => {
-  const link = `${clientOrigin}/verify?token=${token}`;
+export const sendVerificationEmail = async (email: string, token: string) => {
+  const link = `${config.WEB_APP_URL}/verify?token=${token}`;
   const subject = "Email Verification";
   const html = `
     <p>
@@ -70,12 +66,8 @@ export const sendVerificationEmail = async (
   await mailer(email, subject, html);
 };
 
-export const resendVerificationEmail = async (
-  email: string,
-  token: string,
-  clientOrigin: string
-) => {
-  const link = `${clientOrigin}/verify?token=${token}`;
+export const resendVerificationEmail = async (email: string, token: string) => {
+  const link = `${config.WEB_APP_URL}/verify?token=${token}`;
   const subject = "Email Verification";
   const html = `
     <p>
@@ -88,12 +80,8 @@ export const resendVerificationEmail = async (
   await mailer(email, subject, html);
 };
 
-export const sendPasswordResetEmail = async (
-  email: string,
-  token: string,
-  clientOrigin: string
-) => {
-  const link = `${clientOrigin}/reset?token=${token}`;
+export const sendPasswordResetEmail = async (email: string, token: string) => {
+  const link = `${config.WEB_APP_URL}/reset?token=${token}`;
   const subject = "Password Reset";
   const html = `
     <p>

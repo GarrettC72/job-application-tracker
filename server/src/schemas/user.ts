@@ -108,8 +108,7 @@ export const resolvers: Resolvers = {
   Mutation: {
     createUser: async (
       _root,
-      { email, password, confirmPassword, firstName, lastName, verified },
-      { clientOrigin }
+      { email, password, confirmPassword, firstName, lastName, verified }
     ) => {
       try {
         parseEmail(email);
@@ -183,7 +182,7 @@ export const resolvers: Resolvers = {
           expiresIn: "1d",
         });
 
-        await sendVerificationEmail(email, token, clientOrigin);
+        await sendVerificationEmail(email, token);
       } catch (error: unknown) {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {
@@ -253,7 +252,7 @@ export const resolvers: Resolvers = {
 
       return user;
     },
-    resendVerification: async (_root, { token }, { clientOrigin }) => {
+    resendVerification: async (_root, { token }) => {
       let decodedToken, verificationToken;
 
       try {
@@ -301,7 +300,7 @@ export const resolvers: Resolvers = {
       });
 
       try {
-        await resendVerificationEmail(user.email, newToken, clientOrigin);
+        await resendVerificationEmail(user.email, newToken);
       } catch (error: unknown) {
         throw new GraphQLError("Failed to send verification email.", {
           extensions: {
@@ -313,7 +312,7 @@ export const resolvers: Resolvers = {
 
       return user;
     },
-    createPasswordReset: async (_root, { email }, { clientOrigin }) => {
+    createPasswordReset: async (_root, { email }) => {
       try {
         parseEmail(email);
       } catch (error: unknown) {
@@ -359,7 +358,7 @@ export const resolvers: Resolvers = {
       });
 
       try {
-        await sendPasswordResetEmail(email, token, clientOrigin);
+        await sendPasswordResetEmail(email, token);
       } catch (error: unknown) {
         throw new GraphQLError("Failed to send password reset email", {
           extensions: {

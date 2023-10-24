@@ -13,6 +13,8 @@ dist-ssr
 *.local
 __generated__
 
+.env.production
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
