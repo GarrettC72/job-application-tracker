@@ -70,4 +70,5 @@ export interface Token {
 
 export interface MyContext {
   currentUser?: InstanceType<UserModel> | null;
+  clientOrigin: string;
 }

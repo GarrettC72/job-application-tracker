@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import express from "express";
 import cors from "cors";
 import http from "http";
+import path from "path";
 
 import schema from "./schemas";
 import { MyContext, TokenType } from "./types";
@@ -46,7 +47,7 @@ const start = async () => {
     expressMiddleware(server, {
       context: async ({ req }) => {
         const auth = req.get("authorization") ?? null;
-        // const clientOrigin = req.get("origin") ?? "http://localhost:5173";
+        const clientOrigin = req.get("origin") ?? "http://localhost:5173";
         if (auth && auth.startsWith("Bearer ")) {
           let decodedToken, loginToken;
 
@@ -74,16 +75,19 @@ const start = async () => {
 
           const currentUser = await User.findById(loginToken.id);
 
-          return { currentUser };
+          return { currentUser, clientOrigin };
         }
 
-        return {};
+        return { clientOrigin };
       },
     })
   );
 
   if (config.NODE_ENV === "production") {
     app.use(express.static("dist"));
+    app.get("*", (_req, res) => {
+      res.sendFile(path.join(__dirname, "../../dist/index.html"));
+    });
   }
 
   httpServer.listen(config.PORT, () =>
