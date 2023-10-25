@@ -5,9 +5,11 @@
   "main": "index.js",
   "scripts": {
     "tsc": "rm -rf build && tsc",
-    "dev": "ts-node-dev src/index.ts",
-    "build": "npm run compile && npm run tsc",
-    "start": "node build/src/index.js",
+    "dev": "cross-env NODE_ENV=development ts-node-dev src/index.ts",
+    "build:server": "npm run compile && npm run tsc",
+    "build:client": "rm -rf dist && cd ../client/ && npm run build && cp -r dist ../server/",
+    "build:full": "npm run build:server && npm run build:client",
+    "start": "cross-env NODE_ENV=production node build/src/index.js",
     "lint": "eslint --ext .ts .",
     "prettier": "npx prettier --write .",
     "compile": "graphql-codegen"
@@ -35,6 +37,7 @@
     "@graphql-tools/schema": "^10.0.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "googleapis": "^123.0.0",

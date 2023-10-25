@@ -12,6 +12,7 @@ const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN;
 const REDIRECT_URI = process.env.REDIRECT_URI;
 const EMAIL = process.env.EMAIL;
+const NODE_ENV = process.env.NODE_ENV ?? "development";
 
 export default {
   PORT,
@@ -22,4 +23,5 @@ export default {
   REFRESH_TOKEN,
   REDIRECT_URI,
   EMAIL,
+  NODE_ENV,
 };

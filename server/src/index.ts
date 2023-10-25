@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import express from "express";
 import cors from "cors";
 import http from "http";
+import path from "path";
 
 import schema from "./schemas";
 import { MyContext, TokenType } from "./types";
@@ -81,6 +82,13 @@ const start = async () => {
       },
     })
   );
+
+  if (config.NODE_ENV === "production") {
+    app.use(express.static("dist"));
+    app.get("*", (_req, res) => {
+      res.sendFile(path.join(__dirname, "..", "..", "dist", "index.html"));
+    });
+  }
 
   httpServer.listen(config.PORT, () =>
     console.log(`🚀  Server is now running on http://localhost:${config.PORT}`)
