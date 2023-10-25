@@ -7,11 +7,7 @@ const ForgotPasswordPage = () => {
   return (
     <div
       style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        width: "fit-content",
-        margin: "0 auto",
+        textAlign: "center",
       }}
     >
       <Typography variant="h4" gutterBottom sx={{ mt: 1.5 }}>
@@ -21,8 +17,12 @@ const ForgotPasswordPage = () => {
         Enter your email to receive a link to reset your password.
       </Typography>
       <ForgotPasswordForm />
-      <hr style={{ width: "100%" }} />
-      <Link component={RouterLink} to="/" variant="body1">
+      <Link
+        component={RouterLink}
+        to="/"
+        variant="body1"
+        sx={{ display: "inline-block", mt: 1 }}
+      >
         Return to login
       </Link>
     </div>

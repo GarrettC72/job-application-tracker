@@ -38,6 +38,8 @@ const ForgotPasswordForm = () => {
       component="form"
       onSubmit={onSubmit}
       sx={{
+        width: "fit-content",
+        mx: "auto",
         "& .MuiTextField-root": { mb: 2 },
         "& .MuiButton-root": { mb: 2 },
       }}
@@ -54,6 +56,7 @@ const ForgotPasswordForm = () => {
           Send reset email
         </Button>
       </Grid>
+      <hr />
     </Box>
   );
 };
