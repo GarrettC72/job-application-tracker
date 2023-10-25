@@ -7,7 +7,7 @@
     "tsc": "rm -rf build && tsc",
     "dev": "cross-env NODE_ENV=development ts-node-dev src/index.ts",
     "build:server": "npm run compile && npm run tsc",
-    "build:client": "rm -rf dist && cd ../client/ && npm run build && cp -r dist ../server/",
+    "build:client": "rm -rf dist && cd ../client/ && npm install && npm run build && cp -r dist ../server/",
     "build:full": "npm run build:server && npm run build:client",
     "start": "cross-env NODE_ENV=production node build/src/index.js",
     "lint": "eslint --ext .ts .",
