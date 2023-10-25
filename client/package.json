@@ -10,6 +10,7 @@
     "preview": "vite preview",
     "prettier": "npx prettier --write .",
     "compile": "graphql-codegen",
+    "compile-schema": "graphql-codegen --config codegen-schema.ts",
     "watch": "graphql-codegen -w"
   },
   "dependencies": {
@@ -27,6 +28,7 @@
     "react-router-dom": "^6.15.0"
   },
   "devDependencies": {
+    "@graphql-codegen/introspection": "^4.0.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
