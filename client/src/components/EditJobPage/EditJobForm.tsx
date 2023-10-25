@@ -194,6 +194,7 @@ const EditJobForm = () => {
             <TextField
               name="activityType"
               label="Activity"
+              id={`job-activity-input-${index}`}
               select
               value={activity.activityType}
               onChange={({ target }) =>
@@ -208,10 +209,11 @@ const EditJobForm = () => {
               ))}
             </TextField>
             <div style={{ margin: "8px" }}>
-              <InputLabel>Date</InputLabel>
+              <InputLabel htmlFor={`job-date-input-${index}`}>Date</InputLabel>
               <Input
                 name="date"
                 type="date"
+                id={`job-date-input-${index}`}
                 value={activity.date}
                 onChange={({ target }) =>
                   editActivity(target.name, target.value, index)
@@ -247,6 +249,7 @@ const EditJobForm = () => {
       <div>
         <TextField
           className="JobForm-textarea"
+          name="notes"
           label="Notes"
           value={notes}
           onChange={({ target }) => setNotes(target.value)}
