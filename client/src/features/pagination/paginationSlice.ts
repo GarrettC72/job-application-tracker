@@ -3,11 +3,13 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 interface PaginationState {
   page: number;
   rowsPerPage: number;
+  filter: string;
 }
 
 const initialState: PaginationState = {
   page: 0,
   rowsPerPage: 10,
+  filter: "",
 };
 
 export const paginationSlice = createSlice({
@@ -21,9 +23,13 @@ export const paginationSlice = createSlice({
       state.rowsPerPage = action.payload;
       state.page = 0;
     },
+    setFilter(state, action: PayloadAction<string>) {
+      state.filter = action.payload;
+      state.page = 0;
+    },
   },
 });
 
-export const { setPage, setRowsPerPage } = paginationSlice.actions;
+export const { setPage, setRowsPerPage, setFilter } = paginationSlice.actions;
 
 export default paginationSlice.reducer;

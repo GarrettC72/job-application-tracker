@@ -20,6 +20,7 @@ import { DELETE_JOB } from "../../graphql/mutations";
 import { SimpleJob } from "../../types";
 import { useJobsQuery, useNotification } from "../../hooks";
 import Pagination from "../../features/pagination/Pagination";
+import Filter from "../../features/pagination/Filter";
 import DeleteJobDialog from "./DeleteJobDialog";
 
 const StyledTableCell = styled(TableCell)(() => ({
@@ -48,7 +49,7 @@ const JobListPage = () => {
 
   const notifyWith = useNotification();
 
-  const { currentJobs, loading } = useJobsQuery();
+  const { jobsToDisplay, loading } = useJobsQuery();
   const [deleteJob] = useMutation(DELETE_JOB, {
     refetchQueries: [{ query: USER_JOBS }],
     onError: (error) => {
@@ -83,7 +84,7 @@ const JobListPage = () => {
   const jobsTableBody = () => {
     return (
       <TableBody>
-        {currentJobs.map((job) => (
+        {jobsToDisplay.map((job) => (
           <StyledTableRow key={job.id}>
             <StyledTableCell>{job.companyName}</StyledTableCell>
             <StyledTableCell>{job.jobTitle}</StyledTableCell>
@@ -114,9 +115,10 @@ const JobListPage = () => {
       <Typography variant="h4" gutterBottom sx={{ mt: 1.5 }}>
         Your Jobs
       </Typography>
-      <Button component={Link} to="/create" variant="contained" sx={{ mb: 2 }}>
+      <Button component={Link} to="/create" variant="contained">
         Add New Job
       </Button>
+      <Filter />
       <Paper sx={{ width: "100%" }}>
         <TableContainer>
           <Table>

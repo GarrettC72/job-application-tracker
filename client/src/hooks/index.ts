@@ -32,19 +32,24 @@ export const useNotification = () => {
 };
 
 export const useJobsQuery = () => {
-  const { page, rowsPerPage } = useAppSelector(({ pagination }) => pagination);
+  const { page, rowsPerPage, filter } = useAppSelector(
+    ({ pagination }) => pagination
+  );
   const { data, loading, refetch } = useQuery(USER_JOBS);
 
   const allJobs = data ? data.allJobs : [];
-  const currentJobs = allJobs.slice(
+  const filteredJobs = allJobs.filter((job) =>
+    job.companyName.toLowerCase().includes(filter.toLowerCase())
+  );
+  const jobsToDisplay = filteredJobs.slice(
     page * rowsPerPage,
     (page + 1) * rowsPerPage
   );
-  const count = allJobs.length;
+  const count = filteredJobs.length;
 
   return {
     count,
-    currentJobs,
+    jobsToDisplay,
     loading,
     refetch,
   };
