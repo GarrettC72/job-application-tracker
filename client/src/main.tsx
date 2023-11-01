@@ -12,6 +12,7 @@ import ReactDOM from "react-dom/client";
 
 import { store } from "./app/store";
 import { API_BASE_URL } from "./constants";
+import { convertDate } from "./utils";
 import App from "./App";
 import storageService from "./services/storage";
 
@@ -30,8 +31,27 @@ const httpLink = createHttpLink({
   uri: API_BASE_URL,
 });
 
+const cache = new InMemoryCache({
+  typePolicies: {
+    Job: {
+      fields: {
+        dateCreated: {
+          read(dateCreated) {
+            return convertDate(dateCreated);
+          },
+        },
+        lastModified: {
+          read(lastModified) {
+            return convertDate(lastModified);
+          },
+        },
+      },
+    },
+  },
+});
+
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache,
   link: authLink.concat(httpLink),
 });
 

@@ -11,10 +11,7 @@ const dateScalar = new GraphQLScalarType({
   description: "Date custom scalar type",
   serialize(value) {
     if (value instanceof Date) {
-      const offset = value.getTimezoneOffset();
-      const convertedDate = new Date(value.getTime() - offset * 60 * 1000);
-      return convertedDate.toISOString().split("T")[0];
-      // return value.getTime();
+      return value.getTime();
     }
     throw Error("GraphQL Date Scalar serializer expected a `Date` object");
   },

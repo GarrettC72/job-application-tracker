@@ -104,3 +104,10 @@ export const toLoginData = (object: unknown): LoginData => {
 
   return loginData;
 };
+
+export const convertDate = (timestamp: number): string => {
+  const date = new Date(timestamp);
+  const offset = date.getTimezoneOffset();
+  const convertedDate = new Date(date.getTime() - offset * 60 * 1000);
+  return convertedDate.toISOString().split("T")[0];
+};
