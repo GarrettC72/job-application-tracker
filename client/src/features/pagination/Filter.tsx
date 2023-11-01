@@ -1,7 +1,8 @@
-import { TextField } from "@mui/material";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
+import { Clear } from "@mui/icons-material";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setFilter } from "./paginationSlice";
+import { clearFilter, setFilter } from "./paginationSlice";
 
 const Filter = () => {
   const { filter } = useAppSelector(({ pagination }) => pagination);
@@ -14,6 +15,16 @@ const Filter = () => {
       placeholder="Search by company name"
       fullWidth
       sx={{ my: 2 }}
+      InputProps={{
+        endAdornment:
+          filter === "" ? null : (
+            <InputAdornment position="end">
+              <IconButton edge="end" onClick={() => dispatch(clearFilter())}>
+                <Clear />
+              </IconButton>
+            </InputAdornment>
+          ),
+      }}
     />
   );
 };

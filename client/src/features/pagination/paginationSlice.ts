@@ -27,9 +27,14 @@ export const paginationSlice = createSlice({
       state.filter = action.payload;
       state.page = 0;
     },
+    clearFilter(state) {
+      state.filter = "";
+      state.page = 0;
+    },
   },
 });
 
-export const { setPage, setRowsPerPage, setFilter } = paginationSlice.actions;
+export const { setPage, setRowsPerPage, setFilter, clearFilter } =
+  paginationSlice.actions;
 
 export default paginationSlice.reducer;

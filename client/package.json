@@ -19,6 +19,7 @@
     "@emotion/styled": "^11.11.0",
     "@graphql-codegen/cli": "^5.0.0",
     "@graphql-codegen/client-preset": "^4.1.0",
+    "@mui/icons-material": "^5.14.15",
     "@mui/material": "^5.14.12",
     "@reduxjs/toolkit": "^1.9.5",
     "graphql": "^16.7.1",
