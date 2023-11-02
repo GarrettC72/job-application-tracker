@@ -14,6 +14,7 @@ import {
   tableCellClasses,
   Typography,
 } from "@mui/material";
+import { AddBox, DeleteForever, Edit } from "@mui/icons-material";
 
 import { USER_JOBS } from "../../graphql/queries";
 import { DELETE_JOB } from "../../graphql/mutations";
@@ -96,11 +97,16 @@ const JobListPage = () => {
                 component={Link}
                 to={`/jobs/${job.id}`}
                 variant="contained"
+                startIcon={<Edit />}
               >
                 Edit
               </Button>{" "}
               |{" "}
-              <Button onClick={() => setSelectedJob(job)} variant="contained">
+              <Button
+                onClick={() => setSelectedJob(job)}
+                variant="contained"
+                startIcon={<DeleteForever />}
+              >
                 Delete
               </Button>
             </StyledTableCell>
@@ -115,7 +121,12 @@ const JobListPage = () => {
       <Typography variant="h4" gutterBottom sx={{ mt: 1.5 }}>
         Your Jobs
       </Typography>
-      <Button component={Link} to="/create" variant="contained">
+      <Button
+        component={Link}
+        to="/create"
+        variant="contained"
+        startIcon={<AddBox />}
+      >
         Add New Job
       </Button>
       <Filter />

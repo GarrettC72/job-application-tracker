@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Button, Container, Typography } from "@mui/material";
+import { Logout } from "@mui/icons-material";
 import { useEffect } from "react";
 import { useApolloClient } from "@apollo/client";
 
@@ -62,7 +63,7 @@ const App = () => {
       <Notification />
       <Typography variant="body1" align="center">
         {user.name} logged in{" "}
-        <Button onClick={logout} variant="contained">
+        <Button onClick={logout} variant="contained" startIcon={<Logout />}>
           Logout
         </Button>
       </Typography>
