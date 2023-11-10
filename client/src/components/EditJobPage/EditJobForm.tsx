@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
+import { Add, Remove } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -175,7 +176,12 @@ const EditJobForm = () => {
           onChange={({ target }) => setContactTitle(target.value)}
         />
       </div>
-      <Button type="button" onClick={addAcitivity} variant="contained">
+      <Button
+        type="button"
+        onClick={addAcitivity}
+        variant="contained"
+        startIcon={<Add />}
+      >
         Add New Activity
       </Button>
       {activities.map((activity, index) => (
@@ -241,6 +247,7 @@ const EditJobForm = () => {
             type="button"
             onClick={() => removeActivity(index)}
             variant="contained"
+            startIcon={<Remove />}
           >
             Remove
           </Button>
