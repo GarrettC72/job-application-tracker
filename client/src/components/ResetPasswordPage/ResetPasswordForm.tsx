@@ -20,7 +20,6 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
   const [updatePassword] = useMutation(EDIT_PASSWORD, {
     onError: (error) => {
       const verifyError = error.graphQLErrors[0];
-      console.log(verifyError.extensions.code);
       if (
         verifyError.extensions.code &&
         typeof verifyError.extensions.code === "string"

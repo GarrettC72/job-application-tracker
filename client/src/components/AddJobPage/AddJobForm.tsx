@@ -43,7 +43,6 @@ const AddJobForm = () => {
   const navigate = useNavigate();
 
   const [createJob] = useMutation(CREATE_JOB, {
-    refetchQueries: [{ query: USER_JOBS }],
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
@@ -62,6 +61,20 @@ const AddJobForm = () => {
         resetContactTitle();
         resetNotes();
         navigate("/");
+      }
+    },
+    update: (cache, response) => {
+      const addedJob = response.data ? response.data.addJob : null;
+      if (addedJob) {
+        cache.updateQuery({ query: USER_JOBS }, (data) => {
+          if (data) {
+            const updatedJobs = data.allJobs.slice();
+            updatedJobs.unshift(addedJob);
+            return {
+              allJobs: updatedJobs,
+            };
+          }
+        });
       }
     },
   });

@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { clearUser, initializeUser } from "../features/user/userSlice";
 import { setNotification } from "../features/notification/notificationSlice";
 import { USER_JOBS } from "../graphql/queries";
+import { convertDate } from "../utils";
 
 export const useInitialization = () => {
   const dispatch = useAppDispatch();
@@ -41,10 +42,13 @@ export const useJobsQuery = () => {
   const filteredJobs = allJobs.filter((job) =>
     job.companyName.toLowerCase().includes(filter.toLowerCase())
   );
-  const jobsToDisplay = filteredJobs.slice(
-    page * rowsPerPage,
-    (page + 1) * rowsPerPage
-  );
+  const jobsToDisplay = filteredJobs
+    .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+    .map((job) => ({
+      ...job,
+      dateCreated: convertDate(job.dateCreated),
+      lastModified: convertDate(job.lastModified),
+    }));
   const count = filteredJobs.length;
 
   return {
