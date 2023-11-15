@@ -52,7 +52,6 @@ const JobListPage = () => {
 
   const { jobsToDisplay, loading } = useJobsQuery();
   const [deleteJob] = useMutation(DELETE_JOB, {
-    refetchQueries: [{ query: USER_JOBS }],
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
@@ -63,6 +62,21 @@ const JobListPage = () => {
           `Job '${job.jobTitle} at ${job.companyName}' successfully deleted`,
           "success"
         );
+      }
+    },
+    update: (cache, result) => {
+      const deletedJob = result.data ? result.data.deleteJob : null;
+      if (deletedJob) {
+        cache.updateQuery({ query: USER_JOBS }, (data) => {
+          if (data) {
+            return {
+              allJobs: data.allJobs.filter((job) => job.id !== deletedJob.id),
+            };
+          }
+        });
+        const id = cache.identify({ __typename: "Job", id: deletedJob.id });
+        cache.evict({ id });
+        cache.gc();
       }
     },
   });

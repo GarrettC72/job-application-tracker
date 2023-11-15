@@ -63,8 +63,8 @@ const AddJobForm = () => {
         navigate("/");
       }
     },
-    update: (cache, response) => {
-      const addedJob = response.data ? response.data.addJob : null;
+    update: (cache, result) => {
+      const addedJob = result.data ? result.data.addJob : null;
       if (addedJob) {
         cache.updateQuery({ query: USER_JOBS }, (data) => {
           if (data) {
