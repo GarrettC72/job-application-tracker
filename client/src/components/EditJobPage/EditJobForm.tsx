@@ -62,10 +62,7 @@ const EditJobForm = () => {
     },
   });
   const [updateJob] = useMutation(UPDATE_JOB, {
-    refetchQueries: [
-      { query: USER_JOBS },
-      { query: JOB_BY_ID, variables: { id } },
-    ],
+    refetchQueries: [{ query: JOB_BY_ID, variables: { id } }],
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
@@ -77,6 +74,20 @@ const EditJobForm = () => {
           "success"
         );
         navigate("/");
+      }
+    },
+    update: (cache, result) => {
+      const updatedJob = result.data ? result.data.updateJob : null;
+      if (updatedJob) {
+        cache.updateQuery({ query: USER_JOBS }, (data) => {
+          if (data) {
+            return {
+              allJobs: data.allJobs.map((job) =>
+                job.id !== updatedJob.id ? job : updatedJob
+              ),
+            };
+          }
+        });
       }
     },
   });

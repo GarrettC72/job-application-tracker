@@ -48,6 +48,7 @@ export const JOB_BY_ID = gql(`#graphql
         description
       }
       notes
+      id
     }
   }
 `);
