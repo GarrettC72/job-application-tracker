@@ -87,7 +87,17 @@ export const UPDATE_JOB = gql(`#graphql
   mutation updateJob($id: ID!, $jobParams: JobMutationInput!) {
     updateJob(id: $id, jobParams: $jobParams) {
       companyName
+      companyWebsite
       jobTitle
+      jobPostingLink
+      contactName
+      contactTitle
+      activities {
+        activityType
+        date
+        description
+      }
+      notes
       latestActivity
       dateCreated
       lastModified

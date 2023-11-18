@@ -40,13 +40,13 @@ const EditJobForm = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [notes, setNotes] = useState("");
 
-  const id = useParams().id ?? "";
+  const jobId = useParams().id ?? "";
   const notifyWith = useNotification();
   const navigate = useNavigate();
 
   const job = useQuery(JOB_BY_ID, {
-    skip: !id,
-    variables: { id },
+    skip: !jobId,
+    variables: { id: jobId },
     onCompleted: (data) => {
       const jobData = data.getJob;
       if (jobData) {
@@ -62,7 +62,6 @@ const EditJobForm = () => {
     },
   });
   const [updateJob] = useMutation(UPDATE_JOB, {
-    refetchQueries: [{ query: JOB_BY_ID, variables: { id } }],
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
@@ -79,12 +78,55 @@ const EditJobForm = () => {
     update: (cache, result) => {
       const updatedJob = result.data ? result.data.updateJob : null;
       if (updatedJob) {
+        const {
+          __typename,
+          companyName,
+          companyWebsite,
+          jobTitle,
+          jobPostingLink,
+          contactName,
+          contactTitle,
+          activities,
+          notes,
+          latestActivity,
+          dateCreated,
+          lastModified,
+          id,
+        } = updatedJob;
+        const simpleJobUpdate = {
+          __typename,
+          companyName,
+          jobTitle,
+          latestActivity,
+          dateCreated,
+          lastModified,
+          id,
+        };
+        const detailedJobUpdate = {
+          __typename,
+          companyName,
+          companyWebsite,
+          jobTitle,
+          jobPostingLink,
+          contactName,
+          contactTitle,
+          activities,
+          notes,
+          id,
+        };
         cache.updateQuery({ query: USER_JOBS }, (data) => {
           if (data) {
             return {
               allJobs: data.allJobs.map((job) =>
-                job.id !== updatedJob.id ? job : updatedJob
+                job.id !== id ? job : simpleJobUpdate
               ),
+            };
+          }
+        });
+        cache.updateQuery({ query: JOB_BY_ID, variables: { id } }, (data) => {
+          if (data) {
+            return {
+              getJob: detailedJobUpdate,
             };
           }
         });
@@ -104,7 +146,7 @@ const EditJobForm = () => {
       activities,
       notes,
     };
-    updateJob({ variables: { id, jobParams } });
+    updateJob({ variables: { id: jobId, jobParams } });
   };
 
   const addAcitivity = () => {
