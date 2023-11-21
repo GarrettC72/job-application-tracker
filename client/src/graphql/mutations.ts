@@ -73,12 +73,7 @@ export const EDIT_PASSWORD = gql(`#graphql
 export const CREATE_JOB = gql(`#graphql
   mutation createJob($jobParams: JobMutationInput!) {
     addJob(jobParams: $jobParams) {
-      companyName
-      jobTitle
-      latestActivity
-      dateCreated
-      lastModified
-      id
+      ...JobDetails
     }
   }
 `);

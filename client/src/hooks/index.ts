@@ -6,7 +6,9 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { clearUser, initializeUser } from "../features/user/userSlice";
 import { setNotification } from "../features/notification/notificationSlice";
 import { USER_JOBS } from "../graphql/queries";
+import { JOB_DETAILS } from "../graphql/fragments";
 import { convertDate } from "../utils";
+import { getFragmentData } from "../__generated__/fragment-masking";
 
 export const useInitialization = () => {
   const dispatch = useAppDispatch();
@@ -39,16 +41,20 @@ export const useJobsQuery = () => {
   const { data, loading, refetch } = useQuery(USER_JOBS);
 
   const allJobs = data ? data.allJobs : [];
-  const filteredJobs = allJobs.filter((job) =>
-    job.companyName.toLowerCase().includes(filter.toLowerCase())
-  );
+  const filteredJobs = allJobs.filter((job) => {
+    const unmaskedJob = getFragmentData(JOB_DETAILS, job);
+    return unmaskedJob.companyName.toLowerCase().includes(filter.toLowerCase());
+  });
   const jobsToDisplay = filteredJobs
     .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
-    .map((job) => ({
-      ...job,
-      dateCreated: convertDate(job.dateCreated),
-      lastModified: convertDate(job.lastModified),
-    }));
+    .map((job) => {
+      const unmaskedJob = getFragmentData(JOB_DETAILS, job);
+      return {
+        ...unmaskedJob,
+        dateCreated: convertDate(unmaskedJob.dateCreated),
+        lastModified: convertDate(unmaskedJob.lastModified),
+      };
+    });
   const count = filteredJobs.length;
 
   return {

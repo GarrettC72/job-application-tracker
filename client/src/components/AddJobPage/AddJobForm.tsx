@@ -16,6 +16,8 @@ import { ActivityType } from "../../types";
 import { Activity } from "../../types";
 import { USER_JOBS } from "../../graphql/queries";
 import { CREATE_JOB } from "../../graphql/mutations";
+import { JOB_DETAILS } from "../../graphql/fragments";
+import { getFragmentData } from "../../__generated__/fragment-masking";
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -49,8 +51,9 @@ const AddJobForm = () => {
     onCompleted: (result) => {
       const job = result.addJob;
       if (job) {
+        const unmaskedJob = getFragmentData(JOB_DETAILS, job);
         notifyWith(
-          `New job '${job.jobTitle} at ${job.companyName}' successfully saved`,
+          `New job '${unmaskedJob.jobTitle} at ${unmaskedJob.companyName}' successfully saved`,
           "success"
         );
         resetCompanyName();

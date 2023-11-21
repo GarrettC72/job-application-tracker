@@ -15,8 +15,10 @@ import {
 import { Activity, ActivityType } from "../../types";
 import { JOB_BY_ID, USER_JOBS } from "../../graphql/queries";
 import { UPDATE_JOB } from "../../graphql/mutations";
+import { JOB_DETAILS } from "../../graphql/fragments";
 import { parseActivities } from "../../utils";
 import { useNotification } from "../../hooks";
+import { getFragmentData } from "../../__generated__/fragment-masking";
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -117,9 +119,10 @@ const EditJobForm = () => {
         cache.updateQuery({ query: USER_JOBS }, (data) => {
           if (data) {
             return {
-              allJobs: data.allJobs.map((job) =>
-                job.id !== id ? job : simpleJobUpdate
-              ),
+              allJobs: data.allJobs.map((job) => {
+                const unmaskedJob = getFragmentData(JOB_DETAILS, job);
+                return unmaskedJob.id !== id ? unmaskedJob : simpleJobUpdate;
+              }),
             };
           }
         });

@@ -18,8 +18,10 @@ import { AddBox, DeleteForever, Edit } from "@mui/icons-material";
 
 import { USER_JOBS } from "../../graphql/queries";
 import { DELETE_JOB } from "../../graphql/mutations";
+import { JOB_DETAILS } from "../../graphql/fragments";
 import { SimpleJob } from "../../types";
 import { useJobsQuery, useNotification } from "../../hooks";
+import { getFragmentData } from "../../__generated__/fragment-masking";
 import Pagination from "../../features/pagination/Pagination";
 import Filter from "../../features/pagination/Filter";
 import DeleteJobDialog from "./DeleteJobDialog";
@@ -70,7 +72,10 @@ const JobListPage = () => {
         cache.updateQuery({ query: USER_JOBS }, (data) => {
           if (data) {
             return {
-              allJobs: data.allJobs.filter((job) => job.id !== deletedJob.id),
+              allJobs: data.allJobs.filter((job) => {
+                const unmaskedJob = getFragmentData(JOB_DETAILS, job);
+                return unmaskedJob.id !== deletedJob.id;
+              }),
             };
           }
         });

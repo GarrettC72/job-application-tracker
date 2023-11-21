@@ -12,12 +12,7 @@ export const VERIFY_PASSWORD_RESET = gql(`#graphql
 export const USER_JOBS = gql(`#graphql
   query userJobs {
     allJobs {
-      companyName
-      jobTitle
-      latestActivity
-      dateCreated
-      lastModified
-      id
+      ...JobDetails
     }
   }
 `);
