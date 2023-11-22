@@ -10,3 +10,21 @@ export const JOB_DETAILS = gql(`#grpahql
     id
   }
 `);
+
+export const FULL_JOB_DETAILS = gql(`#graphql
+  fragment FullJobDetails on Job {
+    companyName
+    companyWebsite
+    jobTitle
+    jobPostingLink
+    contactName
+    contactTitle
+    activities {
+      activityType
+      date
+      description
+    }
+    notes
+    id
+  }
+`);

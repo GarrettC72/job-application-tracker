@@ -15,7 +15,7 @@ import {
 import { Activity, ActivityType } from "../../types";
 import { JOB_BY_ID, USER_JOBS } from "../../graphql/queries";
 import { UPDATE_JOB } from "../../graphql/mutations";
-import { JOB_DETAILS } from "../../graphql/fragments";
+import { FULL_JOB_DETAILS, JOB_DETAILS } from "../../graphql/fragments";
 import { parseActivities } from "../../utils";
 import { useNotification } from "../../hooks";
 import { getFragmentData } from "../../__generated__/fragment-masking";
@@ -52,14 +52,15 @@ const EditJobForm = () => {
     onCompleted: (data) => {
       const jobData = data.getJob;
       if (jobData) {
-        setCompanyName(jobData.companyName);
-        setCompanyWebsite(jobData.companyWebsite);
-        setJobTitle(jobData.jobTitle);
-        setJobPostingLink(jobData.jobPostingLink);
-        setContactName(jobData.contactName);
-        setContactTitle(jobData.contactTitle);
-        setActivities(parseActivities(jobData.activities));
-        setNotes(jobData.notes);
+        const unmaskedJob = getFragmentData(FULL_JOB_DETAILS, jobData);
+        setCompanyName(unmaskedJob.companyName);
+        setCompanyWebsite(unmaskedJob.companyWebsite);
+        setJobTitle(unmaskedJob.jobTitle);
+        setJobPostingLink(unmaskedJob.jobPostingLink);
+        setContactName(unmaskedJob.contactName);
+        setContactTitle(unmaskedJob.contactTitle);
+        setActivities(parseActivities(unmaskedJob.activities));
+        setNotes(unmaskedJob.notes);
       }
     },
   });
@@ -70,8 +71,9 @@ const EditJobForm = () => {
     onCompleted: (result) => {
       const job = result.updateJob;
       if (job) {
+        const unmaskedJob = getFragmentData(FULL_JOB_DETAILS, job);
         notifyWith(
-          `Job '${job.jobTitle} at ${job.companyName}' successfully updated`,
+          `Job '${unmaskedJob.jobTitle} at ${unmaskedJob.companyName}' successfully updated`,
           "success"
         );
         navigate("/");
@@ -90,11 +92,9 @@ const EditJobForm = () => {
           contactTitle,
           activities,
           notes,
-          latestActivity,
-          dateCreated,
-          lastModified,
           id,
-        } = updatedJob;
+        } = getFragmentData(FULL_JOB_DETAILS, updatedJob);
+        const { latestActivity, dateCreated, lastModified } = updatedJob;
         const simpleJobUpdate = {
           __typename,
           companyName,
@@ -116,6 +116,7 @@ const EditJobForm = () => {
           notes,
           id,
         };
+
         cache.updateQuery({ query: USER_JOBS }, (data) => {
           if (data) {
             return {

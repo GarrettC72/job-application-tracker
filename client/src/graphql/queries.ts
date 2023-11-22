@@ -31,19 +31,7 @@ export const CURRENT_USER = gql(`#graphql
 export const JOB_BY_ID = gql(`#graphql
   query jobById($id: ID!) {
     getJob(id: $id) {
-      companyName
-      companyWebsite
-      jobTitle
-      jobPostingLink
-      contactName
-      contactTitle
-      activities {
-        activityType
-        date
-        description
-      }
-      notes
-      id
+      ...FullJobDetails
     }
   }
 `);
