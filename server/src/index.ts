@@ -1,7 +1,13 @@
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
+import {
+  ApolloServerPluginLandingPageLocalDefault,
+  ApolloServerPluginLandingPageProductionDefault,
+} from "@apollo/server/plugin/landingPage/default";
 import { GraphQLError } from "graphql";
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import express from "express";
@@ -32,9 +38,36 @@ const start = async () => {
   const app = express();
   const httpServer = http.createServer(app);
 
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: "/subscriptions",
+  });
+
+  const serverCleanup = useServer({ schema }, wsServer);
+
+  const landingPage =
+    config.NODE_ENV === "production"
+      ? ApolloServerPluginLandingPageProductionDefault()
+      : ApolloServerPluginLandingPageLocalDefault({
+          embed: { endpointIsEditable: true },
+        });
+
   const server = new ApolloServer<MyContext>({
     schema,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        /* eslint-disable @typescript-eslint/require-await */
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
+      landingPage,
+    ],
   });
 
   await server.start();
@@ -42,7 +75,6 @@ const start = async () => {
   app.use(
     "/graphql",
     cors(),
-    express.static("dist"),
     express.json(),
     expressMiddleware(server, {
       context: async ({ req }) => {

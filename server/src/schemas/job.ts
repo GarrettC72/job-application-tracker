@@ -1,10 +1,13 @@
 import { GraphQLError } from "graphql";
+import { PubSub } from "graphql-subscriptions";
 import gql from "graphql-tag";
 
 import { Resolvers } from "../__generated__/resolvers-types";
 import { toNewJob } from "../utils/parser";
 import { verifyCurrentUser } from "../utils/userHelper";
 import Job from "../models/job";
+
+const pubsub = new PubSub();
 
 export const typeDef = gql`
   type Activity {
@@ -54,6 +57,10 @@ export const typeDef = gql`
     addJob(jobParams: JobMutationInput!): Job
     updateJob(id: ID!, jobParams: JobMutationInput!): Job
     deleteJob(id: ID!): Job
+  }
+
+  extend type Subscription {
+    jobAdded: Job!
   }
 `;
 
@@ -150,6 +157,8 @@ export const resolvers: Resolvers = {
         });
       }
 
+      void pubsub.publish("JOB_ADDED", { jobAdded: job });
+
       return job;
     },
     updateJob: async (_root, { id, jobParams }, { currentUser }) => {
@@ -224,6 +233,13 @@ export const resolvers: Resolvers = {
 
       await job.deleteOne();
       return job;
+    },
+  },
+  Subscription: {
+    jobAdded: {
+      subscribe: () => ({
+        [Symbol.asyncIterator]: () => pubsub.asyncIterator(["JOB_ADDED"]),
+      }),
     },
   },
 };

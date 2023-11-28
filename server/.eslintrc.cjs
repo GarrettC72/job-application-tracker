@@ -3,6 +3,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "prettier",
   ],
   ignorePatterns: ["build", ".eslintrc.cjs"],
   plugins: ["@typescript-eslint"],
@@ -12,7 +13,6 @@ module.exports = {
     node: true,
   },
   rules: {
-    "@typescript-eslint/semi": ["error"],
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
@@ -21,12 +21,8 @@ module.exports = {
     "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     "@typescript-eslint/array-type": ["error", { default: "array-simple" }],
     "no-case-declarations": "off",
-    indent: ["error", 2, { SwitchCase: 1 }],
     quotes: ["error", "double"],
     eqeqeq: "error",
-    "no-trailing-spaces": "error",
-    "object-curly-spacing": ["error", "always"],
-    "arrow-spacing": ["error", { before: true, after: true }],
   },
   parser: "@typescript-eslint/parser",
   parserOptions: {
