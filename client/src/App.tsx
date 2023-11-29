@@ -2,7 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Button, Container, Typography } from "@mui/material";
 import { Logout } from "@mui/icons-material";
 import { useEffect } from "react";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient, useSubscription } from "@apollo/client";
 
 import {
   LoginPage,
@@ -17,6 +17,7 @@ import {
 } from "./components";
 import { useClearUser, useInitialization, useNotification } from "./hooks";
 import { useAppSelector } from "./app/hooks";
+import { JOB_ADDED } from "./graphql/subscriptions";
 
 const App = () => {
   const initializeState = useInitialization();
@@ -29,6 +30,12 @@ const App = () => {
   useEffect(() => {
     initializeState();
   }, [initializeState]);
+
+  useSubscription(JOB_ADDED, {
+    onData: ({ data }) => {
+      console.log(data);
+    },
+  });
 
   const logout = () => {
     clearUser();
