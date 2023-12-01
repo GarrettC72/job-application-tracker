@@ -7,7 +7,7 @@ import { clearUser, initializeUser } from "../features/user/userSlice";
 import { setNotification } from "../features/notification/notificationSlice";
 import { USER_JOBS } from "../graphql/queries";
 import { JOB_DETAILS } from "../graphql/fragments";
-import { convertDate } from "../utils";
+import { convertDate } from "../utils/parser";
 import { getFragmentData } from "../__generated__/fragment-masking";
 
 export const useInitialization = () => {

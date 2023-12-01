@@ -1,4 +1,4 @@
-import { Activity, ActivityType, LoginData } from "./types";
+import { Activity, ActivityType, LoginData } from "../types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;

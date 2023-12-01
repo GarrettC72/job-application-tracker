@@ -1,5 +1,5 @@
 import { LoginData } from "../types";
-import { toLoginData } from "../utils";
+import { toLoginData } from "../utils/parser";
 
 const KEY = "loggedJobappUser";
 

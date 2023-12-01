@@ -3,7 +3,7 @@ import { Box, Button, Grid, TextField } from "@mui/material";
 
 import { useField, useNotification } from "../../hooks";
 import { SEND_PASSWORD_RESET } from "../../graphql/mutations";
-import { isEmail } from "../../utils";
+import { isEmail } from "../../utils/parser";
 
 const ForgotPasswordForm = () => {
   const { reset: resetEmail, ...email } = useField("email");
