@@ -32,6 +32,7 @@ const App = () => {
   }, [initializeState]);
 
   useSubscription(JOB_ADDED, {
+    skip: !user,
     onData: ({ data }) => {
       console.log(data);
     },

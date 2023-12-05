@@ -22,6 +22,11 @@ export const typeDef = gql`
     description: String!
   }
 
+  type UserDetails {
+    id: ID!
+    email: String!
+  }
+
   type Job {
     id: ID!
     companyName: String!
@@ -35,6 +40,22 @@ export const typeDef = gql`
     dateCreated: Date!
     lastModified: Date!
     latestActivity: String!
+  }
+
+  type SubscriptionJob {
+    id: ID!
+    companyName: String!
+    jobTitle: String!
+    companyWebsite: String!
+    jobPostingLink: String!
+    contactName: String!
+    contactTitle: String!
+    activities: [Activity!]!
+    notes: String!
+    dateCreated: Date!
+    lastModified: Date!
+    latestActivity: String!
+    user: UserDetails!
   }
 
   input JobMutationInput {
@@ -60,12 +81,29 @@ export const typeDef = gql`
   }
 
   extend type Subscription {
-    jobAdded: Job!
+    jobAdded: SubscriptionJob!
   }
 `;
 
 export const resolvers: Resolvers = {
   Job: {
+    latestActivity: (root) => {
+      if (root.activities.length === 0) {
+        return "";
+      }
+
+      const activity = root.activities.reduce((result, activity) => {
+        return new Date(activity.date).getTime() -
+          new Date(result.date).getTime() >=
+          0
+          ? activity
+          : result;
+      }, root.activities[0]);
+
+      return activity.activityType;
+    },
+  },
+  SubscriptionJob: {
     latestActivity: (root) => {
       if (root.activities.length === 0) {
         return "";
@@ -157,7 +195,17 @@ export const resolvers: Resolvers = {
         });
       }
 
-      void pubsub.publish("JOB_ADDED", { jobAdded: job });
+      const addedJob = await Job.findById(job._id).populate("user", {
+        email: 1,
+      });
+
+      if (!addedJob) {
+        throw new GraphQLError("Failed to save job", {
+          extensions: { code: "JOB_NOT_FOUND" },
+        });
+      }
+
+      void pubsub.publish("JOB_ADDED", { jobAdded: addedJob });
 
       return job;
     },
