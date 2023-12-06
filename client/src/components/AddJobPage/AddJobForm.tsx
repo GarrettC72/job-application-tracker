@@ -11,13 +11,12 @@ import {
   TextField,
 } from "@mui/material";
 
+import { getFragmentData } from "../../__generated__/fragment-masking";
+import { addJobToCache } from "../../utils/cache";
 import { useField, useNotification } from "../../hooks";
-import { ActivityType } from "../../types";
-import { Activity } from "../../types";
-import { USER_JOBS } from "../../graphql/queries";
+import { Activity, ActivityType } from "../../types";
 import { CREATE_JOB } from "../../graphql/mutations";
 import { JOB_DETAILS } from "../../graphql/fragments";
-import { getFragmentData } from "../../__generated__/fragment-masking";
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -69,15 +68,7 @@ const AddJobForm = () => {
     update: (cache, result) => {
       const addedJob = result.data ? result.data.addJob : null;
       if (addedJob) {
-        cache.updateQuery({ query: USER_JOBS }, (data) => {
-          if (data) {
-            const updatedJobs = data.allJobs.slice();
-            updatedJobs.unshift(addedJob);
-            return {
-              allJobs: updatedJobs,
-            };
-          }
-        });
+        addJobToCache(cache, getFragmentData(JOB_DETAILS, addedJob));
       }
     },
   });

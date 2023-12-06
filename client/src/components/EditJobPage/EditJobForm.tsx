@@ -12,13 +12,13 @@ import {
   Typography,
 } from "@mui/material";
 
+import { getFragmentData } from "../../__generated__/fragment-masking";
+import { parseActivities } from "../../utils/parser";
+import { useNotification } from "../../hooks";
 import { Activity, ActivityType } from "../../types";
 import { JOB_BY_ID, USER_JOBS } from "../../graphql/queries";
 import { UPDATE_JOB } from "../../graphql/mutations";
 import { FULL_JOB_DETAILS, JOB_DETAILS } from "../../graphql/fragments";
-import { parseActivities } from "../../utils/parser";
-import { useNotification } from "../../hooks";
-import { getFragmentData } from "../../__generated__/fragment-masking";
 
 interface ActivityTypeOption {
   value: ActivityType;

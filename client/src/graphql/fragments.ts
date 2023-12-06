@@ -28,18 +28,3 @@ export const FULL_JOB_DETAILS = gql(`#graphql
     id
   }
 `);
-
-export const SUBSCRIPTION_JOB_DETAILS = gql(`#graphql
-  fragment SubscriptionJobDetails on SubscriptionJob {
-    companyName
-    jobTitle
-    latestActivity
-    dateCreated
-    lastModified
-    user {
-      email
-      id
-    }
-    id
-  }
-`);

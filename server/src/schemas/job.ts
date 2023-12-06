@@ -5,6 +5,7 @@ import gql from "graphql-tag";
 import { Resolvers } from "../__generated__/resolvers-types";
 import { toNewJob } from "../utils/parser";
 import { verifyCurrentUser } from "../utils/userHelper";
+import { UserDetails } from "../types";
 import Job from "../models/job";
 
 const pubsub = new PubSub();
@@ -28,21 +29,6 @@ export const typeDef = gql`
   }
 
   type Job {
-    id: ID!
-    companyName: String!
-    jobTitle: String!
-    companyWebsite: String!
-    jobPostingLink: String!
-    contactName: String!
-    contactTitle: String!
-    activities: [Activity!]!
-    notes: String!
-    dateCreated: Date!
-    lastModified: Date!
-    latestActivity: String!
-  }
-
-  type SubscriptionJob {
     id: ID!
     companyName: String!
     jobTitle: String!
@@ -81,7 +67,7 @@ export const typeDef = gql`
   }
 
   extend type Subscription {
-    jobAdded: SubscriptionJob!
+    jobAdded: Job!
   }
 `;
 
@@ -103,42 +89,30 @@ export const resolvers: Resolvers = {
       return activity.activityType;
     },
   },
-  SubscriptionJob: {
-    latestActivity: (root) => {
-      if (root.activities.length === 0) {
-        return "";
-      }
-
-      const activity = root.activities.reduce((result, activity) => {
-        return new Date(activity.date).getTime() -
-          new Date(result.date).getTime() >=
-          0
-          ? activity
-          : result;
-      }, root.activities[0]);
-
-      return activity.activityType;
-    },
-  },
   Query: {
     allJobs: async (_root, _args, { currentUser }) => {
       try {
         const user = verifyCurrentUser(currentUser);
-        return Job.find({ user: user._id }).sort("-dateCreated -_id");
+        return Job.find({ user: user._id })
+          .sort("-dateCreated -_id")
+          .populate<{ user: UserDetails }>("user", { email: 1 });
       } catch {
         return [];
       }
     },
     getJob: async (_root, { id }, { currentUser }) => {
       const user = verifyCurrentUser(currentUser);
-      const job = await Job.findById(id);
+      const job = await Job.findById(id).populate<{ user: UserDetails }>(
+        "user",
+        { email: 1 }
+      );
 
       if (!job) {
         throw new GraphQLError("Job could not be found", {
           extensions: { code: "JOB_NOT_FOUND" },
         });
       }
-      if (job.user.toString() !== user._id.toString()) {
+      if (job.user._id.toString() !== user._id.toString()) {
         throw new GraphQLError("User is not authorized to view this job", {
           extensions: { code: "NOT_PERMITTED" },
         });
@@ -195,7 +169,9 @@ export const resolvers: Resolvers = {
         });
       }
 
-      const addedJob = await Job.findById(job._id).populate("user", {
+      const addedJob = await Job.findById(job._id).populate<{
+        user: UserDetails;
+      }>("user", {
         email: 1,
       });
 
@@ -207,7 +183,7 @@ export const resolvers: Resolvers = {
 
       void pubsub.publish("JOB_ADDED", { jobAdded: addedJob });
 
-      return job;
+      return addedJob;
     },
     updateJob: async (_root, { id, jobParams }, { currentUser }) => {
       const user = verifyCurrentUser(currentUser);
@@ -262,18 +238,27 @@ export const resolvers: Resolvers = {
         });
       }
 
-      return job;
+      const addedJob = await Job.findById(job._id).populate<{
+        user: UserDetails;
+      }>("user", {
+        email: 1,
+      });
+
+      return addedJob;
     },
     deleteJob: async (_root, { id }, { currentUser }) => {
       const user = verifyCurrentUser(currentUser);
-      const job = await Job.findById(id);
+      const job = await Job.findById(id).populate<{ user: UserDetails }>(
+        "user",
+        { email: 1 }
+      );
 
       if (!job) {
         throw new GraphQLError("Job could not be found", {
           extensions: { code: "JOB_NOT_FOUND" },
         });
       }
-      if (job.user.toString() !== user._id.toString()) {
+      if (job.user._id.toString() !== user._id.toString()) {
         throw new GraphQLError("User is not authorized to delete this job", {
           extensions: { code: "NOT_PERMITTED" },
         });

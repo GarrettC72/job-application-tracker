@@ -18,6 +18,12 @@ export interface Activity {
   description: string;
 }
 
+export interface UserDetails {
+  _id: Types.ObjectId;
+  id: string;
+  email: string;
+}
+
 export interface Job {
   id: string;
   companyName: string;

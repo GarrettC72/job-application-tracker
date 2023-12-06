@@ -15,9 +15,12 @@ import {
   EditJobPage,
   Notification,
 } from "./components";
+import { getFragmentData } from "./__generated__";
+import { addJobToCache } from "./utils/cache";
 import { useClearUser, useInitialization, useNotification } from "./hooks";
 import { useAppSelector } from "./app/hooks";
 import { JOB_ADDED } from "./graphql/subscriptions";
+import { JOB_DETAILS } from "./graphql/fragments";
 
 const App = () => {
   const initializeState = useInitialization();
@@ -33,8 +36,13 @@ const App = () => {
 
   useSubscription(JOB_ADDED, {
     skip: !user,
-    onData: ({ data }) => {
-      console.log(data);
+    onData: ({ data, client }) => {
+      if (data.data) {
+        const jobAdded = getFragmentData(JOB_DETAILS, data.data.jobAdded);
+        if (user !== null && user.email === data.data.jobAdded.user.email) {
+          addJobToCache(client.cache, jobAdded);
+        }
+      }
     },
   });
 

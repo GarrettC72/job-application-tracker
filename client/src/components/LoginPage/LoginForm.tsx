@@ -1,10 +1,10 @@
 import { useMutation } from "@apollo/client";
 import { Box, Button, Grid, TextField } from "@mui/material";
 
-import { LOGIN } from "../../graphql/mutations";
 import { useField, useJobsQuery, useNotification } from "../../hooks";
 import { useAppDispatch } from "../../app/hooks";
 import { loginUser } from "../../features/user/userSlice";
+import { LOGIN } from "../../graphql/mutations";
 
 const LoginForm = () => {
   const { reset: resetEmail, ...email } = useField("email");

@@ -16,12 +16,12 @@ import {
 } from "@mui/material";
 import { AddBox, DeleteForever, Edit } from "@mui/icons-material";
 
+import { getFragmentData } from "../../__generated__/fragment-masking";
+import { useJobsQuery, useNotification } from "../../hooks";
+import { SimpleJob } from "../../types";
 import { USER_JOBS } from "../../graphql/queries";
 import { DELETE_JOB } from "../../graphql/mutations";
 import { JOB_DETAILS } from "../../graphql/fragments";
-import { SimpleJob } from "../../types";
-import { useJobsQuery, useNotification } from "../../hooks";
-import { getFragmentData } from "../../__generated__/fragment-masking";
 import Pagination from "../../features/pagination/Pagination";
 import Filter from "../../features/pagination/Filter";
 import DeleteJobDialog from "./DeleteJobDialog";
