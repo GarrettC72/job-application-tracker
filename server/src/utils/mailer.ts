@@ -2,6 +2,7 @@ import { google } from "googleapis";
 import nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 
+import { EmailType } from "../types";
 import config from "./config";
 
 const OAuth2 = google.auth.OAuth2;
@@ -52,56 +53,56 @@ const mailer = async (email: string, subject: string, html: string) => {
   await emailTransporter.sendMail(emailOptions);
 };
 
-export const sendVerificationEmail = async (
+export const sendEmail = async (
   email: string,
   token: string,
-  clientOrigin: string
+  clientOrigin: string,
+  emailType: EmailType
 ) => {
-  const link = `${clientOrigin}/verify?token=${token}`;
-  const subject = "Email Verification";
-  const html = `
-    <p>
-      Thank you for registering with Job Application Tracker. Please verify your email with the link below:<br /><br />
-      <a href="${link}">${link}</a><br />
-      The link will expire in 24 hours.
-    </p>
-  `;
-
-  await mailer(email, subject, html);
-};
-
-export const resendVerificationEmail = async (
-  email: string,
-  token: string,
-  clientOrigin: string
-) => {
-  const link = `${clientOrigin}/verify?token=${token}`;
-  const subject = "Email Verification";
-  const html = `
-    <p>
-      A new verification link has been provided. Please verify your email by clicking the link below:<br /><br />
-      <a href="${link}">${link}</a><br />
-      The link will expire in 24 hours.
-    </p>
-  `;
-
-  await mailer(email, subject, html);
-};
-
-export const sendPasswordResetEmail = async (
-  email: string,
-  token: string,
-  clientOrigin: string
-) => {
-  const link = `${clientOrigin}/reset?token=${token}`;
-  const subject = "Password Reset";
-  const html = `
-    <p>
-      You have requested a link to reset your password. Please set a new password for your account with the link below:<br /><br />
-      <a href="${link}">${link}</a><br />
-      The link will expire in 24 hours.
-    </p>
-  `;
-
-  await mailer(email, subject, html);
+  switch (emailType) {
+    case EmailType.Verify: {
+      await mailer(
+        email,
+        "Email Verification",
+        `
+        <p>
+          Thank you for registering with Job Application Tracker. Please verify your email with the link below:<br /><br />
+          <a href="${clientOrigin}/verify?token=${token}">${clientOrigin}/verify?token=${token}</a><br />
+          The link will expire in 24 hours.
+        </p>
+      `
+      );
+      break;
+    }
+    case EmailType.Reverify: {
+      await mailer(
+        email,
+        "Email Verification",
+        `
+        <p>
+          A new verification link has been provided. Please verify your email by clicking the link below:<br /><br />
+          <a href="${clientOrigin}/verify?token=${token}">${clientOrigin}/verify?token=${token}</a><br />
+          The link will expire in 24 hours.
+        </p>
+      `
+      );
+      break;
+    }
+    case EmailType.PasswordReset: {
+      await mailer(
+        email,
+        "Password Reset",
+        `
+        <p>
+          You have requested a link to reset your password. Please set a new password for your account with the link below:<br /><br />
+          <a href="${clientOrigin}/reset?token=${token}">${clientOrigin}/reset?token=${token}</a><br />
+          The link will expire in 24 hours.
+        </p>
+      `
+      );
+      break;
+    }
+    default:
+      throw new Error(`Unhandled email type: ${emailType}`);
+  }
 };

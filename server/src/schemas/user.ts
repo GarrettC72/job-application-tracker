@@ -5,13 +5,9 @@ import gql from "graphql-tag";
 
 import { Resolvers } from "../__generated__/resolvers-types";
 import { parseEmail, parseNames, toToken } from "../utils/parser";
-import {
-  resendVerificationEmail,
-  sendPasswordResetEmail,
-  sendVerificationEmail,
-} from "../utils/mailer";
+import { sendEmail } from "../utils/mailer";
 import { getUser, handleTokenError } from "../utils/userHelper";
-import { Token, TokenType } from "../types";
+import { EmailType, Token, TokenType } from "../types";
 import config from "../utils/config";
 import User from "../models/user";
 
@@ -183,7 +179,7 @@ export const resolvers: Resolvers = {
           expiresIn: "1d",
         });
 
-        await sendVerificationEmail(email, token, clientOrigin);
+        await sendEmail(email, token, clientOrigin, EmailType.Verify);
       } catch (error: unknown) {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {
@@ -301,7 +297,7 @@ export const resolvers: Resolvers = {
       });
 
       try {
-        await resendVerificationEmail(user.email, newToken, clientOrigin);
+        await sendEmail(user.email, newToken, clientOrigin, EmailType.Reverify);
       } catch (error: unknown) {
         throw new GraphQLError("Failed to send verification email.", {
           extensions: {
@@ -359,7 +355,7 @@ export const resolvers: Resolvers = {
       });
 
       try {
-        await sendPasswordResetEmail(email, token, clientOrigin);
+        await sendEmail(email, token, clientOrigin, EmailType.PasswordReset);
       } catch (error: unknown) {
         throw new GraphQLError("Failed to send password reset email", {
           extensions: {

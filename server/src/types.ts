@@ -68,6 +68,12 @@ export enum TokenType {
   Login = "login",
 }
 
+export enum EmailType {
+  Verify = "Verify",
+  Reverify = "Reverify",
+  PasswordReset = "PasswordReset",
+}
+
 export interface Token {
   email: string;
   id: Types.ObjectId;
