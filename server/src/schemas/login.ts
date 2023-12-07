@@ -6,8 +6,8 @@ import gql from "graphql-tag";
 import { Resolvers } from "../__generated__/resolvers-types";
 import { parseEmail } from "../utils/parser";
 import { Token, TokenType } from "../types";
-import User from "../models/user";
 import config from "../utils/config";
+import User from "../models/user";
 
 export const typeDef = gql`
   type LoginData {

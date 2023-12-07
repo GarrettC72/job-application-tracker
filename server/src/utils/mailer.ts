@@ -1,5 +1,5 @@
-import nodemailer from "nodemailer";
 import { google } from "googleapis";
+import nodemailer from "nodemailer";
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 
 import config from "./config";

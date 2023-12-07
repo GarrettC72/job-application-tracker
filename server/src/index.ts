@@ -15,9 +15,9 @@ import cors from "cors";
 import http from "http";
 import path from "path";
 
-import schema from "./schemas";
-import { MyContext, TokenType } from "./types";
 import { toToken } from "./utils/parser";
+import { MyContext, TokenType } from "./types";
+import schema from "./schemas";
 import config from "./utils/config";
 import User from "./models/user";
 

@@ -68,6 +68,7 @@ export const typeDef = gql`
 
   extend type Subscription {
     jobAdded: Job!
+    jobUpdated: Job!
   }
 `;
 
@@ -238,13 +239,15 @@ export const resolvers: Resolvers = {
         });
       }
 
-      const addedJob = await Job.findById(job._id).populate<{
+      const updatedJob = await Job.findById(job._id).populate<{
         user: UserDetails;
       }>("user", {
         email: 1,
       });
 
-      return addedJob;
+      void pubsub.publish("JOB_UPDATED", { jobUpdated: updatedJob });
+
+      return updatedJob;
     },
     deleteJob: async (_root, { id }, { currentUser }) => {
       const user = verifyCurrentUser(currentUser);
@@ -272,6 +275,11 @@ export const resolvers: Resolvers = {
     jobAdded: {
       subscribe: () => ({
         [Symbol.asyncIterator]: () => pubsub.asyncIterator(["JOB_ADDED"]),
+      }),
+    },
+    jobUpdated: {
+      subscribe: () => ({
+        [Symbol.asyncIterator]: () => pubsub.asyncIterator(["JOB_UPDATED"]),
       }),
     },
   },

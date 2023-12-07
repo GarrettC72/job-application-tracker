@@ -3,17 +3,17 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import gql from "graphql-tag";
 
+import { Resolvers } from "../__generated__/resolvers-types";
 import { parseEmail, parseNames, toToken } from "../utils/parser";
 import {
   resendVerificationEmail,
   sendPasswordResetEmail,
   sendVerificationEmail,
 } from "../utils/mailer";
-import { Resolvers } from "../__generated__/resolvers-types";
-import { Token, TokenType } from "../types";
 import { getUser, handleTokenError } from "../utils/userHelper";
-import User from "../models/user";
+import { Token, TokenType } from "../types";
 import config from "../utils/config";
+import User from "../models/user";
 
 export const typeDef = gql`
   type User {

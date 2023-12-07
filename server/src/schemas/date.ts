@@ -1,5 +1,6 @@
 import { GraphQLScalarType, Kind } from "graphql";
 import gql from "graphql-tag";
+
 import { Resolvers } from "../__generated__/resolvers-types";
 
 export const typeDef = gql`
