@@ -16,11 +16,11 @@ import {
   Notification,
 } from "./components";
 import { getFragmentData } from "./__generated__";
-import { addJobToCache } from "./utils/cache";
+import { addJobToCache, removeJobFromCache } from "./utils/cache";
 import { useClearUser, useInitialization, useNotification } from "./hooks";
 import { useAppSelector } from "./app/hooks";
-import { JOB_ADDED } from "./graphql/subscriptions";
-import { JOB_DETAILS } from "./graphql/fragments";
+import { JOB_ADDED, JOB_UPDATED } from "./graphql/subscriptions";
+import { FULL_JOB_DETAILS, JOB_DETAILS } from "./graphql/fragments";
 
 const App = () => {
   const initializeState = useInitialization();
@@ -38,9 +38,31 @@ const App = () => {
     skip: !user,
     onData: ({ data, client }) => {
       if (data.data) {
-        const jobAdded = getFragmentData(JOB_DETAILS, data.data.jobAdded);
-        if (user !== null && user.email === data.data.jobAdded.user.email) {
+        const jobAdded = data.data.jobAdded;
+        if (user && user.email === jobAdded.user.email) {
           addJobToCache(client.cache, jobAdded);
+        } else {
+          const jobFragment = getFragmentData(JOB_DETAILS, jobAdded);
+          removeJobFromCache(client.cache, jobFragment.id);
+        }
+      }
+    },
+  });
+
+  useSubscription(JOB_UPDATED, {
+    skip: !user,
+    onData: ({ data, client }) => {
+      if (data.data) {
+        const jobUpdated = data.data.jobUpdated;
+        const jobFragment = getFragmentData(FULL_JOB_DETAILS, jobUpdated);
+        if (user && user.email === jobUpdated.user.email) {
+          const id = client.cache.identify({
+            __typename: "Job",
+            id: jobFragment.id,
+          });
+          client.cache.evict({ id, fieldName: "user" });
+        } else {
+          removeJobFromCache(client.cache, jobFragment.id);
         }
       }
     },

@@ -16,9 +16,9 @@ import { getFragmentData } from "../../__generated__/fragment-masking";
 import { parseActivities } from "../../utils/parser";
 import { useNotification } from "../../hooks";
 import { Activity, ActivityType } from "../../types";
-import { JOB_BY_ID, USER_JOBS } from "../../graphql/queries";
+import { JOB_BY_ID } from "../../graphql/queries";
 import { UPDATE_JOB } from "../../graphql/mutations";
-import { FULL_JOB_DETAILS, JOB_DETAILS } from "../../graphql/fragments";
+import { FULL_JOB_DETAILS } from "../../graphql/fragments";
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -77,63 +77,6 @@ const EditJobForm = () => {
           "success"
         );
         navigate("/");
-      }
-    },
-    update: (cache, result) => {
-      const updatedJob = result.data ? result.data.updateJob : null;
-      if (updatedJob) {
-        const {
-          __typename,
-          companyName,
-          companyWebsite,
-          jobTitle,
-          jobPostingLink,
-          contactName,
-          contactTitle,
-          activities,
-          notes,
-          id,
-        } = getFragmentData(FULL_JOB_DETAILS, updatedJob);
-        const { latestActivity, dateCreated, lastModified } = updatedJob;
-        const simpleJobUpdate = {
-          __typename,
-          companyName,
-          jobTitle,
-          latestActivity,
-          dateCreated,
-          lastModified,
-          id,
-        };
-        const detailedJobUpdate = {
-          __typename,
-          companyName,
-          companyWebsite,
-          jobTitle,
-          jobPostingLink,
-          contactName,
-          contactTitle,
-          activities,
-          notes,
-          id,
-        };
-
-        cache.updateQuery({ query: USER_JOBS }, (data) => {
-          if (data) {
-            return {
-              allJobs: data.allJobs.map((job) => {
-                const unmaskedJob = getFragmentData(JOB_DETAILS, job);
-                return unmaskedJob.id !== id ? unmaskedJob : simpleJobUpdate;
-              }),
-            };
-          }
-        });
-        cache.updateQuery({ query: JOB_BY_ID, variables: { id } }, (data) => {
-          if (data) {
-            return {
-              getJob: detailedJobUpdate,
-            };
-          }
-        });
       }
     },
   });

@@ -5,7 +5,20 @@ export const JOB_ADDED = gql(`#graphql
     jobAdded {
       ...JobDetails
       user {
-        id
+        email
+      }
+    }
+  }
+`);
+
+export const JOB_UPDATED = gql(`#graphql
+  subscription jobUpdated {
+    jobUpdated {
+      ...FullJobDetails
+      latestActivity
+      dateCreated
+      lastModified
+      user {
         email
       }
     }

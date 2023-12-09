@@ -68,7 +68,7 @@ const AddJobForm = () => {
     update: (cache, result) => {
       const addedJob = result.data ? result.data.addJob : null;
       if (addedJob) {
-        addJobToCache(cache, getFragmentData(JOB_DETAILS, addedJob));
+        addJobToCache(cache, addedJob);
       }
     },
   });
