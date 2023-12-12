@@ -69,6 +69,7 @@ export const typeDef = gql`
   extend type Subscription {
     jobAdded: Job!
     jobUpdated: Job!
+    jobDeleted: Job!
   }
 `;
 
@@ -268,6 +269,9 @@ export const resolvers: Resolvers = {
       }
 
       await job.deleteOne();
+
+      void pubsub.publish("JOB_DELETED", { jobDeleted: job });
+
       return job;
     },
   },
@@ -280,6 +284,11 @@ export const resolvers: Resolvers = {
     jobUpdated: {
       subscribe: () => ({
         [Symbol.asyncIterator]: () => pubsub.asyncIterator(["JOB_UPDATED"]),
+      }),
+    },
+    jobDeleted: {
+      subscribe: () => ({
+        [Symbol.asyncIterator]: () => pubsub.asyncIterator(["JOB_DELETED"]),
       }),
     },
   },
