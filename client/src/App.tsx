@@ -19,7 +19,7 @@ import { getFragmentData } from "./__generated__";
 import { addJobToCache, removeJobFromCache } from "./utils/cache";
 import { useClearUser, useInitialization, useNotification } from "./hooks";
 import { useAppSelector } from "./app/hooks";
-import { JOB_ADDED, JOB_UPDATED } from "./graphql/subscriptions";
+import { JOB_ADDED, JOB_DELETED, JOB_UPDATED } from "./graphql/subscriptions";
 import { FULL_JOB_DETAILS, JOB_DETAILS } from "./graphql/fragments";
 
 const App = () => {
@@ -39,10 +39,14 @@ const App = () => {
     onData: ({ data, client }) => {
       if (data.data) {
         const jobAdded = data.data.jobAdded;
+        const jobFragment = getFragmentData(JOB_DETAILS, jobAdded);
         if (user && user.email === jobAdded.user.email) {
+          notifyWith(
+            `New job '${jobFragment.jobTitle} at ${jobFragment.companyName}' was added`,
+            "success"
+          );
           addJobToCache(client.cache, jobAdded);
         } else {
-          const jobFragment = getFragmentData(JOB_DETAILS, jobAdded);
           removeJobFromCache(client.cache, jobFragment.id);
         }
       }
@@ -56,6 +60,10 @@ const App = () => {
         const jobUpdated = data.data.jobUpdated;
         const jobFragment = getFragmentData(FULL_JOB_DETAILS, jobUpdated);
         if (user && user.email === jobUpdated.user.email) {
+          notifyWith(
+            `Job '${jobFragment.jobTitle} at ${jobFragment.companyName}' was updated`,
+            "success"
+          );
           const id = client.cache.identify({
             __typename: "Job",
             id: jobFragment.id,
@@ -63,6 +71,22 @@ const App = () => {
           client.cache.evict({ id, fieldName: "user" });
         } else {
           removeJobFromCache(client.cache, jobFragment.id);
+        }
+      }
+    },
+  });
+
+  useSubscription(JOB_DELETED, {
+    skip: !user,
+    onData: ({ data, client }) => {
+      if (data.data) {
+        const jobDeleted = data.data.jobDeleted;
+        removeJobFromCache(client.cache, jobDeleted.id);
+        if (user && user.email === jobDeleted.user.email) {
+          notifyWith(
+            `Job '${jobDeleted.jobTitle} at ${jobDeleted.companyName}' was deleted`,
+            "success"
+          );
         }
       }
     },

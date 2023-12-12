@@ -24,3 +24,16 @@ export const JOB_UPDATED = gql(`#graphql
     }
   }
 `);
+
+export const JOB_DELETED = gql(`#graphql
+  subscription jobDeleted {
+    jobDeleted {
+      companyName
+      jobTitle
+      id
+      user {
+        email
+      }
+    }
+  }
+`);
