@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AlertColor } from "@mui/material";
 
 import { AppDispatch } from "../../app/store";
-import { AlertColor } from "@mui/material";
 
 interface NotificationState {
   message: string | null;

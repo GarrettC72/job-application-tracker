@@ -24,9 +24,9 @@ import Pagination from "../../features/pagination/Pagination";
 import Filter from "../../features/pagination/Filter";
 import DeleteJobDialog from "./DeleteJobDialog";
 
-const StyledTableCell = styled(TableCell)(() => ({
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "lightgray",
+    backgroundColor: theme.palette.action.hover,
     textAlign: "center",
   },
   [`&.${tableCellClasses.body}`]: {

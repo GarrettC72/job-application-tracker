@@ -30,3 +30,5 @@ export interface SimpleJob {
   dateCreated: string;
   lastModified: string;
 }
+
+export type ColorMode = "light" | "dark";

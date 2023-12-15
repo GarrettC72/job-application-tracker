@@ -1,7 +1,15 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Button, Container, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  CssBaseline,
+  ThemeProvider,
+  Typography,
+  createTheme,
+} from "@mui/material";
 import { Logout } from "@mui/icons-material";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useApolloClient, useSubscription } from "@apollo/client";
 
 import {
@@ -21,6 +29,7 @@ import { useClearUser, useInitialization, useNotification } from "./hooks";
 import { useAppSelector } from "./app/hooks";
 import { JOB_ADDED, JOB_DELETED, JOB_UPDATED } from "./graphql/subscriptions";
 import { FULL_JOB_DETAILS, JOB_DETAILS } from "./graphql/fragments";
+import ColorMode from "./features/appearance/ColorMode";
 
 const App = () => {
   const initializeState = useInitialization();
@@ -28,7 +37,10 @@ const App = () => {
   const notifyWith = useNotification();
   const client = useApolloClient();
 
-  const user = useAppSelector(({ user }) => user);
+  const { user, appearance } = useAppSelector(({ user, appearance }) => ({
+    user,
+    appearance,
+  }));
 
   useEffect(() => {
     initializeState();
@@ -92,50 +104,78 @@ const App = () => {
     },
   });
 
+  const theme = useMemo(
+    () =>
+      createTheme({
+        palette: {
+          mode: appearance.colorMode,
+        },
+      }),
+    [appearance.colorMode]
+  );
+
   const logout = () => {
     clearUser();
     notifyWith("Logged out", "info");
     client.resetStore();
   };
 
-  if (!user) {
-    return (
+  const getAppContent = () => {
+    if (!user) {
+      return (
+        <>
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <ColorMode />
+          </Box>
+          <Notification />
+          <Routes>
+            <Route path="/" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/verify" element={<VerificationPage />} />
+            <Route path="/forgot" element={<ForgotPasswordPage />} />
+            <Route path="/reset" element={<ResetPasswordPage />} />
+            <Route path="*" element={<Navigate replace to="/" />} />
+          </Routes>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <Box sx={{ display: "flex" }}>
+            <Typography variant="body1" sx={{ flexGrow: 1 }}>
+              {user.name} logged in{" "}
+              <Button
+                onClick={logout}
+                variant="contained"
+                startIcon={<Logout />}
+              >
+                Logout
+              </Button>
+            </Typography>
+            <ColorMode />
+          </Box>
+          <Notification />
+          <Routes>
+            <Route path="/" element={<JobListPage />} />
+            <Route path="/create" element={<AddJobPage />} />
+            <Route path="/jobs/:id" element={<EditJobPage />} />
+            <Route path="*" element={<Navigate replace to="/" />} />
+          </Routes>
+        </>
+      );
+    }
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <Container maxWidth="xl">
         <Typography variant="h3" gutterBottom align="center" sx={{ mt: 2 }}>
           Job Application Tracker
         </Typography>
-        <Notification />
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/verify" element={<VerificationPage />} />
-          <Route path="/forgot" element={<ForgotPasswordPage />} />
-          <Route path="/reset" element={<ResetPasswordPage />} />
-          <Route path="*" element={<Navigate replace to="/" />} />
-        </Routes>
+        {getAppContent()}
       </Container>
-    );
-  }
-
-  return (
-    <Container maxWidth="xl">
-      <Typography variant="h3" gutterBottom align="center" sx={{ mt: 2 }}>
-        Job Application Tracker
-      </Typography>
-      <Notification />
-      <Typography variant="body1" align="center">
-        {user.name} logged in{" "}
-        <Button onClick={logout} variant="contained" startIcon={<Logout />}>
-          Logout
-        </Button>
-      </Typography>
-      <Routes>
-        <Route path="/" element={<JobListPage />} />
-        <Route path="/create" element={<AddJobPage />} />
-        <Route path="/jobs/:id" element={<EditJobPage />} />
-        <Route path="*" element={<Navigate replace to="/" />} />
-      </Routes>
-    </Container>
+    </ThemeProvider>
   );
 };
 
