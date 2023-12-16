@@ -2,6 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 import { ColorMode } from "../../types";
 import { AppDispatch } from "../../app/store";
+import storageService from "../../services/storage";
 
 interface AppearanceState {
   colorMode: ColorMode;
@@ -25,7 +26,20 @@ export const { set } = appearanceSlice.actions;
 
 export const setColorMode = (useDarkMode: boolean) => {
   return async (dispatch: AppDispatch) => {
-    dispatch(set(useDarkMode ? "dark" : "light"));
+    const colorMode = useDarkMode ? "dark" : "light";
+    storageService.saveColorMode(colorMode);
+    dispatch(set(colorMode));
+  };
+};
+
+export const initializeColorMode = (prefersDarkMode: boolean) => {
+  return async (dispatch: AppDispatch) => {
+    const colorMode = storageService.loadColorMode();
+    if (!colorMode) {
+      dispatch(set(prefersDarkMode ? "dark" : "light"));
+    } else {
+      dispatch(set(colorMode));
+    }
   };
 };
 

@@ -1,10 +1,11 @@
 import { useCallback, useState } from "react";
-import { AlertColor } from "@mui/material";
+import { AlertColor, useMediaQuery } from "@mui/material";
 import { useQuery } from "@apollo/client";
 
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { clearUser, initializeUser } from "../features/user/userSlice";
 import { setNotification } from "../features/notification/notificationSlice";
+import { initializeColorMode } from "../features/appearance/appearanceSlice";
 import { USER_JOBS } from "../graphql/queries";
 import { JOB_DETAILS } from "../graphql/fragments";
 import { convertDate } from "../utils/parser";
@@ -12,10 +13,12 @@ import { getFragmentData } from "../__generated__/fragment-masking";
 
 export const useInitialization = () => {
   const dispatch = useAppDispatch();
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   return useCallback(() => {
     dispatch(initializeUser());
-  }, [dispatch]);
+    dispatch(initializeColorMode(prefersDarkMode));
+  }, [dispatch, prefersDarkMode]);
 };
 
 export const useClearUser = () => {

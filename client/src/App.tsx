@@ -37,10 +37,8 @@ const App = () => {
   const notifyWith = useNotification();
   const client = useApolloClient();
 
-  const { user, appearance } = useAppSelector(({ user, appearance }) => ({
-    user,
-    appearance,
-  }));
+  const user = useAppSelector(({ user }) => user);
+  const colorMode = useAppSelector(({ appearance }) => appearance.colorMode);
 
   useEffect(() => {
     initializeState();
@@ -108,10 +106,10 @@ const App = () => {
     () =>
       createTheme({
         palette: {
-          mode: appearance.colorMode,
+          mode: colorMode,
         },
       }),
-    [appearance.colorMode]
+    [colorMode]
   );
 
   const logout = () => {
