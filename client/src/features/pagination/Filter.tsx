@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { clearFilter, setFilter } from "./paginationSlice";
 
 const Filter = () => {
-  const { filter } = useAppSelector(({ pagination }) => pagination);
+  const filter = useAppSelector(({ pagination }) => pagination.filter);
   const dispatch = useAppDispatch();
 
   return (

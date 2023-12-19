@@ -5,7 +5,10 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setPage, setRowsPerPage } from "./paginationSlice";
 
 const Pagination = () => {
-  const { page, rowsPerPage } = useAppSelector(({ pagination }) => pagination);
+  const page = useAppSelector(({ pagination }) => pagination.page);
+  const rowsPerPage = useAppSelector(
+    ({ pagination }) => pagination.rowsPerPage
+  );
   const { count } = useJobsQuery();
   const dispatch = useAppDispatch();
 
