@@ -19,6 +19,7 @@ import { Activity, ActivityType } from "../../types";
 import { JOB_BY_ID } from "../../graphql/queries";
 import { UPDATE_JOB } from "../../graphql/mutations";
 import { FULL_JOB_DETAILS } from "../../graphql/fragments";
+import { useAppSelector } from "../../app/hooks";
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -43,6 +44,7 @@ const EditJobForm = () => {
   const [notes, setNotes] = useState("");
 
   const jobId = useParams().id ?? "";
+  const colorMode = useAppSelector(({ appearance }) => appearance.colorMode);
   const notifyWith = useNotification();
   const navigate = useNavigate();
 
@@ -226,6 +228,9 @@ const EditJobForm = () => {
                 }
                 error={activity.date === ""}
                 required
+                sx={{
+                  colorScheme: colorMode,
+                }}
               />
             </div>
           </div>

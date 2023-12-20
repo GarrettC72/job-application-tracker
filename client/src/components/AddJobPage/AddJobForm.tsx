@@ -17,6 +17,7 @@ import { useField, useNotification } from "../../hooks";
 import { Activity, ActivityType } from "../../types";
 import { CREATE_JOB } from "../../graphql/mutations";
 import { JOB_DETAILS } from "../../graphql/fragments";
+import { useAppSelector } from "../../app/hooks";
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -42,6 +43,7 @@ const AddJobForm = () => {
 
   const notifyWith = useNotification();
   const navigate = useNavigate();
+  const colorMode = useAppSelector(({ appearance }) => appearance.colorMode);
 
   const [createJob] = useMutation(CREATE_JOB, {
     onError: (error) => {
@@ -192,6 +194,9 @@ const AddJobForm = () => {
                 }
                 error={activity.date === ""}
                 required
+                sx={{
+                  colorScheme: colorMode,
+                }}
               />
             </div>
           </div>
