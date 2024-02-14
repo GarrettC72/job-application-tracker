@@ -1,7 +1,7 @@
-import { useMutation } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client";
 import { Box, Button, Grid, TextField } from "@mui/material";
 
-import { useField, useJobsQuery, useNotification } from "../../hooks";
+import { useField, useNotification } from "../../hooks";
 import { useAppDispatch } from "../../app/hooks";
 import { loginUser } from "../../features/user/userSlice";
 import { LOGIN } from "../../graphql/mutations";
@@ -13,7 +13,7 @@ const LoginForm = () => {
   const dispatch = useAppDispatch();
   const notifyWith = useNotification();
 
-  const { refetch: refetchUserJobs } = useJobsQuery();
+  const client = useApolloClient();
   const [login] = useMutation(LOGIN, {
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
@@ -23,7 +23,7 @@ const LoginForm = () => {
       if (user) {
         dispatch(loginUser(user));
         notifyWith("Successfully logged in!", "success");
-        refetchUserJobs();
+        client.resetStore();
       }
     },
   });
