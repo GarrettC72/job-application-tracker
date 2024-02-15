@@ -1,15 +1,17 @@
 import { TablePagination } from "@mui/material";
 
-import { useJobsQuery } from "../../hooks";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setPage, setRowsPerPage } from "./paginationSlice";
 
-const Pagination = () => {
+interface Props {
+  count: number;
+}
+
+const Pagination = ({ count }: Props) => {
   const page = useAppSelector(({ pagination }) => pagination.page);
   const rowsPerPage = useAppSelector(
     ({ pagination }) => pagination.rowsPerPage
   );
-  const { count } = useJobsQuery();
   const dispatch = useAppDispatch();
 
   return (

@@ -1,6 +1,9 @@
 import { ApolloCache } from "@apollo/client";
 
-import { FragmentType, getFragmentData } from "../__generated__";
+import {
+  FragmentType,
+  getFragmentData,
+} from "../__generated__/fragment-masking";
 import { USER_JOBS } from "../graphql/queries";
 import { JOB_DETAILS } from "../graphql/fragments";
 
