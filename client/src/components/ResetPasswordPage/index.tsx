@@ -5,6 +5,7 @@ import { Typography } from "@mui/material";
 
 import { VERIFY_PASSWORD_RESET } from "../../graphql/queries";
 import ResetPasswordForm from "./ResetPasswordForm";
+import Loading from "../Loading";
 
 const ResetPasswordPage = () => {
   const [status, setStatus] = useState("LOADING");
@@ -44,11 +45,7 @@ const ResetPasswordPage = () => {
   }
 
   if (passwordResetResult.loading) {
-    return (
-      <Typography variant="body1" align="center">
-        Loading...
-      </Typography>
-    );
+    return <Loading />;
   }
 
   return (

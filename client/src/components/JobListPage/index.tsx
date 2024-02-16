@@ -26,6 +26,7 @@ import useJobs from "../../hooks/useJobs";
 import Pagination from "../../features/pagination/Pagination";
 import Filter from "../../features/pagination/Filter";
 import DeleteJobDialog from "./DeleteJobDialog";
+import Loading from "../Loading";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -88,11 +89,7 @@ const JobListPage = () => {
   );
 
   if (loading) {
-    return (
-      <Typography variant="body1" align="center">
-        Loading...
-      </Typography>
-    );
+    return <Loading />;
   }
 
   const count = filteredJobs.length;

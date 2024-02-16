@@ -118,7 +118,7 @@ const start = async () => {
   if (config.NODE_ENV === "production") {
     app.use(express.static("dist"));
     app.get("*", (_req, res) => {
-      res.sendFile(path.join(__dirname, "..", "..", "dist", "index.html"));
+      res.sendFile(path.join(__dirname, "../../dist", "index.html"));
     });
   }
 

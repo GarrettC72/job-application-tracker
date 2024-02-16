@@ -4,6 +4,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Button, Typography } from "@mui/material";
 
 import { RESEND_VERIFICATION, VERIFY_USER } from "../../graphql/mutations";
+import Loading from "../Loading";
 
 const VerificationPage = () => {
   const [status, setStatus] = useState("LOADING");
@@ -67,11 +68,7 @@ const VerificationPage = () => {
   }
 
   if (status === "LOADING") {
-    return (
-      <Typography variant="body1" align="center">
-        Loading...
-      </Typography>
-    );
+    return <Loading />;
   }
 
   return (

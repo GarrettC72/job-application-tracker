@@ -9,7 +9,6 @@ import {
   InputLabel,
   MenuItem,
   TextField,
-  Typography,
 } from "@mui/material";
 
 import { getFragmentData } from "../../__generated__/fragment-masking";
@@ -20,6 +19,7 @@ import { JOB_BY_ID } from "../../graphql/queries";
 import { UPDATE_JOB } from "../../graphql/mutations";
 import { FULL_JOB_DETAILS } from "../../graphql/fragments";
 import { useAppSelector } from "../../app/hooks";
+import Loading from "../Loading";
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -121,11 +121,7 @@ const EditJobForm = () => {
   };
 
   if (job.loading) {
-    return (
-      <Typography variant="body1" align="center">
-        Loading...
-      </Typography>
-    );
+    return <Loading />;
   }
 
   return (
