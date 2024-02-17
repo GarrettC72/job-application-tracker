@@ -1,5 +1,6 @@
 import { useApolloClient, useMutation } from "@apollo/client";
 import { Box, Button, Grid, TextField } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import { useField, useNotification } from "../../hooks";
 import { useAppDispatch } from "../../app/hooks";
@@ -12,6 +13,7 @@ const LoginForm = () => {
 
   const dispatch = useAppDispatch();
   const notifyWith = useNotification();
+  const navigate = useNavigate();
 
   const client = useApolloClient();
   const [login] = useMutation(LOGIN, {
@@ -24,6 +26,7 @@ const LoginForm = () => {
         dispatch(loginUser(user));
         notifyWith("Successfully logged in!", "success");
         client.resetStore();
+        navigate("/", { replace: true });
       }
     },
   });

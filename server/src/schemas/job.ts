@@ -103,7 +103,14 @@ export const resolvers: Resolvers = {
       }
     },
     getJob: async (_root, { id }, { currentUser }) => {
-      const user = verifyCurrentUser(currentUser);
+      let user;
+
+      try {
+        user = verifyCurrentUser(currentUser);
+      } catch {
+        return null;
+      }
+
       const job = await Job.findById(id).populate<{ user: UserDetails }>(
         "user",
         { email: 1 }

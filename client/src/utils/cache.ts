@@ -4,7 +4,7 @@ import {
   FragmentType,
   getFragmentData,
 } from "../__generated__/fragment-masking";
-import { USER_JOBS } from "../graphql/queries";
+import { GET_USER_JOBS } from "../graphql/queries";
 import { JOB_DETAILS } from "../graphql/fragments";
 
 export const addJobToCache = (
@@ -21,7 +21,7 @@ export const addJobToCache = (
   };
   const jobFragment = getFragmentData(JOB_DETAILS, addedJob);
 
-  cache.updateQuery({ query: USER_JOBS }, (data) => {
+  cache.updateQuery({ query: GET_USER_JOBS }, (data) => {
     if (data) {
       const updatedJobs = data.allJobs.slice();
       updatedJobs.unshift(addedJob);

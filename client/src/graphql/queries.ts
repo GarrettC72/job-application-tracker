@@ -9,7 +9,7 @@ export const VERIFY_PASSWORD_RESET = gql(`#graphql
   }
 `);
 
-export const USER_JOBS = gql(`#graphql
+export const GET_USER_JOBS = gql(`#graphql
   query userJobs {
     allJobs {
       ...JobDetails
@@ -17,7 +17,7 @@ export const USER_JOBS = gql(`#graphql
   }
 `);
 
-export const CURRENT_USER = gql(`#graphql
+export const GET_CURRENT_USER = gql(`#graphql
   query currentUser {
     me {
       email
@@ -28,8 +28,8 @@ export const CURRENT_USER = gql(`#graphql
   }
 `);
 
-export const JOB_BY_ID = gql(`#graphql
-  query jobById($id: ID!) {
+export const GET_JOB = gql(`#graphql
+  query getJob($id: ID!) {
     getJob(id: $id) {
       ...FullJobDetails
     }

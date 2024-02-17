@@ -6,7 +6,9 @@ import LoginPage from "./LoginPage";
 import ResetPasswordPage from "./ResetPasswordPage";
 import SignUpPage from "./SignUpPage";
 import VerificationPage from "./VerificationPage";
-import Notification from "../features/notification/Notification";
+import AuthenticatedLayout from "./layouts/AuthenticatedLayout";
+import UnauthenticatedLayout from "./layouts/UnauthenticatedLayout";
+import SharedLayout from "./layouts/SharedLayout";
 
 export {
   LoginPage,
@@ -17,5 +19,7 @@ export {
   JobListPage,
   AddJobPage,
   EditJobPage,
-  Notification,
+  AuthenticatedLayout,
+  UnauthenticatedLayout,
+  SharedLayout,
 };
