@@ -15,12 +15,13 @@ import {
   UnauthenticatedLayout,
   SharedLayout,
 } from "./components";
-import { getFragmentData } from "./__generated__";
+import { getFragmentData } from "./__generated__/fragment-masking";
 import { addJobToCache, removeJobFromCache } from "./utils/cache";
-import { useInitialization, useNotification } from "./hooks";
 import { useAppSelector } from "./app/hooks";
 import { JOB_ADDED, JOB_DELETED, JOB_UPDATED } from "./graphql/subscriptions";
 import { FULL_JOB_DETAILS, JOB_DETAILS } from "./graphql/fragments";
+import useInitialization from "./hooks/useInitialization";
+import useNotification from "./hooks/useNotification";
 
 const App = () => {
   const initializeState = useInitialization();

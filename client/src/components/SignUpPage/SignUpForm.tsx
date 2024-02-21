@@ -2,8 +2,9 @@ import { useMutation } from "@apollo/client";
 import { Box, Button, Grid, TextField } from "@mui/material";
 
 import { isEmail } from "../../utils/parser";
-import { useField, useNotification } from "../../hooks";
 import { REGISTER } from "../../graphql/mutations";
+import useField from "../../hooks/useField";
+import useNotification from "../../hooks/useNotification";
 
 const SignUpForm = () => {
   const { reset: resetEmail, ...email } = useField("email");

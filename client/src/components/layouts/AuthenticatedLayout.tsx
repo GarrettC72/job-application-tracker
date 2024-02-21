@@ -3,8 +3,9 @@ import { Box, Button, Typography } from "@mui/material";
 import { Navigate, Outlet } from "react-router-dom";
 import { useApolloClient } from "@apollo/client";
 
-import { useClearUser, useNotification } from "../../hooks";
+import useClearUser from "../../hooks/useClearUser";
 import useCurrentUser from "../../hooks/useCurrentUser";
+import useNotification from "../../hooks/useNotification";
 import storageService from "../../services/storage";
 import Notification from "../../features/notification/Notification";
 import ColorMode from "../../features/appearance/ColorMode";

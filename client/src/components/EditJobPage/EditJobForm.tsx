@@ -13,12 +13,12 @@ import {
 
 import { getFragmentData } from "../../__generated__/fragment-masking";
 import { parseActivities } from "../../utils/parser";
-import { useNotification } from "../../hooks";
 import { Activity, ActivityType } from "../../types";
 import { GET_JOB } from "../../graphql/queries";
 import { UPDATE_JOB } from "../../graphql/mutations";
 import { FULL_JOB_DETAILS } from "../../graphql/fragments";
 import { useAppSelector } from "../../app/hooks";
+import useNotification from "../../hooks/useNotification";
 import Loading from "../Loading";
 
 interface ActivityTypeOption {

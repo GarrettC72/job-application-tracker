@@ -13,11 +13,12 @@ import {
 
 import { getFragmentData } from "../../__generated__/fragment-masking";
 import { addJobToCache } from "../../utils/cache";
-import { useField, useNotification } from "../../hooks";
 import { Activity, ActivityType } from "../../types";
 import { CREATE_JOB } from "../../graphql/mutations";
 import { JOB_DETAILS } from "../../graphql/fragments";
 import { useAppSelector } from "../../app/hooks";
+import useField from "../../hooks/useField";
+import useNotification from "../../hooks/useNotification";
 
 interface ActivityTypeOption {
   value: ActivityType;

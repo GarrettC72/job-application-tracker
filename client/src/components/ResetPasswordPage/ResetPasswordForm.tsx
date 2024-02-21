@@ -1,8 +1,10 @@
 import { useMutation } from "@apollo/client";
 import { Box, Button, Grid, TextField } from "@mui/material";
 
-import { useClearUser, useField, useNotification } from "../../hooks";
 import { EDIT_PASSWORD } from "../../graphql/mutations";
+import useClearUser from "../../hooks/useClearUser";
+import useField from "../../hooks/useField";
+import useNotification from "../../hooks/useNotification";
 
 interface Props {
   token: string;
