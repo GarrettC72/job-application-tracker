@@ -103,7 +103,7 @@ export const resolvers: Resolvers = {
       }
     },
     getJob: async (_root, { id }, { currentUser }) => {
-      let user;
+      let user, job;
 
       try {
         user = verifyCurrentUser(currentUser);
@@ -111,10 +111,22 @@ export const resolvers: Resolvers = {
         return null;
       }
 
-      const job = await Job.findById(id).populate<{ user: UserDetails }>(
-        "user",
-        { email: 1 }
-      );
+      try {
+        job = await Job.findById(id).populate<{ user: UserDetails }>("user", {
+          email: 1,
+        });
+      } catch (err) {
+        if (err instanceof Error) {
+          if (err.name === "CastError") {
+            throw new GraphQLError("Job could not be found", {
+              extensions: { code: "JOB_NOT_FOUND" },
+            });
+          }
+        }
+        throw new GraphQLError("Encountered issue while retrieving job", {
+          extensions: { code: "UNKNOWN_ERROR" },
+        });
+      }
 
       if (!job) {
         throw new GraphQLError("Job could not be found", {

@@ -9,6 +9,7 @@ import {
   InputLabel,
   MenuItem,
   TextField,
+  Typography,
 } from "@mui/material";
 
 import { getFragmentData } from "../../__generated__/fragment-masking";
@@ -48,7 +49,7 @@ const EditJobForm = () => {
   const notifyWith = useNotification();
   const navigate = useNavigate();
 
-  const job = useQuery(GET_JOB, {
+  const { loading, error } = useQuery(GET_JOB, {
     skip: !jobId,
     variables: { id: jobId },
     onCompleted: (data) => {
@@ -120,8 +121,58 @@ const EditJobForm = () => {
     setActivities(activitiesToUpdate);
   };
 
-  if (job.loading) {
+  if (loading) {
     return <Loading />;
+  }
+
+  if (error) {
+    const graphqlError = error.graphQLErrors[0];
+    if (
+      graphqlError.extensions.code &&
+      typeof graphqlError.extensions.code === "string"
+    ) {
+      const errorCode = graphqlError.extensions.code;
+      if (errorCode === "JOB_NOT_FOUND") {
+        return (
+          <div style={{ textAlign: "center" }}>
+            <Typography variant="h4" gutterBottom>
+              Job Not Found
+            </Typography>
+            <Typography variant="body1">
+              We could not find the job you're looking for.
+              <br />
+              <Link to="/">Go to the Home Page</Link>
+            </Typography>
+          </div>
+        );
+      }
+      if (errorCode === "NOT_PERMITTED") {
+        return (
+          <div style={{ textAlign: "center" }}>
+            <Typography variant="h4" gutterBottom>
+              Access Forbidden
+            </Typography>
+            <Typography variant="body1">
+              You do not have permission to view this job.
+              <br />
+              <Link to="/">Go to the Home Page</Link>
+            </Typography>
+          </div>
+        );
+      }
+    }
+    return (
+      <div style={{ textAlign: "center" }}>
+        <Typography variant="h4" gutterBottom>
+          Server Issues
+        </Typography>
+        <Typography variant="body1">
+          There is currently an issue with the server.
+          <br />
+          Please try again later.
+        </Typography>
+      </div>
+    );
   }
 
   return (
