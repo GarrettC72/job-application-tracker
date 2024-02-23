@@ -34,7 +34,7 @@ interface JobsTableContainerProps {
 
 interface JobsTableRowProps {
   job: SimpleJob;
-  setSelectedJob: () => void;
+  onClick: () => void;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -58,7 +58,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const JobsTableRow = ({ job, setSelectedJob }: JobsTableRowProps) => {
+const JobsTableRow = ({ job, onClick }: JobsTableRowProps) => {
   return (
     <StyledTableRow>
       <StyledTableCell>{job.companyName}</StyledTableCell>
@@ -77,7 +77,7 @@ const JobsTableRow = ({ job, setSelectedJob }: JobsTableRowProps) => {
         </Button>{" "}
         |{" "}
         <Button
-          onClick={() => setSelectedJob()}
+          onClick={onClick}
           variant="contained"
           startIcon={<DeleteForever />}
         >
@@ -111,7 +111,7 @@ const JobsTableContainer = ({
             {jobs.map((job) => (
               <JobsTableRow
                 job={job}
-                setSelectedJob={() => setSelectedJob(job)}
+                onClick={() => setSelectedJob(job)}
                 key={job.id}
               />
             ))}

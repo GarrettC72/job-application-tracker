@@ -60,8 +60,8 @@ const VerificationPage = () => {
         <Typography variant="body1">
           This verification link is invalid.
           <br />
-          Make sure the verification link is correct or create a new account{" "}
-          <Link to="/signup">here</Link>.
+          Please make sure the verification link is correct or click{" "}
+          <Link to="/signup">here</Link> create a new account.
         </Typography>
       </div>
     );
@@ -117,8 +117,8 @@ const VerificationPage = () => {
           <Typography variant="body1">
             This verification link is invalid.
             <br />
-            Make sure the verification link is correct or create a new account{" "}
-            <Link to="/signup">here</Link>.
+            Please make sure the verification link is correct or click{" "}
+            <Link to="/signup">here</Link> create a new account.
           </Typography>
         </>
       )}
