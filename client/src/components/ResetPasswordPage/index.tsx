@@ -36,8 +36,8 @@ const ResetPasswordPage = () => {
         message="This password reset link is invalid."
         callToAction={
           <>
-            Please make sure the link is correct or request a new link{" "}
-            <Link to="/forgot">here</Link>.
+            Please make sure the URL is correct or click{" "}
+            <Link to="/forgot">here</Link> to request a new link.
           </>
         }
       />

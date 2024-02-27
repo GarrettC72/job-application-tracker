@@ -5,9 +5,10 @@ interface Props {
   title: string;
   message: string;
   callToAction: ReactNode;
+  children?: ReactNode;
 }
 
-const ServerResponse = ({ title, message, callToAction }: Props) => {
+const ServerResponse = ({ title, message, callToAction, children }: Props) => {
   return (
     <div style={{ textAlign: "center" }}>
       <Typography variant="h4" gutterBottom>
@@ -18,6 +19,7 @@ const ServerResponse = ({ title, message, callToAction }: Props) => {
         <br />
         {callToAction}
       </Typography>
+      {children}
     </div>
   );
 };

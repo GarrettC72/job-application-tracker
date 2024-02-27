@@ -1,10 +1,11 @@
 import { useMutation } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Button, Typography } from "@mui/material";
+import { Button } from "@mui/material";
 
 import { RESEND_VERIFICATION, VERIFY_USER } from "../../graphql/mutations";
 import Loading from "../Loading";
+import ServerResponse from "../ServerResponse";
 
 const VerificationPage = () => {
   const [status, setStatus] = useState("LOADING");
@@ -51,19 +52,18 @@ const VerificationPage = () => {
     }
   };
 
-  if (!token) {
+  if (!token || status === "INVALID_TOKEN" || status === "USER_NOT_FOUND") {
     return (
-      <div style={{ textAlign: "center" }}>
-        <Typography variant="h4" gutterBottom>
-          Invalid Verification Link
-        </Typography>
-        <Typography variant="body1">
-          This verification link is invalid.
-          <br />
-          Please make sure the verification link is correct or click{" "}
-          <Link to="/signup">here</Link> create a new account.
-        </Typography>
-      </div>
+      <ServerResponse
+        title="Invalid Verification Link"
+        message="This verification link is invalid."
+        callToAction={
+          <>
+            Please make sure the URL is correct or click{" "}
+            <Link to="/signup">here</Link> to create a new account.
+          </>
+        }
+      />
     );
   }
 
@@ -71,77 +71,48 @@ const VerificationPage = () => {
     return <Loading />;
   }
 
-  return (
-    <div style={{ textAlign: "center" }}>
-      {status === "VERIFIED" && (
+  return status === "VERIFIED" ? (
+    <ServerResponse
+      title="Email Successfully Verified"
+      message="Your email is now verified."
+      callToAction={
         <>
-          <Typography variant="h4" gutterBottom>
-            Email Successfully Verified
-          </Typography>
-          <Typography variant="body1">
-            Your email is now verified.
-            <br />
-            Click <Link to="/">here</Link> to login.
-          </Typography>
+          Please click <Link to="/">here</Link> to login.
         </>
-      )}
-      {status === "SENT_NEW_VERIFICATION" && (
+      }
+    />
+  ) : status === "SENT_NEW_VERIFICATION" ? (
+    <ServerResponse
+      title="Expired Verification Link"
+      message="A new verification link has been sent."
+      callToAction="Please check your email."
+    />
+  ) : status === "ALREADY_VERIFIED" ? (
+    <ServerResponse
+      title="Email Already Verified"
+      message="Your email has already been verified."
+      callToAction={
         <>
-          <Typography variant="h4" gutterBottom>
-            Expired Verification Link
-          </Typography>
-          <Typography variant="body1">
-            A new verification link has been sent.
-            <br />
-            Please check your email.
-          </Typography>
+          Please click <Link to="/">here</Link> to login.
         </>
-      )}
-      {status === "ALREADY_VERIFIED" && (
-        <>
-          <Typography variant="h4" gutterBottom>
-            Email Already Verified
-          </Typography>
-          <Typography variant="body1">
-            Your email has already been verified.
-            <br />
-            Click <Link to="/">here</Link> to login.
-          </Typography>
-        </>
-      )}
-      {(status === "INVALID_TOKEN" || status === "USER_NOT_FOUND") && (
-        <>
-          <Typography variant="h4" gutterBottom>
-            Invalid Verification Link
-          </Typography>
-          <Typography variant="body1">
-            This verification link is invalid.
-            <br />
-            Please make sure the verification link is correct or click{" "}
-            <Link to="/signup">here</Link> create a new account.
-          </Typography>
-        </>
-      )}
-      {status === "EXPIRED_TOKEN" && (
-        <>
-          <Typography variant="h4" gutterBottom>
-            Expired Verification Link
-          </Typography>
-          <Typography variant="body1">
-            This verification link is expired.
-            <br />
-            Please click the button below to receive a new verification link.
-          </Typography>
-          <Button
-            variant="contained"
-            onClick={sendNewVerification}
-            sx={{ mt: 2 }}
-          >
-            Resend verification email
-          </Button>
-        </>
-      )}
-    </div>
+      }
+    />
+  ) : status === "EXPIRED_TOKEN" ? (
+    <ServerResponse
+      title="Expired Verification Link"
+      message="This verification link is expired."
+      callToAction="Please click the button below to receive a new verification link."
+    >
+      <Button variant="contained" onClick={sendNewVerification} sx={{ mt: 2 }}>
+        Resend verification email
+      </Button>
+    </ServerResponse>
+  ) : (
+    <ServerResponse
+      title="Server Issues"
+      message="There is currently an issue with the server."
+      callToAction="Please try again later."
+    />
   );
 };
 
