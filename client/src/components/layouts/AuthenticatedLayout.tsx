@@ -10,15 +10,26 @@ import storageService from "../../services/storage";
 import Notification from "../../features/notification/Notification";
 import ColorMode from "../../features/appearance/ColorMode";
 import Loading from "../Loading";
+import ServerResponse from "../ServerResponse";
 
 const AuthenticatedLayout = () => {
-  const { currentUser, loading } = useCurrentUser();
+  const { currentUser, loading, error } = useCurrentUser();
   const clearUser = useClearUser();
   const notifyWith = useNotification();
   const client = useApolloClient();
 
   if (loading) {
     return <Loading />;
+  }
+
+  if (error) {
+    return (
+      <ServerResponse
+        title="Server Issues"
+        message="There is currently an issue with the server."
+        callToAction="Please try again later."
+      />
+    );
   }
 
   if (!currentUser) {
