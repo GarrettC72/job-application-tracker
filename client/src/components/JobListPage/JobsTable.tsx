@@ -25,6 +25,7 @@ import useNotification from "../../hooks/useNotification";
 import Pagination from "../../features/pagination/Pagination";
 import Loading from "../Loading";
 import DeleteJobDialog from "./DeleteJobDialog";
+import ServerResponse from "../ServerResponse";
 
 interface JobsTableContainerProps {
   jobs: SimpleJob[];
@@ -125,7 +126,7 @@ const JobsTableContainer = ({
 
 const JobsTable = () => {
   const [selectedJob, setSelectedJob] = useState<SimpleJob | null>(null);
-  const { jobs, loading } = useJobs();
+  const { jobs, loading, error } = useJobs();
   const { page, rowsPerPage, filter } = useAppSelector(
     ({ pagination }) => pagination
   );
@@ -164,6 +165,16 @@ const JobsTable = () => {
 
   if (loading) {
     return <Loading />;
+  }
+
+  if (error) {
+    return (
+      <ServerResponse
+        title="Server Issues"
+        message="There is currently an issue with the server."
+        callToAction="Please try again later."
+      />
+    );
   }
 
   const count = filteredJobs.length;
