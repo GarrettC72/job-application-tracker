@@ -9,7 +9,6 @@ import {
   InputLabel,
   MenuItem,
   TextField,
-  Typography,
 } from "@mui/material";
 
 import { getFragmentData } from "../../__generated__/fragment-masking";
@@ -21,6 +20,7 @@ import { FULL_JOB_DETAILS } from "../../graphql/fragments";
 import { useAppSelector } from "../../app/hooks";
 import useNotification from "../../hooks/useNotification";
 import Loading from "../Loading";
+import ServerResponse from "../ServerResponse";
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -134,44 +134,29 @@ const EditJobForm = () => {
       const errorCode = graphqlError.extensions.code;
       if (errorCode === "JOB_NOT_FOUND") {
         return (
-          <div style={{ textAlign: "center" }}>
-            <Typography variant="h4" gutterBottom>
-              Job Not Found
-            </Typography>
-            <Typography variant="body1">
-              We could not find the job you're looking for.
-              <br />
-              <Link to="/">Go to the Home Page</Link>
-            </Typography>
-          </div>
+          <ServerResponse
+            title="Job Not Found"
+            message="We could not find the job you're looking for."
+            callToAction={<Link to="/">Go to the Home Page</Link>}
+          />
         );
       }
       if (errorCode === "NOT_PERMITTED") {
         return (
-          <div style={{ textAlign: "center" }}>
-            <Typography variant="h4" gutterBottom>
-              Access Forbidden
-            </Typography>
-            <Typography variant="body1">
-              You do not have permission to view this job.
-              <br />
-              <Link to="/">Go to the Home Page</Link>
-            </Typography>
-          </div>
+          <ServerResponse
+            title="Access Forbidden"
+            message="You do not have permission to view this job."
+            callToAction={<Link to="/">Go to the Home Page</Link>}
+          />
         );
       }
     }
     return (
-      <div style={{ textAlign: "center" }}>
-        <Typography variant="h4" gutterBottom>
-          Server Issues
-        </Typography>
-        <Typography variant="body1">
-          There is currently an issue with the server.
-          <br />
-          Please try again later.
-        </Typography>
-      </div>
+      <ServerResponse
+        title="Server Issues"
+        message="There is currently an issue with the server."
+        callToAction="Please try again later."
+      />
     );
   }
 
