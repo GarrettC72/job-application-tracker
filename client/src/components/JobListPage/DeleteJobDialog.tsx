@@ -12,9 +12,16 @@ interface Props {
   dialogText: string;
   onClose: () => void;
   onConfirm: () => void;
+  disabled: boolean;
 }
 
-const DeleteJobDialog = ({ open, dialogText, onClose, onConfirm }: Props) => {
+const DeleteJobDialog = ({
+  open,
+  dialogText,
+  onClose,
+  onConfirm,
+  disabled,
+}: Props) => {
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Delete this job?</DialogTitle>
@@ -23,7 +30,9 @@ const DeleteJobDialog = ({ open, dialogText, onClose, onConfirm }: Props) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={onConfirm}>Confirm</Button>
+        <Button onClick={onConfirm} disabled={disabled}>
+          Confirm
+        </Button>
       </DialogActions>
     </Dialog>
   );

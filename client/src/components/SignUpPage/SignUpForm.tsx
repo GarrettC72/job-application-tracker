@@ -16,7 +16,7 @@ const SignUpForm = () => {
 
   const notifyWith = useNotification();
 
-  const [register] = useMutation(REGISTER, {
+  const [register, { loading }] = useMutation(REGISTER, {
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
@@ -92,7 +92,7 @@ const SignUpForm = () => {
           required
           error={lastName.value === ""}
         />
-        <Button type="submit" variant="contained">
+        <Button type="submit" variant="contained" disabled={loading}>
           Sign up
         </Button>
       </Grid>

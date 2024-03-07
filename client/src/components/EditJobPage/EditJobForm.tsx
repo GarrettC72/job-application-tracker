@@ -67,7 +67,7 @@ const EditJobForm = () => {
       }
     },
   });
-  const [updateJob] = useMutation(UPDATE_JOB, {
+  const [updateJob, { loading: updateLoading }] = useMutation(UPDATE_JOB, {
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
@@ -305,7 +305,7 @@ const EditJobForm = () => {
       <Button type="button" component={Link} to="/" variant="contained">
         Cancel
       </Button>
-      <Button type="submit" variant="contained">
+      <Button type="submit" variant="contained" disabled={updateLoading}>
         Save
       </Button>
     </Box>

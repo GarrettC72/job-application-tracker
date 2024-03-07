@@ -17,7 +17,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
 
   const client = useApolloClient();
-  const [login] = useMutation(LOGIN, {
+  const [login, { loading }] = useMutation(LOGIN, {
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
@@ -60,7 +60,7 @@ const LoginForm = () => {
       <Grid container direction="column">
         <TextField label="Email" {...email} required />
         <TextField label="Password" {...password} required />
-        <Button type="submit" variant="contained">
+        <Button type="submit" variant="contained" disabled={loading}>
           Login
         </Button>
       </Grid>

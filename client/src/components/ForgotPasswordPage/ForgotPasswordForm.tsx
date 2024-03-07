@@ -11,7 +11,7 @@ const ForgotPasswordForm = () => {
 
   const notifyWith = useNotification();
 
-  const [sendPasswordReset] = useMutation(SEND_PASSWORD_RESET, {
+  const [sendPasswordReset, { loading }] = useMutation(SEND_PASSWORD_RESET, {
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
@@ -53,7 +53,7 @@ const ForgotPasswordForm = () => {
           sx={{ mt: 2 }}
           error={!isEmail(email.value)}
         />
-        <Button type="submit" variant="contained">
+        <Button type="submit" variant="contained" disabled={loading}>
           Send reset email
         </Button>
       </Grid>

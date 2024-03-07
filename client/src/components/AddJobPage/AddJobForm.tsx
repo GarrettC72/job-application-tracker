@@ -46,7 +46,7 @@ const AddJobForm = () => {
   const navigate = useNavigate();
   const colorMode = useAppSelector(({ appearance }) => appearance.colorMode);
 
-  const [createJob] = useMutation(CREATE_JOB, {
+  const [createJob, { loading }] = useMutation(CREATE_JOB, {
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
@@ -239,7 +239,7 @@ const AddJobForm = () => {
       <Button type="button" component={Link} to="/" variant="contained">
         Cancel
       </Button>
-      <Button type="submit" variant="contained">
+      <Button type="submit" variant="contained" disabled={loading}>
         Save
       </Button>
     </Box>

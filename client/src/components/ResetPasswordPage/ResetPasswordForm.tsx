@@ -19,7 +19,7 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
   const clearUser = useClearUser();
   const notifyWith = useNotification();
 
-  const [updatePassword] = useMutation(EDIT_PASSWORD, {
+  const [updatePassword, { loading }] = useMutation(EDIT_PASSWORD, {
     onError: (error) => {
       const verifyError = error.graphQLErrors[0];
       if (
@@ -82,7 +82,7 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
           required
           error={confirmPassword.value.length < 8}
         />
-        <Button type="submit" variant="contained">
+        <Button type="submit" variant="contained" disabled={loading}>
           Set New Password
         </Button>
       </Grid>

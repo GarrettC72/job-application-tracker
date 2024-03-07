@@ -133,7 +133,7 @@ const JobsTable = () => {
 
   const notifyWith = useNotification();
 
-  const [deleteJob] = useMutation(DELETE_JOB, {
+  const [deleteJob, { loading: deleteLoading }] = useMutation(DELETE_JOB, {
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
@@ -202,6 +202,7 @@ const JobsTable = () => {
             ? `Delete job '${selectedJob.jobTitle} at ${selectedJob.companyName}'?`
             : ""
         }
+        disabled={deleteLoading}
       />
     </>
   );
