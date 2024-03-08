@@ -88,7 +88,7 @@ const VerificationPage = () => {
       setStatus("VERIFIED");
     },
   });
-  const [resend] = useMutation(RESEND_VERIFICATION, {
+  const [resend, { loading }] = useMutation(RESEND_VERIFICATION, {
     onError: (error) => {
       const verifyError = error.graphQLErrors[0];
       if (
@@ -142,6 +142,7 @@ const VerificationPage = () => {
           variant="contained"
           onClick={sendNewVerification}
           sx={{ mt: 2 }}
+          disabled={loading}
         >
           Resend verification email
         </Button>

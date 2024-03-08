@@ -13,15 +13,11 @@ import {
 import { DeleteForever, Edit } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
-import { useMutation } from "@apollo/client";
 
 import { SimpleJob } from "../../types";
 import { useAppSelector } from "../../app/hooks";
 import { filterJobs, getJobsPage } from "../../utils/jobs";
-import { removeJobFromCache } from "../../utils/cache";
-import { DELETE_JOB } from "../../graphql/mutations";
 import useJobs from "../../hooks/useJobs";
-import useNotification from "../../hooks/useNotification";
 import Pagination from "../../features/pagination/Pagination";
 import Loading from "../Loading";
 import DeleteJobDialog from "./DeleteJobDialog";
@@ -131,29 +127,6 @@ const JobsTable = () => {
     ({ pagination }) => pagination
   );
 
-  const notifyWith = useNotification();
-
-  const [deleteJob, { loading: deleteLoading }] = useMutation(DELETE_JOB, {
-    onError: (error) => {
-      notifyWith(error.graphQLErrors[0].message, "error");
-    },
-    onCompleted: (result) => {
-      const job = result.deleteJob;
-      if (job) {
-        notifyWith(
-          `Job '${job.jobTitle} at ${job.companyName}' successfully deleted`,
-          "success"
-        );
-      }
-    },
-    update: (cache, result) => {
-      const deletedJob = result.data ? result.data.deleteJob : null;
-      if (deletedJob) {
-        removeJobFromCache(cache, deletedJob.id);
-      }
-    },
-  });
-
   const filteredJobs = useMemo(
     () => (jobs ? filterJobs(jobs, filter) : []),
     [jobs, filter]
@@ -179,13 +152,6 @@ const JobsTable = () => {
 
   const count = filteredJobs.length;
 
-  const handleDelete = (job: SimpleJob | null) => {
-    if (job) {
-      deleteJob({ variables: { id: job.id } });
-    }
-    setSelectedJob(null);
-  };
-
   return (
     <>
       <JobsTableContainer
@@ -193,17 +159,7 @@ const JobsTable = () => {
         count={count}
         setSelectedJob={setSelectedJob}
       />
-      <DeleteJobDialog
-        open={selectedJob !== null}
-        onClose={() => setSelectedJob(null)}
-        onConfirm={() => handleDelete(selectedJob)}
-        dialogText={
-          selectedJob
-            ? `Delete job '${selectedJob.jobTitle} at ${selectedJob.companyName}'?`
-            : ""
-        }
-        disabled={deleteLoading}
-      />
+      <DeleteJobDialog job={selectedJob} onClose={() => setSelectedJob(null)} />
     </>
   );
 };
