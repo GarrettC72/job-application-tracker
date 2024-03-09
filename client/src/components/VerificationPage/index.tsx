@@ -1,11 +1,11 @@
 import { useMutation } from "@apollo/client";
 import { ReactNode, useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Button } from "@mui/material";
 
-import { RESEND_VERIFICATION, VERIFY_USER } from "../../graphql/mutations";
+import { VERIFY_USER } from "../../graphql/mutations";
 import Loading from "../Loading";
 import ServerResponse from "../ServerResponse";
+import ResendVerificationButton from "./ResendVerificationButton";
 
 interface VerificationResponseProps {
   title: string;
@@ -88,20 +88,6 @@ const VerificationPage = () => {
       setStatus("VERIFIED");
     },
   });
-  const [resend, { loading }] = useMutation(RESEND_VERIFICATION, {
-    onError: (error) => {
-      const verifyError = error.graphQLErrors[0];
-      if (
-        verifyError.extensions.code &&
-        typeof verifyError.extensions.code === "string"
-      ) {
-        setStatus(verifyError.extensions.code);
-      }
-    },
-    onCompleted: () => {
-      setStatus("SENT_NEW_VERIFICATION");
-    },
-  });
   const token = searchParams.get("token");
 
   useEffect(() => {
@@ -109,12 +95,6 @@ const VerificationPage = () => {
       verify({ variables: { token } });
     }
   }, [token, verify]);
-
-  const sendNewVerification = () => {
-    if (token) {
-      resend({ variables: { token } });
-    }
-  };
 
   if (!token) {
     return (
@@ -138,14 +118,7 @@ const VerificationPage = () => {
   return (
     <ServerResponse {...getVerificationResponseProps(status)}>
       {status === "EXPIRED_TOKEN" && (
-        <Button
-          variant="contained"
-          onClick={sendNewVerification}
-          sx={{ mt: 2 }}
-          disabled={loading}
-        >
-          Resend verification email
-        </Button>
+        <ResendVerificationButton token={token} setStatus={setStatus} />
       )}
     </ServerResponse>
   );

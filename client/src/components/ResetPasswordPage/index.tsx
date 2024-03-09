@@ -76,7 +76,7 @@ const ResetPasswordPage = () => {
   const [status, setStatus] = useState("LOADING");
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") ?? "";
-  const passwordResetResult = useQuery(VERIFY_PASSWORD_RESET, {
+  const { loading } = useQuery(VERIFY_PASSWORD_RESET, {
     skip: !token,
     variables: { token },
     onError: (error) => {
@@ -108,7 +108,7 @@ const ResetPasswordPage = () => {
     );
   }
 
-  if (passwordResetResult.loading) {
+  if (loading) {
     return <Loading />;
   }
 

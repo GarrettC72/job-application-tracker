@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { DeleteForever, Edit } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { SimpleJob } from "../../types";
 import { useAppSelector } from "../../app/hooks";
@@ -26,7 +26,7 @@ import ServerResponse from "../ServerResponse";
 interface JobsTableContainerProps {
   jobs: SimpleJob[];
   count: number;
-  setSelectedJob: Dispatch<SetStateAction<SimpleJob | null>>;
+  setSelectedJob: React.Dispatch<React.SetStateAction<SimpleJob | null>>;
 }
 
 interface JobsTableRowProps {
