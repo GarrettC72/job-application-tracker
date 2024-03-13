@@ -15,7 +15,11 @@ const ColorMode = () => {
     <FormGroup>
       <FormControlLabel
         control={
-          <Switch checked={colorMode === "dark"} onChange={handleChange} />
+          <Switch
+            checked={colorMode === "dark"}
+            onChange={handleChange}
+            id="color-mode-switch"
+          />
         }
         label="Dark Mode"
         labelPlacement="start"

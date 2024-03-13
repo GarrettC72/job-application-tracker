@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "@apollo/client";
+import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@apollo/client";
 import { Add, Remove } from "@mui/icons-material";
 import {
   Box,
@@ -11,16 +11,20 @@ import {
   TextField,
 } from "@mui/material";
 
-import { getFragmentData } from "../../__generated__/fragment-masking";
+import {
+  FragmentType,
+  getFragmentData,
+} from "../../__generated__/fragment-masking";
 import { parseActivities } from "../../utils/parser";
 import { Activity, ActivityType } from "../../types";
-import { GET_JOB } from "../../graphql/queries";
 import { UPDATE_JOB } from "../../graphql/mutations";
 import { FULL_JOB_DETAILS } from "../../graphql/fragments";
 import { useAppSelector } from "../../app/hooks";
 import useNotification from "../../hooks/useNotification";
-import Loading from "../Loading";
-import ServerResponse from "../ServerResponse";
+
+interface Props {
+  jobFragment: FragmentType<typeof FULL_JOB_DETAILS>;
+}
 
 interface ActivityTypeOption {
   value: ActivityType;
@@ -34,39 +38,23 @@ const activityTypeOptions: ActivityTypeOption[] = Object.values(
   label: v.toString(),
 }));
 
-const EditJobForm = () => {
-  const [companyName, setCompanyName] = useState("");
-  const [companyWebsite, setCompanyWebsite] = useState("");
-  const [jobTitle, setJobTitle] = useState("");
-  const [jobPostingLink, setJobPostingLink] = useState("");
-  const [contactName, setContactName] = useState("");
-  const [contactTitle, setContactTitle] = useState("");
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [notes, setNotes] = useState("");
+const EditJobForm = ({ jobFragment }: Props) => {
+  const job = getFragmentData(FULL_JOB_DETAILS, jobFragment);
+  const [companyName, setCompanyName] = useState(job.companyName);
+  const [companyWebsite, setCompanyWebsite] = useState(job.companyWebsite);
+  const [jobTitle, setJobTitle] = useState(job.jobTitle);
+  const [jobPostingLink, setJobPostingLink] = useState(job.jobPostingLink);
+  const [contactName, setContactName] = useState(job.contactName);
+  const [contactTitle, setContactTitle] = useState(job.contactTitle);
+  const [activities, setActivities] = useState<Activity[]>(
+    parseActivities(job.activities)
+  );
+  const [notes, setNotes] = useState(job.notes);
 
-  const jobId = useParams().id ?? "";
   const colorMode = useAppSelector(({ appearance }) => appearance.colorMode);
   const notifyWith = useNotification();
   const navigate = useNavigate();
 
-  const { loading, error } = useQuery(GET_JOB, {
-    skip: !jobId,
-    variables: { id: jobId },
-    onCompleted: (data) => {
-      const jobData = data.getJob;
-      if (jobData) {
-        const unmaskedJob = getFragmentData(FULL_JOB_DETAILS, jobData);
-        setCompanyName(unmaskedJob.companyName);
-        setCompanyWebsite(unmaskedJob.companyWebsite);
-        setJobTitle(unmaskedJob.jobTitle);
-        setJobPostingLink(unmaskedJob.jobPostingLink);
-        setContactName(unmaskedJob.contactName);
-        setContactTitle(unmaskedJob.contactTitle);
-        setActivities(parseActivities(unmaskedJob.activities));
-        setNotes(unmaskedJob.notes);
-      }
-    },
-  });
   const [updateJob, { loading: updateLoading }] = useMutation(UPDATE_JOB, {
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
@@ -96,7 +84,7 @@ const EditJobForm = () => {
       activities,
       notes,
     };
-    updateJob({ variables: { id: jobId, jobParams } });
+    updateJob({ variables: { id: job.id, jobParams } });
   };
 
   const addAcitivity = () => {
@@ -120,45 +108,6 @@ const EditJobForm = () => {
     activitiesToUpdate.splice(index, 1);
     setActivities(activitiesToUpdate);
   };
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    const graphqlError = error.graphQLErrors[0];
-    if (
-      graphqlError.extensions.code &&
-      typeof graphqlError.extensions.code === "string"
-    ) {
-      const errorCode = graphqlError.extensions.code;
-      if (errorCode === "JOB_NOT_FOUND") {
-        return (
-          <ServerResponse
-            title="Job Not Found"
-            message="We could not find the job you're looking for."
-            callToAction={<Link to="/">Go to the Home Page</Link>}
-          />
-        );
-      }
-      if (errorCode === "NOT_PERMITTED") {
-        return (
-          <ServerResponse
-            title="Access Forbidden"
-            message="You do not have permission to view this job."
-            callToAction={<Link to="/">Go to the Home Page</Link>}
-          />
-        );
-      }
-    }
-    return (
-      <ServerResponse
-        title="Server Issues"
-        message="There is currently an issue with the server."
-        callToAction="Please try again later."
-      />
-    );
-  }
 
   return (
     <Box
