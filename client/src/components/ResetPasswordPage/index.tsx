@@ -14,7 +14,7 @@ interface ResetResponseProps {
   callToAction: ReactNode;
 }
 
-const getResetResponseProps = (status: string): ResetResponseProps => {
+const getResetResponseProps = (status: string): ResetResponseProps | null => {
   switch (status) {
     case "UPDATED_PASSWORD":
       return {
@@ -64,11 +64,7 @@ const getResetResponseProps = (status: string): ResetResponseProps => {
         ),
       };
     default:
-      return {
-        title: "Server Issues",
-        message: "There is currently an issue with the server.",
-        callToAction: "Please try again later.",
-      };
+      return null;
   }
 };
 
@@ -123,7 +119,13 @@ const ResetPasswordPage = () => {
     );
   }
 
-  return <ServerResponse {...getResetResponseProps(status)} />;
+  const responseProps = getResetResponseProps(status);
+
+  return responseProps === null ? (
+    <ServerResponse />
+  ) : (
+    <ServerResponse {...responseProps} />
+  );
 };
 
 export default ResetPasswordPage;

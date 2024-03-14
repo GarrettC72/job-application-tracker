@@ -40,23 +40,11 @@ const EditJobPage = () => {
         );
       }
     }
-    return (
-      <ServerResponse
-        title="Server Issues"
-        message="There is currently an issue with the server."
-        callToAction="Please try again later."
-      />
-    );
+    return <ServerResponse />;
   }
 
   if (!job) {
-    return (
-      <ServerResponse
-        title="Server Issues"
-        message="There is currently an issue with the server."
-        callToAction="Please try again later."
-      />
-    );
+    return <ServerResponse />;
   }
 
   return (

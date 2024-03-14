@@ -15,7 +15,7 @@ interface VerificationResponseProps {
 
 const getVerificationResponseProps = (
   status: string
-): VerificationResponseProps => {
+): VerificationResponseProps | null => {
   switch (status) {
     case "VERIFIED":
       return {
@@ -63,11 +63,7 @@ const getVerificationResponseProps = (
         ),
       };
     default:
-      return {
-        title: "Server Issues",
-        message: "There is currently an issue with the server.",
-        callToAction: "Please try again later.",
-      };
+      return null;
   }
 };
 
@@ -115,8 +111,12 @@ const VerificationPage = () => {
     return <Loading />;
   }
 
-  return (
-    <ServerResponse {...getVerificationResponseProps(status)}>
+  const responseProps = getVerificationResponseProps(status);
+
+  return responseProps === null ? (
+    <ServerResponse />
+  ) : (
+    <ServerResponse {...responseProps}>
       {status === "EXPIRED_TOKEN" && (
         <ResendVerificationButton token={token} setStatus={setStatus} />
       )}

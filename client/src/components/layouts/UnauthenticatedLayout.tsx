@@ -15,13 +15,7 @@ const UnauthenticatedLayout = () => {
   }
 
   if (error) {
-    return (
-      <ServerResponse
-        title="Server Issues"
-        message="There is currently an issue with the server."
-        callToAction="Please try again later."
-      />
-    );
+    return <ServerResponse />;
   }
 
   if (currentUser !== null && currentUser !== undefined) {
