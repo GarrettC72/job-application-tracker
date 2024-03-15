@@ -1,5 +1,5 @@
 import { useApolloClient, useMutation } from "@apollo/client";
-import { Box, Button, Grid, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, Grid, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import { useAppDispatch } from "../../app/hooks";
@@ -54,15 +54,33 @@ const LoginForm = () => {
         width: "fit-content",
         mx: "auto",
         "& .MuiTextField-root": { mb: 2 },
-        "& .MuiButton-root": { mb: 2 },
       }}
     >
       <Grid container direction="column">
         <TextField label="Email" {...email} required />
         <TextField label="Password" {...password} required />
-        <Button type="submit" variant="contained" disabled={loading}>
-          Login
-        </Button>
+        <Box sx={{ position: "relative", mb: 2 }}>
+          <Button
+            sx={{ width: "100%" }}
+            type="submit"
+            variant="contained"
+            disabled={loading}
+          >
+            Login
+          </Button>
+          {loading && (
+            <CircularProgress
+              size={24}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                marginTop: "-12px",
+                marginLeft: "-12px",
+              }}
+            />
+          )}
+        </Box>
       </Grid>
       <hr />
     </Box>

@@ -5,6 +5,7 @@ import { Add, Remove } from "@mui/icons-material";
 import {
   Box,
   Button,
+  CircularProgress,
   Input,
   InputLabel,
   MenuItem,
@@ -55,7 +56,7 @@ const EditJobForm = ({ jobFragment }: Props) => {
   const notifyWith = useNotification();
   const navigate = useNavigate();
 
-  const [updateJob, { loading: updateLoading }] = useMutation(UPDATE_JOB, {
+  const [updateJob, { loading }] = useMutation(UPDATE_JOB, {
     onError: (error) => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
@@ -116,7 +117,6 @@ const EditJobForm = ({ jobFragment }: Props) => {
       sx={{
         "& .MuiTextField-root": { m: 1, width: "25ch" },
         "& .JobForm-textarea": { width: "50ch" },
-        "& .MuiButton-root": { m: 1 },
       }}
     >
       <div>
@@ -161,6 +161,7 @@ const EditJobForm = ({ jobFragment }: Props) => {
       </div>
       <Button
         type="button"
+        sx={{ m: 1 }}
         onClick={addAcitivity}
         variant="contained"
         startIcon={<Add />}
@@ -231,6 +232,7 @@ const EditJobForm = ({ jobFragment }: Props) => {
           </div>
           <Button
             type="button"
+            sx={{ m: 1 }}
             onClick={() => removeActivity(index)}
             variant="contained"
             startIcon={<Remove />}
@@ -251,12 +253,32 @@ const EditJobForm = ({ jobFragment }: Props) => {
           maxRows={5}
         />
       </div>
-      <Button type="button" component={Link} to="/" variant="contained">
+      <Button
+        sx={{ m: 1 }}
+        type="button"
+        component={Link}
+        to="/"
+        variant="contained"
+      >
         Cancel
       </Button>
-      <Button type="submit" variant="contained" disabled={updateLoading}>
-        Save
-      </Button>
+      <Box sx={{ m: 1, display: "inline-block", position: "relative" }}>
+        <Button type="submit" variant="contained" disabled={loading}>
+          Save
+        </Button>
+        {loading && (
+          <CircularProgress
+            size={24}
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              marginTop: "-12px",
+              marginLeft: "-12px",
+            }}
+          />
+        )}
+      </Box>
     </Box>
   );
 };

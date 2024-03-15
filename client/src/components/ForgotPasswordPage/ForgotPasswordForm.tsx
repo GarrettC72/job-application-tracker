@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Box, Button, Grid, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, Grid, TextField } from "@mui/material";
 
 import { isEmail } from "../../utils/parser";
 import { SEND_PASSWORD_RESET } from "../../graphql/mutations";
@@ -42,7 +42,6 @@ const ForgotPasswordForm = () => {
         width: "fit-content",
         mx: "auto",
         "& .MuiTextField-root": { mb: 2 },
-        "& .MuiButton-root": { mb: 2 },
       }}
     >
       <Grid container direction="column">
@@ -53,9 +52,28 @@ const ForgotPasswordForm = () => {
           sx={{ mt: 2 }}
           error={!isEmail(email.value)}
         />
-        <Button type="submit" variant="contained" disabled={loading}>
-          Send reset email
-        </Button>
+        <Box sx={{ mb: 2, position: "relative" }}>
+          <Button
+            sx={{ width: "100%" }}
+            type="submit"
+            variant="contained"
+            disabled={loading}
+          >
+            Send reset email
+          </Button>
+          {loading && (
+            <CircularProgress
+              size={24}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                marginTop: "-12px",
+                marginLeft: "-12px",
+              }}
+            />
+          )}
+        </Box>
       </Grid>
       <hr />
     </Box>

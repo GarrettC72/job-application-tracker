@@ -1,6 +1,8 @@
 import { useMutation } from "@apollo/client";
 import {
+  Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -62,9 +64,23 @@ const DeleteJobDialog = ({ job, onClose }: Props) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleDelete} disabled={loading}>
-          Confirm
-        </Button>
+        <Box sx={{ position: "relative" }}>
+          <Button onClick={handleDelete} disabled={loading}>
+            Confirm
+          </Button>
+          {loading && (
+            <CircularProgress
+              size={24}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                marginTop: "-12px",
+                marginLeft: "-12px",
+              }}
+            />
+          )}
+        </Box>
       </DialogActions>
     </Dialog>
   );

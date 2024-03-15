@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Button } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 
 import { RESEND_VERIFICATION } from "../../graphql/mutations";
 
@@ -31,14 +31,27 @@ const ResendVerificationButton = ({ token, setStatus }: Props) => {
   };
 
   return (
-    <Button
-      variant="contained"
-      onClick={sendNewVerification}
-      sx={{ mt: 2 }}
-      disabled={loading}
-    >
-      Resend verification email
-    </Button>
+    <Box sx={{ mt: 2, position: "relative" }}>
+      <Button
+        variant="contained"
+        onClick={sendNewVerification}
+        disabled={loading}
+      >
+        Resend verification email
+      </Button>
+      {loading && (
+        <CircularProgress
+          size={24}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            marginTop: "-12px",
+            marginLeft: "-12px",
+          }}
+        />
+      )}
+    </Box>
   );
 };
 
