@@ -121,7 +121,6 @@ const AddJobForm = () => {
       sx={{
         "& .MuiTextField-root": { m: 1, width: "25ch" },
         "& .JobForm-textarea": { width: "50ch" },
-        // "& .MuiButton-root": { m: 1 },
       }}
     >
       <div>
@@ -186,7 +185,12 @@ const AddJobForm = () => {
               ))}
             </TextField>
             <div style={{ margin: "8px" }}>
-              <InputLabel htmlFor={`job-date-input-${index}`}>Date</InputLabel>
+              <InputLabel
+                sx={{ color: activity.date === "" ? "error.main" : undefined }}
+                htmlFor={`job-date-input-${index}`}
+              >
+                Date
+              </InputLabel>
               <Input
                 name="date"
                 type="date"
@@ -199,6 +203,7 @@ const AddJobForm = () => {
                 required
                 sx={{
                   colorScheme: colorMode,
+                  color: activity.date === "" ? "error.main" : undefined,
                 }}
               />
             </div>
