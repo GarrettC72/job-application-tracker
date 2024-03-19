@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { Job } from "../types";
+import { ActivityType, Job } from "../types";
 
 const schema = new mongoose.Schema<Job>({
   companyName: {
@@ -26,8 +26,15 @@ const schema = new mongoose.Schema<Job>({
   },
   activities: [
     {
-      date: String,
-      activityType: String,
+      date: {
+        type: String,
+        required: true,
+      },
+      activityType: {
+        type: String,
+        enum: ActivityType,
+        required: true,
+      },
       description: String,
     },
   ],
