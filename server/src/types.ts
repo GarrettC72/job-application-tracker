@@ -1,15 +1,15 @@
 import { Model, Types } from "mongoose";
 
 export enum ActivityType {
-  Applied = "Submitted Job Application",
-  SentResume = "Sent Resume",
-  OnlineAssessment = "Took Online Assessment",
-  Interviewed = "Interviewed For Job",
-  Rejected = "Rejected",
-  ClosedFilled = "Job Closed/Filled",
-  ReceivedOffer = "Received Job Offer",
-  AcceptedOffer = "Accepted Job Offer",
-  DeclinedOffer = "Declined Job Offer",
+  APPLIED = "Submitted Job Application",
+  SENT_RESUME = "Sent Resume",
+  ONLINE_ASSESSMENT = "Took Online Assessment",
+  INTERVIEWED = "Interviewed For Job",
+  REJECTED = "Rejected",
+  CLOSED_FILLED = "Job Closed/Filled",
+  RECEIVED_OFFER = "Received Job Offer",
+  ACCEPTED_OFFER = "Accepted Job Offer",
+  DECLINED_OFFER = "Declined Job Offer",
 }
 
 export interface Activity {

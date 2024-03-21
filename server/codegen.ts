@@ -7,6 +7,9 @@ const config: CodegenConfig = {
       config: {
         useIndexSignature: true,
         contextType: "../types#MyContext",
+        enumValues: {
+          ActivityType: "../types#ActivityType",
+        },
       },
       plugins: ["typescript", "typescript-resolvers"],
     },
