@@ -57,13 +57,12 @@ const start = async () => {
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
       {
-        /* eslint-disable @typescript-eslint/require-await */
         async serverWillStart() {
-          return {
+          return Promise.resolve({
             async drainServer() {
               await serverCleanup.dispose();
             },
-          };
+          });
         },
       },
       landingPage,
