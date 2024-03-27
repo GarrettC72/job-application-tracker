@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-import { User, UserMethods, UserModel } from "../types";
+import { User } from "../types";
 
-const schema = new mongoose.Schema<User, UserModel, UserMethods>({
+const schema = new mongoose.Schema<User>({
   email: {
     type: String,
     required: true,
@@ -26,8 +26,4 @@ const schema = new mongoose.Schema<User, UserModel, UserMethods>({
   },
 });
 
-schema.method("fullName", function fullName(): string {
-  return this.firstName + " " + this.lastName;
-});
-
-export default mongoose.model<User, UserModel>("User", schema);
+export default mongoose.model<User>("User", schema);

@@ -74,7 +74,7 @@ export const parseObjectIdParam = (
   field: string
 ): Types.ObjectId => {
   if (!param || !isObjectIdParam(param)) {
-    throw new Error(`Incorrect or missing ${field}:`);
+    throw new Error(`Incorrect or missing ${field}`);
   }
 
   return param;

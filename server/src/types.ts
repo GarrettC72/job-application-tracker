@@ -1,4 +1,4 @@
-import { Model, Types } from "mongoose";
+import { HydratedDocument, Types } from "mongoose";
 
 export enum ActivityType {
   APPLIED = "Submitted Job Application",
@@ -46,7 +46,6 @@ export type NewJob = Omit<
 >;
 
 export interface User {
-  _id: Types.ObjectId;
   id: string;
   email: string;
   passwordHash: string;
@@ -56,11 +55,7 @@ export interface User {
   latestPasswordChange: Date;
 }
 
-export interface UserMethods {
-  fullName(): string;
-}
-
-export type UserModel = Model<User, Record<string, never>, UserMethods>;
+export type UserDocument = HydratedDocument<User>;
 
 export enum TokenType {
   Verification = "verification",
@@ -81,6 +76,6 @@ export interface Token {
 }
 
 export interface MyContext {
-  currentUser?: InstanceType<UserModel> | null;
+  currentUser?: UserDocument | null;
   clientOrigin: string;
 }

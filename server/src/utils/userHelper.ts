@@ -1,7 +1,7 @@
 import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
-import { Token, TokenType } from "../types";
+import { Token, TokenType, UserDocument } from "../types";
 import { toToken } from "./parser";
 import config from "./config";
 import User from "../models/user";
@@ -97,7 +97,7 @@ export const getUser = async (
   param: string | Token,
   missingUserMessage: string,
   verified: boolean
-): Promise<InstanceType<typeof User>> => {
+): Promise<UserDocument> => {
   let user, invalidArgs;
 
   switch (typeof param) {
@@ -122,17 +122,17 @@ export const getUser = async (
 };
 
 export const verifyCurrentUser = (
-  currentUser: InstanceType<typeof User> | null | undefined
-): InstanceType<typeof User> => {
+  currentUser: UserDocument | null | undefined
+): UserDocument => {
   return verifyUser(currentUser, "Must be signed in", false, { currentUser });
 };
 
 export const verifyUser = (
-  user: InstanceType<typeof User> | null | undefined,
+  user: UserDocument | null | undefined,
   missingUserMessage: string,
   verified: boolean,
   invalidArgs: object
-): InstanceType<typeof User> => {
+): UserDocument => {
   if (!user) {
     throw new GraphQLError(missingUserMessage, {
       extensions: {

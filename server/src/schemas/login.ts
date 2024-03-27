@@ -71,7 +71,7 @@ export const resolvers: Resolvers = {
       return {
         token,
         email: user.email,
-        name: user.fullName(),
+        name: user.firstName + " " + user.lastName,
       };
     },
   },
