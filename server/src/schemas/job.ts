@@ -12,13 +12,13 @@ const pubsub = new PubSub();
 
 export const typeDef = gql`
   type Activity {
-    activityType: String!
+    activityType: ActivityType!
     date: String!
     description: String!
   }
 
   input ActivityInput {
-    activityType: String!
+    activityType: ActivityType!
     date: String!
     description: String!
   }
@@ -40,7 +40,7 @@ export const typeDef = gql`
     notes: String!
     dateCreated: Date!
     lastModified: Date!
-    latestActivity: String!
+    latestActivity: ActivityType
     user: UserDetails!
   }
 
@@ -77,7 +77,7 @@ export const resolvers: Resolvers = {
   Job: {
     latestActivity: (root) => {
       if (root.activities.length === 0) {
-        return "";
+        return null;
       }
 
       const activity = root.activities.reduce((result, activity) => {
