@@ -3,7 +3,7 @@ import { PubSub } from "graphql-subscriptions";
 import gql from "graphql-tag";
 
 import { Resolvers } from "../__generated__/resolvers-types";
-import { toNewJob } from "../utils/parser";
+import { parseDateParam, parseNonEmptyStringParam } from "../utils/parser";
 import { verifyCurrentUser } from "../utils/userHelper";
 import { UserDetails } from "../types";
 import Job from "../models/job";
@@ -146,10 +146,13 @@ export const resolvers: Resolvers = {
     addJob: async (_root, { jobParams }, { currentUser }) => {
       const user = verifyCurrentUser(currentUser);
       const date = new Date();
-      let newJob;
 
       try {
-        newJob = toNewJob(jobParams);
+        parseNonEmptyStringParam(jobParams.companyName, "Company Name");
+        parseNonEmptyStringParam(jobParams.jobTitle, "Job Title");
+        jobParams.activities.forEach((activity) => {
+          parseDateParam(activity.date, "Activity Date");
+        });
       } catch (error: unknown) {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {
@@ -170,7 +173,7 @@ export const resolvers: Resolvers = {
         }
       }
 
-      const job = new Job(newJob);
+      const job = new Job(jobParams);
 
       Object.assign(job, {
         dateCreated: date,
@@ -210,7 +213,6 @@ export const resolvers: Resolvers = {
       const user = verifyCurrentUser(currentUser);
       const date = new Date();
       const job = await Job.findById(id);
-      let jobUpdate;
 
       if (!job) {
         throw new GraphQLError("Job could not be found", {
@@ -224,7 +226,11 @@ export const resolvers: Resolvers = {
       }
 
       try {
-        jobUpdate = toNewJob(jobParams);
+        parseNonEmptyStringParam(jobParams.companyName, "Company Name");
+        parseNonEmptyStringParam(jobParams.jobTitle, "Job Title");
+        jobParams.activities.forEach((activity) => {
+          parseDateParam(activity.date, "Activity Date");
+        });
       } catch (error: unknown) {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {
@@ -245,7 +251,7 @@ export const resolvers: Resolvers = {
         }
       }
 
-      Object.assign(job, jobUpdate, { lastModified: date });
+      Object.assign(job, jobParams, { lastModified: date });
 
       try {
         await job.save();

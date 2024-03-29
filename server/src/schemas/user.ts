@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import gql from "graphql-tag";
 
 import { Resolvers } from "../__generated__/resolvers-types";
-import { parseEmail, parseNames, toToken } from "../utils/parser";
+import { parseEmail, parseNonEmptyStringParam, toToken } from "../utils/parser";
 import { sendEmail } from "../utils/mailer";
 import { getUser, handleTokenError } from "../utils/userHelper";
 import { EmailType, Token, TokenType } from "../types";
@@ -109,7 +109,8 @@ export const resolvers: Resolvers = {
     ) => {
       try {
         parseEmail(email);
-        parseNames(firstName, lastName);
+        parseNonEmptyStringParam(firstName, "First Name");
+        parseNonEmptyStringParam(lastName, "Last Name");
       } catch (error: unknown) {
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {

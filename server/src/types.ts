@@ -40,11 +40,6 @@ export interface Job {
   user: Types.ObjectId;
 }
 
-export type NewJob = Omit<
-  Job,
-  "id" | "dateCreated" | "lastModified" | "latestActivity" | "user"
->;
-
 export interface User {
   id: string;
   email: string;
