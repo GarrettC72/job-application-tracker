@@ -14,9 +14,15 @@ import { DeleteForever, Edit } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 
-import { SimpleJob } from "../../types";
+import {
+  FragmentType,
+  getFragmentData,
+} from "../../__generated__/fragment-masking";
+import { JOB_DETAILS } from "../../graphql/fragments";
 import { useAppSelector } from "../../app/hooks";
-import { filterJobs, getJobsPage } from "../../utils/jobs";
+import { filterJobs } from "../../utils/jobs";
+import { convertDate } from "../../utils/parser";
+import { ActivityType } from "../../types";
 import useJobs from "../../hooks/useJobs";
 import Pagination from "../../features/pagination/Pagination";
 import Loading from "../Loading";
@@ -24,13 +30,15 @@ import DeleteJobDialog from "./DeleteJobDialog";
 import ServerResponse from "../ServerResponse";
 
 interface JobsTableContainerProps {
-  jobs: SimpleJob[];
+  jobs: Array<FragmentType<typeof JOB_DETAILS>>;
   count: number;
-  setSelectedJob: React.Dispatch<React.SetStateAction<SimpleJob | null>>;
+  setSelectedJob: React.Dispatch<
+    React.SetStateAction<FragmentType<typeof JOB_DETAILS> | null>
+  >;
 }
 
 interface JobsTableRowProps {
-  job: SimpleJob;
+  job: FragmentType<typeof JOB_DETAILS>;
   onClick: () => void;
 }
 
@@ -56,17 +64,22 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const JobsTableRow = ({ job, onClick }: JobsTableRowProps) => {
+  const jobFragment = getFragmentData(JOB_DETAILS, job);
   return (
     <StyledTableRow>
-      <StyledTableCell>{job.companyName}</StyledTableCell>
-      <StyledTableCell>{job.jobTitle}</StyledTableCell>
-      <StyledTableCell>{job.latestActivity}</StyledTableCell>
-      <StyledTableCell>{job.dateCreated}</StyledTableCell>
-      <StyledTableCell>{job.lastModified}</StyledTableCell>
+      <StyledTableCell>{jobFragment.companyName}</StyledTableCell>
+      <StyledTableCell>{jobFragment.jobTitle}</StyledTableCell>
+      <StyledTableCell>
+        {jobFragment.latestActivity
+          ? ActivityType[jobFragment.latestActivity]
+          : ""}
+      </StyledTableCell>
+      <StyledTableCell>{convertDate(jobFragment.dateCreated)}</StyledTableCell>
+      <StyledTableCell>{convertDate(jobFragment.lastModified)}</StyledTableCell>
       <StyledTableCell>
         <Button
           component={Link}
-          to={`/jobs/${job.id}`}
+          to={`/jobs/${jobFragment.id}`}
           variant="contained"
           startIcon={<Edit />}
         >
@@ -109,7 +122,7 @@ const JobsTableContainer = ({
               <JobsTableRow
                 job={job}
                 onClick={() => setSelectedJob(job)}
-                key={job.id}
+                key={getFragmentData(JOB_DETAILS, job).id}
               />
             ))}
           </TableBody>
@@ -121,7 +134,9 @@ const JobsTableContainer = ({
 };
 
 const JobsTable = () => {
-  const [selectedJob, setSelectedJob] = useState<SimpleJob | null>(null);
+  const [selectedJob, setSelectedJob] = useState<FragmentType<
+    typeof JOB_DETAILS
+  > | null>(null);
   const { jobs, loading, error } = useJobs();
   const { page, rowsPerPage, filter } = useAppSelector(
     ({ pagination }) => pagination
@@ -132,7 +147,7 @@ const JobsTable = () => {
     [jobs, filter]
   );
   const jobsToDisplay = useMemo(
-    () => getJobsPage(filteredJobs, page, rowsPerPage),
+    () => filteredJobs.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
     [filteredJobs, page, rowsPerPage]
   );
 

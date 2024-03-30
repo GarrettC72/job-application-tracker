@@ -10,13 +10,17 @@ import {
   DialogTitle,
 } from "@mui/material";
 
+import {
+  FragmentType,
+  getFragmentData,
+} from "../../__generated__/fragment-masking";
+import { JOB_DETAILS } from "../../graphql/fragments";
 import { DELETE_JOB } from "../../graphql/mutations";
-import { SimpleJob } from "../../types";
 import { removeJobFromCache } from "../../utils/cache";
 import useNotification from "../../hooks/useNotification";
 
 interface Props {
-  job: SimpleJob | null;
+  job: FragmentType<typeof JOB_DETAILS> | null;
   onClose: () => void;
 }
 
@@ -46,9 +50,11 @@ const DeleteJobDialog = ({ job, onClose }: Props) => {
 
   const notifyWith = useNotification();
 
+  const jobFragment = getFragmentData(JOB_DETAILS, job);
+
   const handleDelete = () => {
-    if (job) {
-      deleteJob({ variables: { id: job.id } });
+    if (jobFragment) {
+      deleteJob({ variables: { id: jobFragment.id } });
     }
   };
 
@@ -57,8 +63,8 @@ const DeleteJobDialog = ({ job, onClose }: Props) => {
       <DialogTitle>Delete this job?</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          {job
-            ? `Delete job '${job.jobTitle} at ${job.companyName}'?`
+          {jobFragment
+            ? `Delete job '${jobFragment.jobTitle} at ${jobFragment.companyName}'?`
             : "Delete job ' at '?"}
         </DialogContentText>
       </DialogContent>
