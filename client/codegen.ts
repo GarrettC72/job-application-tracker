@@ -11,6 +11,9 @@ const config: CodegenConfig = {
         gqlTagName: "gql",
         fragmentMasking: { unmaskFunctionName: "getFragmentData" },
       },
+      config: {
+        enumsAsTypes: true,
+      },
     },
   },
   ignoreNoDocuments: true,

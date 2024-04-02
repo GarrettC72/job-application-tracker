@@ -16,8 +16,7 @@ import {
   FragmentType,
   getFragmentData,
 } from "../../__generated__/fragment-masking";
-import { parseActivities } from "../../utils/parser";
-import { Activity, ActivityType } from "../../types";
+import { Activity, ActivityTypeValue, ActivityTypeLabel } from "../../types";
 import { UPDATE_JOB } from "../../graphql/mutations";
 import { FULL_JOB_DETAILS } from "../../graphql/fragments";
 import { useAppSelector } from "../../app/hooks";
@@ -28,15 +27,15 @@ interface Props {
 }
 
 interface ActivityTypeOption {
-  value: ActivityType;
+  value: ActivityTypeValue;
   label: string;
 }
 
 const activityTypeOptions: ActivityTypeOption[] = Object.values(
-  ActivityType
+  ActivityTypeValue
 ).map((v) => ({
   value: v,
-  label: v.toString(),
+  label: ActivityTypeLabel[v].toString(),
 }));
 
 const EditJobForm = ({ jobFragment }: Props) => {
@@ -47,9 +46,7 @@ const EditJobForm = ({ jobFragment }: Props) => {
   const [jobPostingLink, setJobPostingLink] = useState(job.jobPostingLink);
   const [contactName, setContactName] = useState(job.contactName);
   const [contactTitle, setContactTitle] = useState(job.contactTitle);
-  const [activities, setActivities] = useState<Activity[]>(
-    parseActivities(job.activities)
-  );
+  const [activities, setActivities] = useState<Activity[]>(job.activities);
   const [notes, setNotes] = useState(job.notes);
 
   const colorMode = useAppSelector(({ appearance }) => appearance.colorMode);
@@ -90,7 +87,7 @@ const EditJobForm = ({ jobFragment }: Props) => {
 
   const addAcitivity = () => {
     const newActivity: Activity = {
-      activityType: ActivityType.Applied,
+      activityType: ActivityTypeValue.APPLIED,
       date: "",
       description: "",
     };

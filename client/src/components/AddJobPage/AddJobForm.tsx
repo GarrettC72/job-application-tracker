@@ -14,7 +14,7 @@ import {
 
 import { getFragmentData } from "../../__generated__/fragment-masking";
 import { addJobToCache } from "../../utils/cache";
-import { Activity, ActivityType } from "../../types";
+import { Activity, ActivityTypeLabel, ActivityTypeValue } from "../../types";
 import { CREATE_JOB } from "../../graphql/mutations";
 import { JOB_DETAILS } from "../../graphql/fragments";
 import { useAppSelector } from "../../app/hooks";
@@ -22,15 +22,15 @@ import useField from "../../hooks/useField";
 import useNotification from "../../hooks/useNotification";
 
 interface ActivityTypeOption {
-  value: ActivityType;
+  value: ActivityTypeValue;
   label: string;
 }
 
 const activityTypeOptions: ActivityTypeOption[] = Object.values(
-  ActivityType
+  ActivityTypeValue
 ).map((v) => ({
   value: v,
-  label: v.toString(),
+  label: ActivityTypeLabel[v].toString(),
 }));
 
 const AddJobForm = () => {
@@ -94,7 +94,7 @@ const AddJobForm = () => {
 
   const addAcitivity = () => {
     const newActivity: Activity = {
-      activityType: ActivityType.Applied,
+      activityType: ActivityTypeValue.APPLIED,
       date: "",
       description: "",
     };

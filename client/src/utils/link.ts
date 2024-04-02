@@ -1,8 +1,9 @@
+import { createHttpLink, from, split } from "@apollo/client";
 import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
-import { createClient } from "graphql-ws";
+import { removeTypenameFromVariables } from "@apollo/client/link/remove-typename";
 import { setContext } from "@apollo/client/link/context";
-import { createHttpLink, split } from "@apollo/client";
 import { getMainDefinition } from "@apollo/client/utilities";
+import { createClient } from "graphql-ws";
 
 import { API_BASE_URL, SUBSCRIPTION_URL } from "../constants";
 import storageService from "../services/storage";
@@ -27,6 +28,8 @@ export const getWsHttpSplitLink = () => {
 
   const httpLink = createHttpLink({ uri: API_BASE_URL });
 
+  const removeTypenameLink = removeTypenameFromVariables();
+
   const splitLink = split(
     ({ query }) => {
       const definition = getMainDefinition(query);
@@ -39,5 +42,7 @@ export const getWsHttpSplitLink = () => {
     authLink.concat(httpLink)
   );
 
-  return splitLink;
+  const link = from([removeTypenameLink, splitLink]);
+
+  return link;
 };

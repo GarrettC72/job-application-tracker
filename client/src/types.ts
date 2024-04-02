@@ -4,7 +4,7 @@ export interface LoginData {
   name: string;
 }
 
-export enum ActivityType {
+export enum ActivityTypeLabel {
   APPLIED = "Submitted Job Application",
   SENT_RESUME = "Sent Resume",
   ONLINE_ASSESSMENT = "Took Online Assessment",
@@ -16,8 +16,20 @@ export enum ActivityType {
   DECLINED_OFFER = "Declined Job Offer",
 }
 
+export enum ActivityTypeValue {
+  APPLIED = "APPLIED",
+  SENT_RESUME = "SENT_RESUME",
+  ONLINE_ASSESSMENT = "ONLINE_ASSESSMENT",
+  INTERVIEWED = "INTERVIEWED",
+  REJECTED = "REJECTED",
+  CLOSED_FILLED = "CLOSED_FILLED",
+  RECEIVED_OFFER = "RECEIVED_OFFER",
+  ACCEPTED_OFFER = "ACCEPTED_OFFER",
+  DECLINED_OFFER = "DECLINED_OFFER",
+}
+
 export interface Activity {
-  activityType: ActivityType;
+  activityType: `${ActivityTypeValue}`;
   date: string;
   description: string;
 }
