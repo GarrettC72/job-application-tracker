@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@mui/material";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -14,14 +15,16 @@ import {
   UnauthenticatedLayout,
   SharedLayout,
 } from "./components";
-import useInitialization from "./hooks/useInitialization";
+import { useAppDispatch } from "./app/hooks";
+import { initializeColorMode } from "./features/appearance/appearanceSlice";
 
 const App = () => {
-  const initializeState = useInitialization();
+  const dispatch = useAppDispatch();
+  const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
 
   useEffect(() => {
-    initializeState();
-  }, [initializeState]);
+    dispatch(initializeColorMode(prefersDarkMode));
+  }, [dispatch, prefersDarkMode]);
 
   return (
     <Routes>

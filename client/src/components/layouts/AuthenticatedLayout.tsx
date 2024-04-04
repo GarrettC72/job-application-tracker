@@ -11,7 +11,6 @@ import {
 } from "../../graphql/subscriptions";
 import { FULL_JOB_DETAILS, JOB_DETAILS } from "../../graphql/fragments";
 import { addJobToCache, removeJobFromCache } from "../../utils/cache";
-import useClearUser from "../../hooks/useClearUser";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import useNotification from "../../hooks/useNotification";
 import storageService from "../../services/storage";
@@ -22,7 +21,6 @@ import ServerResponse from "../ServerResponse";
 
 const AuthenticatedLayout = () => {
   const { currentUser, loading, error } = useCurrentUser();
-  const clearUser = useClearUser();
   const notifyWith = useNotification();
   const client = useApolloClient();
 
@@ -98,7 +96,7 @@ const AuthenticatedLayout = () => {
   }
 
   const logout = () => {
-    clearUser();
+    storageService.removeUser();
     notifyWith("Logged out", "info");
     client.resetStore();
   };

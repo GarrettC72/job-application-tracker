@@ -2,17 +2,15 @@ import { useApolloClient, useMutation } from "@apollo/client";
 import { Box, Button, CircularProgress, Grid, TextField } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import { useAppDispatch } from "../../app/hooks";
-import { loginUser } from "../../features/user/userSlice";
 import { LOGIN } from "../../graphql/mutations";
 import useField from "../../hooks/useField";
 import useNotification from "../../hooks/useNotification";
+import storageService from "../../services/storage";
 
 const LoginForm = () => {
   const { reset: resetEmail, ...email } = useField("email");
   const { reset: resetPassword, ...password } = useField("password");
 
-  const dispatch = useAppDispatch();
   const notifyWith = useNotification();
   const navigate = useNavigate();
 
@@ -24,9 +22,9 @@ const LoginForm = () => {
     onCompleted: (data) => {
       const user = data.login;
       if (user) {
-        dispatch(loginUser(user));
-        notifyWith("Successfully logged in!", "success");
+        storageService.saveUser(user);
         client.resetStore();
+        notifyWith("Successfully logged in!", "success");
         navigate("/", { replace: true });
       }
     },

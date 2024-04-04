@@ -52,7 +52,7 @@ const EditJobPage = () => {
       <Typography variant="h4" gutterBottom sx={{ mt: 1.5 }}>
         Edit Job
       </Typography>
-      <EditJobForm jobFragment={job} />
+      <EditJobForm key={jobId} jobFragment={job} />
     </div>
   );
 };

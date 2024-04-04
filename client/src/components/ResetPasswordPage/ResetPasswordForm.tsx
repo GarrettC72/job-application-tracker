@@ -2,9 +2,9 @@ import { useMutation } from "@apollo/client";
 import { Box, Button, CircularProgress, Grid, TextField } from "@mui/material";
 
 import { EDIT_PASSWORD } from "../../graphql/mutations";
-import useClearUser from "../../hooks/useClearUser";
 import useField from "../../hooks/useField";
 import useNotification from "../../hooks/useNotification";
+import storageService from "../../services/storage";
 
 interface Props {
   token: string;
@@ -16,7 +16,6 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
   const { reset: resetConfirmPassword, ...confirmPassword } =
     useField("password");
 
-  const clearUser = useClearUser();
   const notifyWith = useNotification();
 
   const [updatePassword, { loading }] = useMutation(EDIT_PASSWORD, {
@@ -37,7 +36,7 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
     },
     onCompleted: () => {
       setStatus("UPDATED_PASSWORD");
-      clearUser();
+      storageService.removeUser();
     },
   });
 
