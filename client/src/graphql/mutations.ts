@@ -3,9 +3,7 @@ import { gql } from "../../src/__generated__/gql";
 export const LOGIN = gql(`#graphql
   mutation login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
-      token
-      email
-      name
+      value
     }
   }
 `);

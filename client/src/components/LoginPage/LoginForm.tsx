@@ -20,9 +20,8 @@ const LoginForm = () => {
       notifyWith(error.graphQLErrors[0].message, "error");
     },
     onCompleted: (data) => {
-      const user = data.login;
-      if (user) {
-        storageService.saveUser(user);
+      if (data.login) {
+        storageService.saveToken(data.login.value);
         client.resetStore();
         notifyWith("Successfully logged in!", "success");
         navigate("/", { replace: true });

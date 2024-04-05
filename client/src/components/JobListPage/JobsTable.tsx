@@ -21,7 +21,7 @@ import {
 import { JOB_DETAILS } from "../../graphql/fragments";
 import { useAppSelector } from "../../app/hooks";
 import { filterJobs } from "../../utils/jobs";
-import { convertDate } from "../../utils/parser";
+import { parseDate } from "../../utils/parser";
 import { ActivityTypeLabel } from "../../types";
 import useJobs from "../../hooks/useJobs";
 import Pagination from "../../features/pagination/Pagination";
@@ -74,8 +74,8 @@ const JobsTableRow = ({ job, onClick }: JobsTableRowProps) => {
           ? ActivityTypeLabel[jobFragment.latestActivity]
           : ""}
       </StyledTableCell>
-      <StyledTableCell>{convertDate(jobFragment.dateCreated)}</StyledTableCell>
-      <StyledTableCell>{convertDate(jobFragment.lastModified)}</StyledTableCell>
+      <StyledTableCell>{parseDate(jobFragment.dateCreated)}</StyledTableCell>
+      <StyledTableCell>{parseDate(jobFragment.lastModified)}</StyledTableCell>
       <StyledTableCell>
         <Button
           component={Link}

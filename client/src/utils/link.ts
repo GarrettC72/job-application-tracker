@@ -16,12 +16,12 @@ export const getWsHttpSplitLink = () => {
   );
 
   const authLink = setContext((_, { headers }) => {
-    const user = storageService.loadUser();
+    const token = storageService.loadToken();
 
     return {
       headers: {
         ...headers,
-        authorization: user ? `Bearer ${user.token}` : null,
+        authorization: token ? `Bearer ${token}` : null,
       },
     };
   });

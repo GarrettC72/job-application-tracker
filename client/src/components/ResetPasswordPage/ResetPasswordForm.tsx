@@ -36,7 +36,7 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
     },
     onCompleted: () => {
       setStatus("UPDATED_PASSWORD");
-      storageService.removeUser();
+      storageService.removeToken();
     },
   });
 

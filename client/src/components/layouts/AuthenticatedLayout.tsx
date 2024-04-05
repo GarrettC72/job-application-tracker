@@ -91,12 +91,12 @@ const AuthenticatedLayout = () => {
   }
 
   if (!currentUser) {
-    storageService.removeUser();
+    storageService.removeToken();
     return <Navigate to="/login" replace={true} />;
   }
 
   const logout = () => {
-    storageService.removeUser();
+    storageService.removeToken();
     notifyWith("Logged out", "info");
     client.resetStore();
   };

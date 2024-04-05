@@ -1,9 +1,3 @@
-export interface LoginData {
-  token: string;
-  email: string;
-  name: string;
-}
-
 export enum ActivityTypeLabel {
   APPLIED = "Submitted Job Application",
   SENT_RESUME = "Sent Resume",

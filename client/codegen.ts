@@ -13,6 +13,12 @@ const config: CodegenConfig = {
       },
       config: {
         enumsAsTypes: true,
+        scalars: {
+          Date: {
+            input: "string | number",
+            output: "number",
+          },
+        },
       },
     },
   },
