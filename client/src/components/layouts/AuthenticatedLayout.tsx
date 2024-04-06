@@ -87,6 +87,26 @@ const AuthenticatedLayout = () => {
   }
 
   if (error) {
+    const networkError = error.networkError;
+    if (
+      networkError &&
+      "result" in networkError &&
+      typeof networkError.result === "object" &&
+      networkError.result.errors &&
+      Array.isArray(networkError.result.errors)
+    ) {
+      const graphQlError = networkError.result.errors[0];
+      if (
+        graphQlError &&
+        graphQlError.extensions &&
+        graphQlError.extensions.code &&
+        typeof graphQlError.extensions.code === "string" &&
+        graphQlError.extensions.code === "INVALID_TOKEN"
+      ) {
+        storageService.removeToken();
+        return <Navigate to="/login" replace={true} />;
+      }
+    }
     return <ServerResponse />;
   }
 
