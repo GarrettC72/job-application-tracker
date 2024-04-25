@@ -16,6 +16,7 @@ import http from "http";
 import path from "path";
 
 import { toToken } from "./utils/parser";
+import { verifyCurrentUser } from "./utils/userHelper";
 import { MyContext, TokenType } from "./types";
 import schema from "./schemas";
 import config from "./utils/config";
@@ -43,7 +44,75 @@ const start = async () => {
     path: "/subscriptions",
   });
 
-  const serverCleanup = useServer({ schema }, wsServer);
+  const serverCleanup = useServer(
+    {
+      schema,
+      context: async (ctx, _msg, _args) => {
+        if (ctx.connectionParams) {
+          const auth = ctx.connectionParams.authorization;
+          if (typeof auth === "string") {
+            const decodedToken = jwt.verify(auth.substring(7), config.SECRET);
+            const loginToken = toToken(decodedToken);
+            const currentUser = await User.findById(loginToken.id);
+
+            return { currentUser };
+          }
+        }
+        return { currentUser: null };
+      },
+      onConnect: async (ctx) => {
+        if (ctx.connectionParams) {
+          const auth = ctx.connectionParams.authorization;
+          if (auth && typeof auth === "string" && auth.startsWith("Bearer ")) {
+            let decodedToken, loginToken;
+
+            try {
+              decodedToken = jwt.verify(auth.substring(7), config.SECRET);
+              loginToken = toToken(decodedToken);
+            } catch (error: unknown) {
+              throw new GraphQLError("Invalid login token", {
+                extensions: {
+                  code: "INVALID_TOKEN",
+                  invalidArgs: decodedToken,
+                  error,
+                },
+              });
+            }
+
+            if (loginToken.type !== TokenType.Login) {
+              throw new GraphQLError("Invalid login token", {
+                extensions: {
+                  code: "INVALID_TOKEN",
+                  invalidArgs: decodedToken,
+                },
+              });
+            }
+
+            const currentUser = await User.findById(loginToken.id);
+
+            verifyCurrentUser(currentUser);
+
+            return true;
+          } else {
+            throw new GraphQLError("Login token missing", {
+              extensions: {
+                code: "INVALID_TOKEN",
+                invalidArgs: {
+                  connectionsParams: ctx.connectionParams,
+                },
+              },
+            });
+          }
+        } else {
+          return false;
+        }
+      },
+      onDisconnect(_ctx, _code, _reason) {
+        console.log("Disconnected!");
+      },
+    },
+    wsServer
+  );
 
   const landingPage =
     config.NODE_ENV === "production"

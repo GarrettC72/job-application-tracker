@@ -12,6 +12,12 @@ export const getWsHttpSplitLink = () => {
   const wsLink = new GraphQLWsLink(
     createClient({
       url: SUBSCRIPTION_URL,
+      connectionParams: () => {
+        const token = storageService.loadToken();
+        return {
+          authorization: token ? `Bearer ${token}` : null,
+        };
+      },
     })
   );
 

@@ -1,5 +1,5 @@
 import { GraphQLError } from "graphql";
-import { PubSub } from "graphql-subscriptions";
+import { PubSub, withFilter } from "graphql-subscriptions";
 import gql from "graphql-tag";
 
 import { Resolvers } from "../__generated__/resolvers-types";
@@ -302,18 +302,42 @@ export const resolvers: Resolvers = {
   },
   Subscription: {
     jobAdded: {
-      subscribe: () => ({
-        [Symbol.asyncIterator]: () => pubsub.asyncIterator(["JOB_ADDED"]),
+      subscribe: (_root, _args, ctx) => ({
+        [Symbol.asyncIterator]: withFilter(
+          () => pubsub.asyncIterator(["JOB_ADDED"]),
+          (payload) => {
+            if (!ctx.currentUser) {
+              return false;
+            }
+            return payload.jobAdded.user.email === ctx.currentUser.email;
+          }
+        ),
       }),
     },
     jobUpdated: {
-      subscribe: () => ({
-        [Symbol.asyncIterator]: () => pubsub.asyncIterator(["JOB_UPDATED"]),
+      subscribe: (_root, _args, ctx) => ({
+        [Symbol.asyncIterator]: withFilter(
+          () => pubsub.asyncIterator(["JOB_UPDATED"]),
+          (payload) => {
+            if (!ctx.currentUser) {
+              return false;
+            }
+            return payload.jobUpdated.user.email === ctx.currentUser.email;
+          }
+        ),
       }),
     },
     jobDeleted: {
-      subscribe: () => ({
-        [Symbol.asyncIterator]: () => pubsub.asyncIterator(["JOB_DELETED"]),
+      subscribe: (_root, _args, ctx) => ({
+        [Symbol.asyncIterator]: withFilter(
+          () => pubsub.asyncIterator(["JOB_DELETED"]),
+          (payload) => {
+            if (!ctx.currentUser) {
+              return false;
+            }
+            return payload.jobDeleted.user.email === ctx.currentUser.email;
+          }
+        ),
       }),
     },
   },
