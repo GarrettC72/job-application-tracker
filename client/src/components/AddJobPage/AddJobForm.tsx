@@ -92,7 +92,7 @@ const AddJobForm = () => {
     createJob({ variables: { jobParams } });
   };
 
-  const addAcitivity = () => {
+  const addActivity = () => {
     const newActivity: Activity = {
       activityType: ActivityTypeValue.APPLIED,
       date: "",
@@ -148,7 +148,7 @@ const AddJobForm = () => {
       <Button
         type="button"
         sx={{ m: 1 }}
-        onClick={addAcitivity}
+        onClick={addActivity}
         variant="contained"
         startIcon={<Add />}
       >

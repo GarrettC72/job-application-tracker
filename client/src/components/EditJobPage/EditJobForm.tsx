@@ -85,7 +85,7 @@ const EditJobForm = ({ jobFragment }: Props) => {
     updateJob({ variables: { id: job.id, jobParams } });
   };
 
-  const addAcitivity = () => {
+  const addActivity = () => {
     const newActivity: Activity = {
       activityType: ActivityTypeValue.APPLIED,
       date: "",
@@ -159,7 +159,7 @@ const EditJobForm = ({ jobFragment }: Props) => {
       <Button
         type="button"
         sx={{ m: 1 }}
-        onClick={addAcitivity}
+        onClick={addActivity}
         variant="contained"
         startIcon={<Add />}
       >
