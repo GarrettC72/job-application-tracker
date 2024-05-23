@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React from "react";
 import { useMutation } from "@apollo/client";
 import { Link, useNavigate } from "react-router-dom";
 import { Add, Remove } from "@mui/icons-material";
@@ -14,12 +14,12 @@ import {
 
 import { getFragmentData } from "../../__generated__/fragment-masking";
 import { addJobToCache } from "../../utils/cache";
-import { Activity, ActivityTypeLabel, ActivityTypeValue } from "../../types";
+import { ActivityTypeLabel, ActivityTypeValue } from "../../types";
 import { CREATE_JOB } from "../../graphql/mutations";
 import { JOB_DETAILS } from "../../graphql/fragments";
 import { useAppSelector } from "../../app/hooks";
-import useField from "../../hooks/useField";
 import useNotification from "../../hooks/useNotification";
+import useJobForm from "../../hooks/useJobForm";
 
 interface ActivityTypeOption {
   value: ActivityTypeValue;
@@ -34,15 +34,7 @@ const activityTypeOptions: ActivityTypeOption[] = Object.values(
 }));
 
 const AddJobForm = () => {
-  const { reset: resetCompanyName, ...companyName } = useField("text");
-  const { reset: resetCompanyWebsite, ...companyWebsite } = useField("text");
-  const { reset: resetJobTitle, ...jobTitle } = useField("text");
-  const { reset: resetJobPostingLink, ...jobPostingLink } = useField("text");
-  const { reset: resetContactName, ...contactName } = useField("text");
-  const { reset: resetContactTitle, ...contactTitle } = useField("text");
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const { reset: resetNotes, ...notes } = useField("text");
-
+  const [state, dispatch] = useJobForm();
   const notifyWith = useNotification();
   const navigate = useNavigate();
   const colorMode = useAppSelector(({ appearance }) => appearance.colorMode);
@@ -59,13 +51,6 @@ const AddJobForm = () => {
           `New job '${unmaskedJob.jobTitle} at ${unmaskedJob.companyName}' successfully saved`,
           "success"
         );
-        resetCompanyName();
-        resetCompanyWebsite();
-        resetJobTitle();
-        resetJobPostingLink();
-        resetContactName();
-        resetContactTitle();
-        resetNotes();
         navigate("/");
       }
     },
@@ -79,39 +64,22 @@ const AddJobForm = () => {
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    const jobParams = {
-      companyName: companyName.value,
-      companyWebsite: companyWebsite.value,
-      jobTitle: jobTitle.value,
-      jobPostingLink: jobPostingLink.value,
-      contactName: contactName.value,
-      contactTitle: contactTitle.value,
-      activities,
-      notes: notes.value,
-    };
-    createJob({ variables: { jobParams } });
+    createJob({ variables: { jobParams: state } });
   };
 
-  const addActivity = () => {
-    const newActivity: Activity = {
-      activityType: ActivityTypeValue.APPLIED,
-      date: "",
-      description: "",
-    };
-    setActivities(activities.concat(newActivity));
+  const handleTextFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target;
+    dispatch({ type: "edit_text_field", payload: { name, value } });
   };
 
-  const editActivity = (name: string, value: string, index: number) => {
-    const updatedActivities = activities.map((activity, i) =>
-      i === index ? { ...activity, [name]: value } : activity
-    );
-    setActivities(updatedActivities);
-  };
-
-  const removeActivity = (index: number) => {
-    const activitiesToUpdate = activities.slice();
-    activitiesToUpdate.splice(index, 1);
-    setActivities(activitiesToUpdate);
+  const editActivity = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index: number
+  ) => {
+    const { name, value } = event.target;
+    dispatch({ type: "edit_activity", payload: { name, value, index } });
   };
 
   return (
@@ -127,34 +95,58 @@ const AddJobForm = () => {
         <TextField
           required
           label="Company Name"
-          {...companyName}
-          error={companyName.value === ""}
+          name="companyName"
+          value={state.companyName}
+          onChange={(e) => handleTextFieldChange(e)}
+          error={state.companyName === ""}
         />
-        <TextField label="Company Website" {...companyWebsite} />
+        <TextField
+          label="Company Website"
+          name="companyWebsite"
+          value={state.companyWebsite}
+          onChange={(e) => handleTextFieldChange(e)}
+        />
       </div>
       <div>
         <TextField
           required
           label="Job Title"
-          {...jobTitle}
-          error={jobTitle.value === ""}
+          name="jobTitle"
+          value={state.jobTitle}
+          onChange={(e) => handleTextFieldChange(e)}
+          error={state.jobTitle === ""}
         />
-        <TextField label="Job Posting Link" {...jobPostingLink} />
+        <TextField
+          label="Job Posting Link"
+          name="jobPostingLink"
+          value={state.jobPostingLink}
+          onChange={(e) => handleTextFieldChange(e)}
+        />
       </div>
       <div>
-        <TextField label="Contact Name" {...contactName} />
-        <TextField label="Contact Title" {...contactTitle} />
+        <TextField
+          label="Contact Name"
+          name="contactName"
+          value={state.contactName}
+          onChange={(e) => handleTextFieldChange(e)}
+        />
+        <TextField
+          label="Contact Title"
+          name="contactTitle"
+          value={state.contactTitle}
+          onChange={(e) => handleTextFieldChange(e)}
+        />
       </div>
       <Button
         type="button"
         sx={{ m: 1 }}
-        onClick={addActivity}
+        onClick={() => dispatch({ type: "add_activity" })}
         variant="contained"
         startIcon={<Add />}
       >
         Add New Activity
       </Button>
-      {activities.map((activity, index) => (
+      {state.activities.map((activity, index) => (
         <div
           style={{
             border: "solid",
@@ -168,15 +160,13 @@ const AddJobForm = () => {
         >
           <div style={{ display: "flex" }}>
             <TextField
-              name="activityType"
-              label="Activity"
-              id={`job-activity-input-${index}`}
-              select
-              value={activity.activityType}
-              onChange={({ target }) =>
-                editActivity(target.name, target.value, index)
-              }
               required
+              select
+              id={`job-activity-input-${index}`}
+              label="Activity"
+              name="activityType"
+              value={activity.activityType}
+              onChange={(e) => editActivity(e, index)}
             >
               {activityTypeOptions.map((option) => (
                 <MenuItem key={option.label} value={option.value}>
@@ -192,15 +182,13 @@ const AddJobForm = () => {
                 Date
               </InputLabel>
               <Input
-                name="date"
+                required
                 type="date"
                 id={`job-date-input-${index}`}
+                name="date"
                 value={activity.date}
-                onChange={({ target }) =>
-                  editActivity(target.name, target.value, index)
-                }
+                onChange={(e) => editActivity(e, index)}
                 error={activity.date === ""}
-                required
                 sx={{
                   colorScheme: colorMode,
                   color: activity.date === "" ? "error.main" : undefined,
@@ -211,21 +199,21 @@ const AddJobForm = () => {
           <div style={{ width: "min-content" }}>
             <TextField
               className="JobForm-textarea"
-              name="description"
-              label="Description"
               multiline
               minRows={4}
               maxRows={4}
+              label="Description"
+              name="description"
               value={activity.description}
-              onChange={({ target }) =>
-                editActivity(target.name, target.value, index)
-              }
+              onChange={(e) => editActivity(e, index)}
             />
           </div>
           <Button
             type="button"
             sx={{ m: 1 }}
-            onClick={() => removeActivity(index)}
+            onClick={() =>
+              dispatch({ type: "remove_activity", payload: index })
+            }
             variant="contained"
             startIcon={<Remove />}
           >
@@ -236,12 +224,13 @@ const AddJobForm = () => {
       <div>
         <TextField
           className="JobForm-textarea"
-          name="notes"
-          label="Notes"
-          {...notes}
           multiline
           minRows={5}
           maxRows={5}
+          label="Notes"
+          name="notes"
+          value={state.notes}
+          onChange={(e) => handleTextFieldChange(e)}
         />
       </div>
       <Button

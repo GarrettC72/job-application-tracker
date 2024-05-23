@@ -1,4 +1,4 @@
-import { useReducer /*, useState*/ } from "react";
+import { useReducer } from "react";
 import { Activity, ActivityTypeValue } from "../types";
 
 interface JobFormFields {
@@ -99,71 +99,7 @@ const reducer = (state: JobFormFields, action: JobFormFieldsAction) => {
 };
 
 const useJobForm = (fields?: JobFormFields) => {
-  // const [jobFormFields, setJobFormFields] = useState<JobFormFields>(
-  //   fields ?? {
-  //     companyName: "",
-  //     companyWebsite: "",
-  //     jobTitle: "",
-  //     jobPostingLink: "",
-  //     contactName: "",
-  //     contactTitle: "",
-  //     activities: [],
-  //     notes: "",
-  //   }
-  // );
   const jobFormFieldsReducer = useReducer(reducer, fields ?? defaultState);
-
-  // const editTextField = (
-  //   event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  // ) => {
-  //   const { name, value } = event.target;
-  //   setJobFormFields((prevFields) => {
-  //     return {
-  //       ...prevFields,
-  //       [name]: value,
-  //     };
-  //   });
-  // };
-
-  // const addActivity = () => {
-  //   setJobFormFields((prevFields) => {
-  //     return {
-  //       ...prevFields,
-  //       acitivities: prevFields.activities.concat({
-  //         activityType: ActivityTypeValue.APPLIED,
-  //         date: "",
-  //         description: "",
-  //       }),
-  //     };
-  //   });
-  // };
-
-  // const removeActivity = (index: number) => {
-  //   setJobFormFields((prevFields) => {
-  //     const newActivities = prevFields.activities.slice();
-  //     newActivities.splice(index, 1);
-  //     return {
-  //       ...prevFields,
-  //       activities: newActivities,
-  //     };
-  //   });
-  // };
-
-  // const editActivity = (
-  //   event: React.ChangeEvent<HTMLInputElement>,
-  //   index: number
-  // ) => {
-  //   const { name, value } = event.target;
-  //   setJobFormFields((prevFields) => {
-  //     return {
-  //       ...prevFields,
-  //       activities: prevFields.activities.map((activity, i) =>
-  //         i === index ? { ...activity, [name]: value } : activity
-  //       ),
-  //     };
-  //   });
-  // };
-
   return jobFormFieldsReducer;
 };
 
