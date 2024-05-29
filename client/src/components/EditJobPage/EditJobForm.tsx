@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { Add, Remove } from "@mui/icons-material";
@@ -16,11 +15,12 @@ import {
   FragmentType,
   getFragmentData,
 } from "../../__generated__/fragment-masking";
-import { Activity, ActivityTypeValue, ActivityTypeLabel } from "../../types";
+import { ActivityTypeValue, ActivityTypeLabel } from "../../types";
 import { UPDATE_JOB } from "../../graphql/mutations";
 import { FULL_JOB_DETAILS } from "../../graphql/fragments";
 import { useAppSelector } from "../../app/hooks";
 import useNotification from "../../hooks/useNotification";
+import useJobForm from "../../hooks/useJobForm";
 
 interface Props {
   jobFragment: FragmentType<typeof FULL_JOB_DETAILS>;
@@ -40,18 +40,10 @@ const activityTypeOptions: ActivityTypeOption[] = Object.values(
 
 const EditJobForm = ({ jobFragment }: Props) => {
   const job = getFragmentData(FULL_JOB_DETAILS, jobFragment);
-  const [companyName, setCompanyName] = useState(job.companyName);
-  const [companyWebsite, setCompanyWebsite] = useState(job.companyWebsite);
-  const [jobTitle, setJobTitle] = useState(job.jobTitle);
-  const [jobPostingLink, setJobPostingLink] = useState(job.jobPostingLink);
-  const [contactName, setContactName] = useState(job.contactName);
-  const [contactTitle, setContactTitle] = useState(job.contactTitle);
-  const [activities, setActivities] = useState<Activity[]>(job.activities);
-  const [notes, setNotes] = useState(job.notes);
-
-  const colorMode = useAppSelector(({ appearance }) => appearance.colorMode);
+  const [state, dispatch] = useJobForm(job);
   const notifyWith = useNotification();
   const navigate = useNavigate();
+  const colorMode = useAppSelector(({ appearance }) => appearance.colorMode);
 
   const [updateJob, { loading }] = useMutation(UPDATE_JOB, {
     onError: (error) => {
@@ -72,39 +64,22 @@ const EditJobForm = ({ jobFragment }: Props) => {
 
   const onSubmit = (event: React.SyntheticEvent) => {
     event.preventDefault();
-    const jobParams = {
-      companyName,
-      companyWebsite,
-      jobTitle,
-      jobPostingLink,
-      contactName,
-      contactTitle,
-      activities,
-      notes,
-    };
-    updateJob({ variables: { id: job.id, jobParams } });
+    updateJob({ variables: { id: job.id, jobParams: state } });
   };
 
-  const addActivity = () => {
-    const newActivity: Activity = {
-      activityType: ActivityTypeValue.APPLIED,
-      date: "",
-      description: "",
-    };
-    setActivities(activities.concat(newActivity));
+  const handleTextFieldChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target;
+    dispatch({ type: "edit_text_field", payload: { name, value } });
   };
 
-  const editActivity = (name: string, value: string, index: number) => {
-    const updatedActivities = activities.map((activity, i) =>
-      i === index ? { ...activity, [name]: value } : activity
-    );
-    setActivities(updatedActivities);
-  };
-
-  const removeActivity = (index: number) => {
-    const activitiesToUpdate = activities.slice();
-    activitiesToUpdate.splice(index, 1);
-    setActivities(activitiesToUpdate);
+  const editActivity = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index: number
+  ) => {
+    const { name, value } = event.target;
+    dispatch({ type: "edit_activity", payload: { name, value, index } });
   };
 
   return (
@@ -120,52 +95,58 @@ const EditJobForm = ({ jobFragment }: Props) => {
         <TextField
           required
           label="Company Name"
-          value={companyName}
-          onChange={({ target }) => setCompanyName(target.value)}
-          error={companyName === ""}
+          name="companyName"
+          value={state.companyName}
+          onChange={(e) => handleTextFieldChange(e)}
+          error={state.companyName === ""}
         />
         <TextField
           label="Company Website"
-          value={companyWebsite}
-          onChange={({ target }) => setCompanyWebsite(target.value)}
+          name="companyWebsite"
+          value={state.companyWebsite}
+          onChange={(e) => handleTextFieldChange(e)}
         />
       </div>
       <div>
         <TextField
           required
           label="Job Title"
-          value={jobTitle}
-          onChange={({ target }) => setJobTitle(target.value)}
-          error={jobTitle === ""}
+          name="jobTitle"
+          value={state.jobTitle}
+          onChange={(e) => handleTextFieldChange(e)}
+          error={state.jobTitle === ""}
         />
         <TextField
           label="Job Posting Link"
-          value={jobPostingLink}
-          onChange={({ target }) => setJobPostingLink(target.value)}
+          name="jobPostingLink"
+          value={state.jobPostingLink}
+          onChange={(e) => handleTextFieldChange(e)}
         />
       </div>
       <div>
         <TextField
           label="Contact Name"
-          value={contactName}
-          onChange={({ target }) => setContactName(target.value)}
+          name="contactName"
+          value={state.contactName}
+          onChange={(e) => handleTextFieldChange(e)}
         />
         <TextField
           label="Contact Title"
-          value={contactTitle}
-          onChange={({ target }) => setContactTitle(target.value)}
+          name="contactTitle"
+          value={state.contactTitle}
+          onChange={(e) => handleTextFieldChange(e)}
         />
       </div>
       <Button
         type="button"
         sx={{ m: 1 }}
-        onClick={addActivity}
+        onClick={() => dispatch({ type: "add_activity" })}
         variant="contained"
         startIcon={<Add />}
       >
         Add New Activity
       </Button>
-      {activities.map((activity, index) => (
+      {state.activities.map((activity, index) => (
         <div
           style={{
             border: "solid",
@@ -179,15 +160,13 @@ const EditJobForm = ({ jobFragment }: Props) => {
         >
           <div style={{ display: "flex" }}>
             <TextField
-              name="activityType"
-              label="Activity"
-              id={`job-activity-input-${index}`}
-              select
-              value={activity.activityType}
-              onChange={({ target }) =>
-                editActivity(target.name, target.value, index)
-              }
               required
+              select
+              id={`job-activity-input-${index}`}
+              label="Activity"
+              name="activityType"
+              value={activity.activityType}
+              onChange={(e) => editActivity(e, index)}
             >
               {activityTypeOptions.map((option) => (
                 <MenuItem key={option.label} value={option.value}>
@@ -203,15 +182,13 @@ const EditJobForm = ({ jobFragment }: Props) => {
                 Date
               </InputLabel>
               <Input
-                name="date"
+                required
                 type="date"
                 id={`job-date-input-${index}`}
+                name="date"
                 value={activity.date}
-                onChange={({ target }) =>
-                  editActivity(target.name, target.value, index)
-                }
+                onChange={(e) => editActivity(e, index)}
                 error={activity.date === ""}
-                required
                 sx={{
                   colorScheme: colorMode,
                   color: activity.date === "" ? "error.main" : undefined,
@@ -222,21 +199,21 @@ const EditJobForm = ({ jobFragment }: Props) => {
           <div style={{ width: "min-content" }}>
             <TextField
               className="JobForm-textarea"
-              name="description"
-              label="Description"
               multiline
               minRows={4}
               maxRows={4}
+              label="Description"
+              name="description"
               value={activity.description}
-              onChange={({ target }) =>
-                editActivity(target.name, target.value, index)
-              }
+              onChange={(e) => editActivity(e, index)}
             />
           </div>
           <Button
             type="button"
             sx={{ m: 1 }}
-            onClick={() => removeActivity(index)}
+            onClick={() =>
+              dispatch({ type: "remove_activity", payload: index })
+            }
             variant="contained"
             startIcon={<Remove />}
           >
@@ -247,13 +224,13 @@ const EditJobForm = ({ jobFragment }: Props) => {
       <div>
         <TextField
           className="JobForm-textarea"
-          name="notes"
-          label="Notes"
-          value={notes}
-          onChange={({ target }) => setNotes(target.value)}
           multiline
           minRows={5}
           maxRows={5}
+          label="Notes"
+          name="notes"
+          value={state.notes}
+          onChange={(e) => handleTextFieldChange(e)}
         />
       </div>
       <Button
