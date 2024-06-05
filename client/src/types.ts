@@ -28,4 +28,15 @@ export interface Activity {
   description: string;
 }
 
+export interface JobFormFields {
+  companyName: string;
+  companyWebsite: string;
+  jobTitle: string;
+  jobPostingLink: string;
+  contactName: string;
+  contactTitle: string;
+  activities: Activity[];
+  notes: string;
+}
+
 export type ColorMode = "light" | "dark";

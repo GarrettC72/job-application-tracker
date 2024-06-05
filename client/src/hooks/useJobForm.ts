@@ -1,16 +1,5 @@
 import { useReducer } from "react";
-import { Activity, ActivityTypeValue } from "../types";
-
-interface JobFormFields {
-  companyName: string;
-  companyWebsite: string;
-  jobTitle: string;
-  jobPostingLink: string;
-  contactName: string;
-  contactTitle: string;
-  activities: Activity[];
-  notes: string;
-}
+import { ActivityTypeValue, JobFormFields } from "../types";
 
 interface TextFieldPayload {
   name: string;
@@ -98,7 +87,7 @@ const reducer = (state: JobFormFields, action: JobFormFieldsAction) => {
   }
 };
 
-const useJobForm = (fields?: JobFormFields) => {
+const useJobForm = (fields?: JobFormFields | null) => {
   const jobFormFieldsReducer = useReducer(reducer, fields ?? defaultState);
   return jobFormFieldsReducer;
 };
