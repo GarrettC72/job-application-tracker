@@ -1,7 +1,7 @@
 import { Logout } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
-import { Navigate, Outlet } from "react-router-dom";
 import { useApolloClient, useSubscription } from "@apollo/client";
+import { Navigate, Outlet } from "react-router-dom";
 
 import { getFragmentData } from "../../__generated__/fragment-masking";
 import {

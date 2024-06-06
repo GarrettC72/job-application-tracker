@@ -1,7 +1,7 @@
-import { Link, useSearchParams } from "react-router-dom";
-import { ReactNode, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { Typography } from "@mui/material";
+import { Link, useSearchParams } from "react-router-dom";
+import { ReactNode, useState } from "react";
 
 import { VERIFY_PASSWORD_RESET } from "../../graphql/queries";
 import ResetPasswordForm from "./ResetPasswordForm";

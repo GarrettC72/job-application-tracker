@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
 import { Button, Typography } from "@mui/material";
 import { AddBox } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 import Filter from "../../features/pagination/Filter";
 import JobsTable from "./JobsTable";
