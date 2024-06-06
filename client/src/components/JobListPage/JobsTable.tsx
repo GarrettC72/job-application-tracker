@@ -39,7 +39,9 @@ interface JobsTableContainerProps {
 
 interface JobsTableRowProps {
   job: FragmentType<typeof JOB_DETAILS>;
-  onClick: () => void;
+  setSelectedJob: React.Dispatch<
+    React.SetStateAction<FragmentType<typeof JOB_DETAILS> | null>
+  >;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -63,7 +65,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-const JobsTableRow = ({ job, onClick }: JobsTableRowProps) => {
+const JobsTableRow = ({ job, setSelectedJob }: JobsTableRowProps) => {
   const jobFragment = getFragmentData(JOB_DETAILS, job);
   return (
     <StyledTableRow>
@@ -87,7 +89,7 @@ const JobsTableRow = ({ job, onClick }: JobsTableRowProps) => {
         </Button>{" "}
         |{" "}
         <Button
-          onClick={onClick}
+          onClick={() => setSelectedJob(job)}
           variant="contained"
           startIcon={<DeleteForever />}
         >
@@ -121,7 +123,7 @@ const JobsTableContainer = ({
             {jobs.map((job) => (
               <JobsTableRow
                 job={job}
-                onClick={() => setSelectedJob(job)}
+                setSelectedJob={setSelectedJob}
                 key={getFragmentData(JOB_DETAILS, job).id}
               />
             ))}
