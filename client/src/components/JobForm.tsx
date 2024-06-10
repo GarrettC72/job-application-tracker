@@ -10,17 +10,12 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
-import {
-  FragmentType,
-  getFragmentData,
-} from "../__generated__/fragment-masking";
 import { ActivityTypeValue, ActivityTypeLabel, JobFormFields } from "../types";
-import { FULL_JOB_DETAILS } from "../graphql/fragments";
 import { useAppSelector } from "../app/hooks";
 import useJobForm from "../hooks/useJobForm";
 
 interface Props {
-  jobFragment?: FragmentType<typeof FULL_JOB_DETAILS>;
+  initalJobState?: JobFormFields;
   onSubmit: (data: JobFormFields) => void;
   loading: boolean;
 }
@@ -37,11 +32,8 @@ const activityTypeOptions: ActivityTypeOption[] = Object.values(
   label: ActivityTypeLabel[v].toString(),
 }));
 
-const JobForm = ({ jobFragment, onSubmit, loading }: Props) => {
-  const job = jobFragment
-    ? getFragmentData(FULL_JOB_DETAILS, jobFragment)
-    : null;
-  const [state, dispatch] = useJobForm(job);
+const JobForm = ({ initalJobState, onSubmit, loading }: Props) => {
+  const [state, dispatch] = useJobForm(initalJobState);
   const colorMode = useAppSelector(({ appearance }) => appearance.colorMode);
 
   const handleSubmit = (event: React.SyntheticEvent) => {

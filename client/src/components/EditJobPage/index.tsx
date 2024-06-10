@@ -1,16 +1,41 @@
 import { Typography } from "@mui/material";
-import { Link, useParams } from "react-router-dom";
+import { useMutation } from "@apollo/client";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-import EditJobForm from "./EditJobForm";
+import { getFragmentData } from "../../__generated__/fragment-masking";
+import { UPDATE_JOB } from "../../graphql/mutations";
+import { FULL_JOB_DETAILS } from "../../graphql/fragments";
+import { JobFormFields } from "../../types";
+import useJob from "../../hooks/useJob";
+import useNotification from "../../hooks/useNotification";
 import Loading from "../Loading";
 import ServerResponse from "../ServerResponse";
-import useJob from "../../hooks/useJob";
+import JobForm from "../JobForm";
 
 const EditJobPage = () => {
   const jobId = useParams().id ?? "";
-  const { job, loading, error } = useJob(jobId);
+  const { job, loading: queryLoading, error } = useJob(jobId);
+  const notifyWith = useNotification();
+  const navigate = useNavigate();
 
-  if (loading) {
+  const [updateJob, { loading: mutationLoading }] = useMutation(UPDATE_JOB, {
+    onError: (error) => {
+      notifyWith(error.graphQLErrors[0].message, "error");
+    },
+    onCompleted: (result) => {
+      const job = result.updateJob;
+      if (job) {
+        const unmaskedJob = getFragmentData(FULL_JOB_DETAILS, job);
+        notifyWith(
+          `Job '${unmaskedJob.jobTitle} at ${unmaskedJob.companyName}' successfully updated`,
+          "success"
+        );
+        navigate("/");
+      }
+    },
+  });
+
+  if (queryLoading) {
     return <Loading />;
   }
 
@@ -47,12 +72,23 @@ const EditJobPage = () => {
     return <ServerResponse />;
   }
 
+  const { id, ...jobFields } = getFragmentData(FULL_JOB_DETAILS, job);
+
+  const onSubmit = (data: JobFormFields) => {
+    updateJob({ variables: { id: id, jobParams: data } });
+  };
+
   return (
     <div>
       <Typography variant="h4" gutterBottom sx={{ mt: 1.5 }}>
         Edit Job
       </Typography>
-      <EditJobForm key={jobId} jobFragment={job} />
+      <JobForm
+        key={id}
+        initalJobState={jobFields}
+        onSubmit={onSubmit}
+        loading={mutationLoading}
+      />
     </div>
   );
 };
