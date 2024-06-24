@@ -1,11 +1,10 @@
 import { Typography } from "@mui/material";
-import { ReactNode } from "react";
 
 interface Props {
   title?: string;
   message?: string;
-  callToAction?: ReactNode;
-  children?: ReactNode;
+  callToAction?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const ServerResponse = ({

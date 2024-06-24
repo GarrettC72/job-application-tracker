@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import { VERIFY_USER } from "../../graphql/mutations";
@@ -10,7 +10,7 @@ import ResendVerificationButton from "./ResendVerificationButton";
 interface VerificationResponseProps {
   title: string;
   message: string;
-  callToAction: ReactNode;
+  callToAction: React.ReactNode;
 }
 
 const getVerificationResponseProps = (

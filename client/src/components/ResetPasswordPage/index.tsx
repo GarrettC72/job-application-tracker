@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { Typography } from "@mui/material";
 import { Link, useSearchParams } from "react-router-dom";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 
 import { VERIFY_PASSWORD_RESET } from "../../graphql/queries";
 import ResetPasswordForm from "./ResetPasswordForm";
@@ -11,7 +11,7 @@ import ServerResponse from "../ServerResponse";
 interface ResetResponseProps {
   title: string;
   message: string;
-  callToAction: ReactNode;
+  callToAction: React.ReactNode;
 }
 
 const getResetResponseProps = (status: string): ResetResponseProps | null => {
