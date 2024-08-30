@@ -24,6 +24,7 @@ import { filterJobs } from "../../utils/jobs";
 import { parseDate } from "../../utils/parser";
 import { ActivityTypeLabel } from "../../types";
 import useJobs from "../../hooks/useJobs";
+import useDebounce from "../../hooks/useDebounce";
 import Pagination from "../../features/pagination/Pagination";
 import Loading from "../Loading";
 import DeleteJobDialog from "./DeleteJobDialog";
@@ -143,10 +144,11 @@ const JobsTable = () => {
   const { page, rowsPerPage, filter } = useAppSelector(
     ({ pagination }) => pagination
   );
+  const debouncedFilter = useDebounce(filter);
 
   const filteredJobs = useMemo(
-    () => (jobs ? filterJobs(jobs, filter) : []),
-    [jobs, filter]
+    () => (jobs ? filterJobs(jobs, debouncedFilter) : []),
+    [jobs, debouncedFilter]
   );
   const jobsToDisplay = useMemo(
     () => filteredJobs.slice(page * rowsPerPage, (page + 1) * rowsPerPage),
