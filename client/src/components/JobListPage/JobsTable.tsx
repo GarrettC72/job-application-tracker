@@ -113,11 +113,13 @@ const JobsTableContainer = ({
           <TableHead>
             <TableRow>
               <StyledTableCell>Company Name</StyledTableCell>
-              <StyledTableCell>Job Title</StyledTableCell>
+              <StyledTableCell style={{ width: "25%" }}>
+                Job Title
+              </StyledTableCell>
               <StyledTableCell>Latest Activity</StyledTableCell>
               <StyledTableCell>Date Created</StyledTableCell>
               <StyledTableCell>Last Modified</StyledTableCell>
-              <StyledTableCell>Action</StyledTableCell>
+              <StyledTableCell style={{ width: "20%" }}>Action</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
