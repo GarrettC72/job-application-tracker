@@ -29,7 +29,7 @@ export const resolvers: Resolvers = {
           throw new GraphQLError(error.message, {
             extensions: {
               code: "BAD_USER_INPUT",
-              invalidArgs: password,
+              invalidArgs: email,
             },
           });
         }
@@ -46,7 +46,10 @@ export const resolvers: Resolvers = {
         throw new GraphQLError("Invalid email or password", {
           extensions: {
             code: "BAD_USER_INPUT",
-            invalidArgs: email,
+            invalidArgs: {
+              email,
+              password,
+            },
           },
         });
       }
