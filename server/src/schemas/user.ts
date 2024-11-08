@@ -1,4 +1,5 @@
 import { GraphQLError } from "graphql";
+import { z } from "zod";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import gql from "graphql-tag";
@@ -112,6 +113,14 @@ export const resolvers: Resolvers = {
         parseNonEmptyStringParam(firstName, "First Name");
         parseNonEmptyStringParam(lastName, "Last Name");
       } catch (error: unknown) {
+        if (error instanceof z.ZodError) {
+          throw new GraphQLError(error.issues[0].message, {
+            extensions: {
+              code: "BAD_USER_INPUT",
+              invalidArgs: email,
+            },
+          });
+        }
         if (error instanceof Error) {
           throw new GraphQLError(error.message, {
             extensions: {
@@ -314,8 +323,8 @@ export const resolvers: Resolvers = {
       try {
         parseEmail(email);
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          throw new GraphQLError(error.message, {
+        if (error instanceof z.ZodError) {
+          throw new GraphQLError(error.issues[0].message, {
             extensions: {
               code: "BAD_USER_INPUT",
               invalidArgs: email,

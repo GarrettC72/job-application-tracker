@@ -1,16 +1,10 @@
 import { Types, isObjectIdOrHexString } from "mongoose";
+import { z } from "zod";
 
 import { Token, TokenType } from "../types";
 
 const isString = (text: unknown): text is string => {
   return typeof text === "string" || text instanceof String;
-};
-
-const isEmail = (text: string): boolean => {
-  // Taken from HTML specifications
-  const emailRegExp =
-    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-  return text.length > 0 && emailRegExp.test(text);
 };
 
 const isTokenType = (param: string): param is TokenType => {
@@ -34,14 +28,16 @@ export const parseNonEmptyStringParam = (
   if (param.trim() === "") {
     throw new Error(`${field} must be filled in`);
   }
+  // z.string()
+  //   .min(1, { message: `${field} must be filled in` })
+  //   .parse(param);
 };
 
 export const parseEmail = (param: unknown): string => {
-  if (!isString(param) || !isEmail(param)) {
-    throw new Error("Please enter a valid email address");
-  }
-
-  return param;
+  return z
+    .string()
+    .email({ message: "Please enter a valid email address" })
+    .parse(param);
 };
 
 export const parseTokenType = (param: unknown): TokenType => {
