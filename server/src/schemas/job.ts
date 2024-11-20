@@ -1,5 +1,6 @@
 import { GraphQLError } from "graphql";
 import { PubSub, withFilter } from "graphql-subscriptions";
+import { z } from "zod";
 import gql from "graphql-tag";
 
 import { Resolvers } from "../__generated__/resolvers-types";
@@ -154,20 +155,11 @@ export const resolvers: Resolvers = {
           parseDateParam(activity.date, "Activity Date");
         });
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          throw new GraphQLError(error.message, {
+        if (error instanceof z.ZodError) {
+          throw new GraphQLError(error.issues[0].message, {
             extensions: {
               code: "BAD_USER_INPUT",
               invalidArgs: jobParams,
-              error,
-            },
-          });
-        } else {
-          throw new GraphQLError("All required fields must be filled in", {
-            extensions: {
-              code: "BAD_USER_INPUT",
-              invalidArgs: jobParams,
-              error,
             },
           });
         }
@@ -232,20 +224,11 @@ export const resolvers: Resolvers = {
           parseDateParam(activity.date, "Activity Date");
         });
       } catch (error: unknown) {
-        if (error instanceof Error) {
-          throw new GraphQLError(error.message, {
+        if (error instanceof z.ZodError) {
+          throw new GraphQLError(error.issues[0].message, {
             extensions: {
               code: "BAD_USER_INPUT",
               invalidArgs: jobParams,
-              error,
-            },
-          });
-        } else {
-          throw new GraphQLError("All required fields must be filled in", {
-            extensions: {
-              code: "BAD_USER_INPUT",
-              invalidArgs: jobParams,
-              error,
             },
           });
         }

@@ -17,20 +17,13 @@ const isObjectIdParam = (param: unknown): param is Types.ObjectId => {
   return isObjectIdOrHexString(param);
 };
 
-const isDate = (date: string): boolean => {
-  return Boolean(Date.parse(date));
-};
-
 export const parseNonEmptyStringParam = (
   param: string,
   field: string
 ): void => {
-  if (param.trim() === "") {
-    throw new Error(`${field} must be filled in`);
-  }
-  // z.string()
-  //   .min(1, { message: `${field} must be filled in` })
-  //   .parse(param);
+  z.string()
+    .min(1, { message: `${field} must be filled in` })
+    .parse(param);
 };
 
 export const parseEmail = (param: unknown): string => {
@@ -59,10 +52,8 @@ export const parseObjectIdParam = (
   return param;
 };
 
-export const parseDateParam = (date: string, field: string): void => {
-  if (!isDate(date)) {
-    throw new Error(`Value of ${field} incorrect: ${date}`);
-  }
+export const parseDateParam = (date: string, field: string): string => {
+  return z.string().date(`Value of ${field} incorrect: ${date}`).parse(date);
 };
 
 export const toToken = (object: unknown): Token => {
