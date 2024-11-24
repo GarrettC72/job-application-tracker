@@ -3,15 +3,17 @@ import { z } from "zod";
 
 import { Token, TokenType } from "../types";
 
-const isString = (text: unknown): text is string => {
-  return typeof text === "string" || text instanceof String;
-};
-
-const isTokenType = (param: string): param is TokenType => {
-  return Object.values(TokenType)
-    .map((v) => v.toString())
-    .includes(param);
-};
+const TokenTypeEnum = z.nativeEnum(TokenType, {
+  errorMap: (issue, ctx) => {
+    if (
+      issue.code === z.ZodIssueCode.invalid_type ||
+      issue.code === z.ZodIssueCode.invalid_enum_value
+    ) {
+      return { message: "Value of token type incorrect: " + ctx.data };
+    }
+    return { message: ctx.defaultError };
+  },
+});
 
 const isObjectIdParam = (param: unknown): param is Types.ObjectId => {
   return isObjectIdOrHexString(param);
@@ -34,11 +36,7 @@ export const parseEmail = (param: unknown): string => {
 };
 
 export const parseTokenType = (param: unknown): TokenType => {
-  if (!isString(param) || !isTokenType(param)) {
-    throw new Error("Value of token type incorrect: " + param);
-  }
-
-  return param;
+  return TokenTypeEnum.parse(param);
 };
 
 export const parseObjectIdParam = (
