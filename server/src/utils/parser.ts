@@ -15,9 +15,19 @@ const TokenTypeEnum = z.nativeEnum(TokenType, {
   },
 });
 
-const isObjectIdParam = (param: unknown): param is Types.ObjectId => {
-  return isObjectIdOrHexString(param);
-};
+const EmailSchema = z
+  .string({
+    required_error: "Missing email address",
+  })
+  .email({ message: "Please enter a valid email address" });
+const TokenSchema = z.object({
+  email: EmailSchema,
+  id: z.custom<Types.ObjectId>(
+    (val) => isObjectIdOrHexString(val),
+    "Incorrect or missing id"
+  ),
+  type: TokenTypeEnum,
+});
 
 export const parseNonEmptyStringParam = (
   param: string,
@@ -29,25 +39,7 @@ export const parseNonEmptyStringParam = (
 };
 
 export const parseEmail = (param: unknown): string => {
-  return z
-    .string()
-    .email({ message: "Please enter a valid email address" })
-    .parse(param);
-};
-
-export const parseTokenType = (param: unknown): TokenType => {
-  return TokenTypeEnum.parse(param);
-};
-
-export const parseObjectIdParam = (
-  param: unknown,
-  field: string
-): Types.ObjectId => {
-  if (!param || !isObjectIdParam(param)) {
-    throw new Error(`Incorrect or missing ${field}`);
-  }
-
-  return param;
+  return EmailSchema.parse(param);
 };
 
 export const parseDateParam = (date: string, field: string): string => {
@@ -59,15 +51,5 @@ export const toToken = (object: unknown): Token => {
     throw new Error("Incorrect or missing data");
   }
 
-  if (!("email" in object) || !("id" in object) || !("type" in object)) {
-    throw new Error("Incorrect data: some fields are missing");
-  }
-
-  const token = {
-    email: parseEmail(object.email),
-    id: parseObjectIdParam(object.id, "id"),
-    type: parseTokenType(object.type),
-  };
-
-  return token;
+  return TokenSchema.parse(object);
 };
