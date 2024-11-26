@@ -11,12 +11,13 @@ interface Props {
 const ResendVerificationButton = ({ token, setStatus }: Props) => {
   const [resend, { loading }] = useMutation(RESEND_VERIFICATION, {
     onError: (error) => {
-      const verifyError = error.graphQLErrors[0];
+      const resendError = error.graphQLErrors[0];
       if (
-        verifyError.extensions.code &&
-        typeof verifyError.extensions.code === "string"
+        resendError.extensions &&
+        resendError.extensions.code &&
+        typeof resendError.extensions.code === "string"
       ) {
-        setStatus(verifyError.extensions.code);
+        setStatus(resendError.extensions.code);
       }
     },
     onCompleted: () => {

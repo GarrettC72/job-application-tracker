@@ -78,6 +78,7 @@ const ResetPasswordPage = () => {
     onError: (error) => {
       const verifyError = error.graphQLErrors[0];
       if (
+        verifyError.extensions &&
         verifyError.extensions.code &&
         typeof verifyError.extensions.code === "string"
       ) {

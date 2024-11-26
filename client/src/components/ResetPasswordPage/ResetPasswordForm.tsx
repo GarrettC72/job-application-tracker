@@ -20,13 +20,14 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
 
   const [updatePassword, { loading }] = useMutation(EDIT_PASSWORD, {
     onError: (error) => {
-      const verifyError = error.graphQLErrors[0];
+      const updateError = error.graphQLErrors[0];
       if (
-        verifyError.extensions.code &&
-        typeof verifyError.extensions.code === "string"
+        updateError.extensions &&
+        updateError.extensions.code &&
+        typeof updateError.extensions.code === "string"
       ) {
-        setStatus(verifyError.extensions.code);
-        if (verifyError.extensions.code === "BAD_USER_INPUT") {
+        setStatus(updateError.extensions.code);
+        if (updateError.extensions.code === "BAD_USER_INPUT") {
           notifyWith(
             "Failed to save new password. Make sure your password is at least 8 characters long and that you enter it correctly twice.",
             "error"

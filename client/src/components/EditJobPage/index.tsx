@@ -42,6 +42,7 @@ const EditJobPage = () => {
   if (error) {
     const graphqlError = error.graphQLErrors[0];
     if (
+      graphqlError.extensions &&
       graphqlError.extensions.code &&
       typeof graphqlError.extensions.code === "string"
     ) {
