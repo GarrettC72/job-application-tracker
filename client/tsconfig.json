@@ -20,6 +20,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src/**/*", "codegen.ts", "codegen-schema.ts", "*.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
