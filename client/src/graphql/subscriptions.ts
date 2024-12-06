@@ -3,7 +3,7 @@ import { gql } from "../../src/__generated__/gql";
 export const JOB_ADDED = gql(`#graphql
   subscription jobAdded {
     jobAdded {
-      ...JobDetails
+      ...JobDetails @unmask(mode: "migrate")
       user {
         email
       }
@@ -14,7 +14,7 @@ export const JOB_ADDED = gql(`#graphql
 export const JOB_UPDATED = gql(`#graphql
   subscription jobUpdated {
     jobUpdated {
-      ...FullJobDetails
+      ...FullJobDetails @unmask(mode: "migrate")
       latestActivity
       dateCreated
       lastModified
