@@ -1,16 +1,13 @@
 import eslint from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
-import reactRefresh from "eslint-plugin-react-refresh";
-import reactHooks from "eslint-plugin-react-hooks";
-import react from "eslint-plugin-react";
-import globals from "globals";
 import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier";
+import globals from "globals";
 
 export default tseslint.config(
   {
-    // config with just ignores is the replacement for `.eslintignore`
     ignores: [
+      "**/build",
       "**/dist",
       "**/node_modules",
       "**/src/__generated__",
@@ -18,10 +15,10 @@ export default tseslint.config(
     ],
   },
   {
-    files: ["**/*.ts", "**/*.tsx"],
+    files: ["**/*.ts"],
     extends: [
       eslint.configs.recommended,
-      ...tseslint.configs.recommended,
+      ...tseslint.configs.recommendedTypeChecked,
       eslintConfigPrettier,
     ],
     languageOptions: {
@@ -31,25 +28,16 @@ export default tseslint.config(
         tsconfigRootDir: import.meta.dirname,
       },
       globals: {
-        ...globals.browser,
+        ...globals.node,
       },
     },
     plugins: {
-      "@typescript-eslint": tseslint.plugin,
+      "@typescript/eslint": tseslint.plugin,
       "@stylistic": stylistic,
-      "react-refresh": reactRefresh,
-      "react-hooks": reactHooks,
-      react: react,
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
-      "react-refresh/only-export-components": [
-        "warn",
-        {
-          allowConstantExport: true,
-        },
-      ],
       "@stylistic/semi": "error",
+      "@typescript-eslint/no-unsafe-assignment": "error",
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -60,9 +48,8 @@ export default tseslint.config(
         "error",
         { argsIgnorePattern: "^_" },
       ],
-      "no-case-declarations": "off",
       "@typescript-eslint/array-type": ["error", { default: "array-simple" }],
-      "react/react-in-jsx-scope": 0,
+      "no-case-declarations": "off",
       quotes: ["error", "double"],
       eqeqeq: "error",
     },

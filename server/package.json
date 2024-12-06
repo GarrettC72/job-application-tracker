@@ -10,16 +10,18 @@
     "build:client": "rm -rf dist && cd ../client/ && npm install && npm run build && cp -r dist ../server/",
     "build:full": "npm run build:server && npm run build:client",
     "start": "cross-env NODE_ENV=production node build/src/index.js",
-    "lint": "eslint --ext .ts .",
+    "lint": "eslint .",
     "prettier": "npx prettier --write .",
     "compile": "graphql-codegen"
   },
   "author": "Garrett Chen",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/js": "^9.16.0",
     "@graphql-codegen/cli": "^5.0.3",
     "@graphql-codegen/typescript": "^4.1.2",
     "@graphql-codegen/typescript-resolvers": "^4.4.1",
+    "@stylistic/eslint-plugin": "^2.11.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.17",
     "@types/jsonwebtoken": "^9.0.7",
@@ -28,9 +30,11 @@
     "@typescript-eslint/parser": "^8.16.0",
     "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
+    "globals": "^15.13.0",
     "prettier": "^3.3.3",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.17.0"
   },
   "dependencies": {
     "@apollo/server": "^4.11.2",
