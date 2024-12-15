@@ -12,7 +12,7 @@ export const VERIFY_PASSWORD_RESET = gql(`#graphql
 export const GET_USER_JOBS = gql(`#graphql
   query userJobs {
     allJobs {
-      ...JobDetails @unmask(mode: "migrate")
+      ...JobDetails
     }
   }
 `);
@@ -31,7 +31,7 @@ export const GET_CURRENT_USER = gql(`#graphql
 export const GET_JOB = gql(`#graphql
   query getJob($id: ID!) {
     getJob(id: $id) {
-      ...FullJobDetails @unmask(mode: "migrate")
+      ...FullJobDetails
     }
   }
 `);

@@ -71,7 +71,7 @@ export const EDIT_PASSWORD = gql(`#graphql
 export const CREATE_JOB = gql(`#graphql
   mutation createJob($jobParams: JobMutationInput!) {
     addJob(jobParams: $jobParams) {
-      ...JobDetails @unmask(mode: "migrate")
+      ...JobDetails
     }
   }
 `);
@@ -79,7 +79,7 @@ export const CREATE_JOB = gql(`#graphql
 export const UPDATE_JOB = gql(`#graphql
   mutation updateJob($id: ID!, $jobParams: JobMutationInput!) {
     updateJob(id: $id, jobParams: $jobParams) {
-      ...FullJobDetails @unmask(mode: "migrate")
+      ...FullJobDetails
       latestActivity
       dateCreated
       lastModified

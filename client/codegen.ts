@@ -10,6 +10,11 @@ const config: CodegenConfig = {
       presetConfig: {
         gqlTagName: "gql",
         fragmentMasking: { unmaskFunctionName: "getFragmentData" },
+        // fragmentMasking: false,
+        // inlineFragmentTypes: "mask",
+        // customDirectives: {
+        //   apolloUnmask: true,
+        // },
       },
       config: {
         enumsAsTypes: true,

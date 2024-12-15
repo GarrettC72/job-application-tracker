@@ -9,7 +9,7 @@ import { getWsHttpSplitLink } from "./utils/link";
 import App from "./App";
 
 const client = new ApolloClient({
-  dataMasking: true,
+  // dataMasking: true,
   cache: new InMemoryCache(),
   link: getWsHttpSplitLink(),
 });

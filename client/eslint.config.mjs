@@ -63,7 +63,7 @@ export default tseslint.config(
       "no-case-declarations": "off",
       "@typescript-eslint/array-type": ["error", { default: "array-simple" }],
       "react/react-in-jsx-scope": 0,
-      quotes: ["error", "double"],
+      quotes: ["error", "double", { avoidEscape: true }],
       eqeqeq: "error",
     },
   }
