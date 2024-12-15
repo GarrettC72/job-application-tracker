@@ -16,7 +16,11 @@ const client = new ApolloClient({
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter
+      future={{
+        v7_relativeSplatPath: true,
+      }}
+    >
       <ApolloProvider client={client}>
         <Provider store={store}>
           <App />
