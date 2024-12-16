@@ -1,6 +1,6 @@
 import { useApolloClient, useMutation } from "@apollo/client";
 import { Box, Button, CircularProgress, Grid, TextField } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import { LOGIN } from "../../graphql/mutations";
 import useField from "../../hooks/useField";

@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { useMutation } from "@apollo/client";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import { getFragmentData } from "../../__generated__/fragment-masking";
 import { addJobToCache } from "../../utils/cache";

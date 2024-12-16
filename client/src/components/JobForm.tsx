@@ -8,7 +8,7 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { ActivityTypeValue, ActivityTypeLabel, JobFormFields } from "../types";
 import { useAppSelector } from "../app/hooks";

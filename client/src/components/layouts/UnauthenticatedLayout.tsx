@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router";
 
 import ColorMode from "../../features/appearance/ColorMode";
 import Notification from "../../features/notification/Notification";

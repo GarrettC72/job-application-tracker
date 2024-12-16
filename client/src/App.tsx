@@ -1,5 +1,5 @@
 import { useMediaQuery } from "@mui/material";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router";
 import { useEffect } from "react";
 
 import {

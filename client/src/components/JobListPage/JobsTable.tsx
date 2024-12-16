@@ -11,7 +11,7 @@ import {
   tableCellClasses,
 } from "@mui/material";
 import { DeleteForever, Edit } from "@mui/icons-material";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { useMemo, useState } from "react";
 
 import {
