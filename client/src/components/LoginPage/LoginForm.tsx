@@ -1,7 +1,6 @@
 import { useApolloClient, useMutation } from "@apollo/client";
-import { Box, Button, CircularProgress, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, TextField, Grid2 } from "@mui/material";
 import { useNavigate } from "react-router";
-import Grid from "@mui/material/Grid2";
 
 import { LOGIN } from "../../graphql/mutations";
 import useField from "../../hooks/useField";
@@ -54,7 +53,7 @@ const LoginForm = () => {
         "& .MuiTextField-root": { mb: 2 },
       }}
     >
-      <Grid container direction="column">
+      <Grid2 container direction="column">
         <TextField label="Email" {...email} required />
         <TextField label="Password" {...password} required />
         <Box sx={{ position: "relative", mb: 2 }}>
@@ -79,7 +78,7 @@ const LoginForm = () => {
             />
           )}
         </Box>
-      </Grid>
+      </Grid2>
       <hr />
     </Box>
   );
