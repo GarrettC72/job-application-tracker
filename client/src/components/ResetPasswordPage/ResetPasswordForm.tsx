@@ -1,5 +1,6 @@
 import { useMutation } from "@apollo/client";
-import { Box, Button, CircularProgress, Grid, TextField } from "@mui/material";
+import { Box, Button, CircularProgress, TextField } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 
 import { EDIT_PASSWORD } from "../../graphql/mutations";
 import useField from "../../hooks/useField";

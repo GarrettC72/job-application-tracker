@@ -1,5 +1,6 @@
-import { Typography, Link, Grid } from "@mui/material";
+import { Typography, Link } from "@mui/material";
 import { Link as RouterLink } from "react-router";
+import Grid from "@mui/material/Grid2";
 
 import LoginForm from "./LoginForm";
 
