@@ -68,14 +68,22 @@ const SignUpForm = () => {
         <TextField
           label="Password"
           {...password}
-          inputProps={{ minLength: 8 }}
+          slotProps={{
+            htmlInput: {
+              minLength: 8,
+            },
+          }}
           required
           error={password.value.length < 8}
         />
         <TextField
           label="Confirm Password"
           {...confirmPassword}
-          inputProps={{ minLength: 8 }}
+          slotProps={{
+            htmlInput: {
+              minLength: 8,
+            },
+          }}
           required
           error={confirmPassword.value.length < 8}
         />

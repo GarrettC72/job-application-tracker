@@ -15,15 +15,17 @@ const Filter = () => {
       placeholder="Search by company name"
       fullWidth
       sx={{ my: 2 }}
-      InputProps={{
-        endAdornment:
-          filter === "" ? null : (
-            <InputAdornment position="end">
-              <IconButton edge="end" onClick={() => dispatch(clearFilter())}>
-                <Clear />
-              </IconButton>
-            </InputAdornment>
-          ),
+      slotProps={{
+        input: {
+          endAdornment:
+            filter === "" ? null : (
+              <InputAdornment position="end">
+                <IconButton edge="end" onClick={() => dispatch(clearFilter())}>
+                  <Clear />
+                </IconButton>
+              </InputAdornment>
+            ),
+        },
       }}
     />
   );
