@@ -9,6 +9,6 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
-    "lib": ["ESNext.AsyncIterable"]
+    "lib": ["ES6", "DOM", "ESNext.AsyncIterable"]
   }
 }
