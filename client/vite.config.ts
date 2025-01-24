@@ -24,7 +24,8 @@ export default defineConfig({
             if (
               id.includes("react") ||
               id.includes("use-sync-external-store") ||
-              id.includes("@emotion")
+              id.includes("@emotion") ||
+              id.includes("rehackt")
             )
               return;
             return id
