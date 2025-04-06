@@ -1,4 +1,4 @@
-import { Typography, Link, Grid2 } from "@mui/material";
+import { Typography, Link, Grid } from "@mui/material";
 import { Link as RouterLink } from "react-router";
 
 import LoginForm from "./LoginForm";
@@ -14,7 +14,7 @@ const LoginPage = () => {
         Login
       </Typography>
       <LoginForm />
-      <Grid2 container direction="column">
+      <Grid container direction="column">
         <Link
           component={RouterLink}
           to="/signup"
@@ -26,7 +26,7 @@ const LoginPage = () => {
         <Link component={RouterLink} to="/forgot" variant="body1">
           Forgot your password?
         </Link>
-      </Grid2>
+      </Grid>
     </div>
   );
 };

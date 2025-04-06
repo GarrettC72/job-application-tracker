@@ -38,4 +38,7 @@ export default defineConfig({
       },
     },
   },
+  resolve: {
+    conditions: ["mui-modern", "module", "browser", "development|production"],
+  },
 });

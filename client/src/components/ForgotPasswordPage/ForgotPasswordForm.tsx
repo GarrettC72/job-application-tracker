@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Box, Button, CircularProgress, TextField, Grid2 } from "@mui/material";
+import { Box, Button, CircularProgress, TextField, Grid } from "@mui/material";
 
 import { isEmail } from "../../utils/parser";
 import { SEND_PASSWORD_RESET } from "../../graphql/mutations";
@@ -44,7 +44,7 @@ const ForgotPasswordForm = () => {
         "& .MuiTextField-root": { mb: 2 },
       }}
     >
-      <Grid2 container direction="column">
+      <Grid container direction="column">
         <TextField
           label="Email"
           {...email}
@@ -74,7 +74,7 @@ const ForgotPasswordForm = () => {
             />
           )}
         </Box>
-      </Grid2>
+      </Grid>
       <hr />
     </Box>
   );

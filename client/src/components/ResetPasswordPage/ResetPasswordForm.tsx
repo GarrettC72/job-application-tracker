@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import { Box, Button, CircularProgress, TextField, Grid2 } from "@mui/material";
+import { Box, Button, CircularProgress, TextField, Grid } from "@mui/material";
 
 import { EDIT_PASSWORD } from "../../graphql/mutations";
 import useField from "../../hooks/useField";
@@ -66,7 +66,7 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
         "& .MuiTextField-root": { mb: 2 },
       }}
     >
-      <Grid2 container direction="column">
+      <Grid container direction="column">
         <TextField
           label="Password"
           {...password}
@@ -111,7 +111,7 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
             />
           )}
         </Box>
-      </Grid2>
+      </Grid>
     </Box>
   );
 };
