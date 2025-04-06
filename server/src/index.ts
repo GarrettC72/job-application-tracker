@@ -7,7 +7,7 @@ import {
 } from "@apollo/server/plugin/landingPage/default";
 import { GraphQLError } from "graphql";
 import { WebSocketServer } from "ws";
-import { useServer } from "graphql-ws/lib/use/ws";
+import { useServer } from "graphql-ws/use/ws";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import express from "express";
