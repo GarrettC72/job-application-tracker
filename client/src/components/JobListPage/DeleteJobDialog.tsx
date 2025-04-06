@@ -59,7 +59,7 @@ const DeleteJobDialog = ({ job, onClose }: Props) => {
   };
 
   return (
-    <Dialog open={job !== null} onClose={onClose}>
+    <Dialog open={job !== null} onClose={onClose} closeAfterTransition={false}>
       <DialogTitle>Delete this job?</DialogTitle>
       <DialogContent>
         <DialogContentText>
