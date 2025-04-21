@@ -3,13 +3,11 @@ import { Box, Button, Typography } from "@mui/material";
 import { useApolloClient, useSubscription } from "@apollo/client";
 import { Navigate, Outlet } from "react-router";
 
-import { getFragmentData } from "../../__generated__/fragment-masking";
 import {
   JOB_ADDED,
   JOB_DELETED,
   JOB_UPDATED,
 } from "../../graphql/subscriptions";
-import { FULL_JOB_DETAILS, JOB_DETAILS } from "../../graphql/fragments";
 import { addJobToCache, removeJobFromCache } from "../../utils/cache";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import useNotification from "../../hooks/useNotification";
@@ -29,10 +27,9 @@ const AuthenticatedLayout = () => {
     onData: ({ data, client }) => {
       if (data.data) {
         const jobAdded = data.data.jobAdded;
-        const jobFragment = getFragmentData(JOB_DETAILS, jobAdded);
         addJobToCache(client.cache, jobAdded);
         notifyWith(
-          `New job '${jobFragment.jobTitle} at ${jobFragment.companyName}' was added`,
+          `New job '${jobAdded.jobTitle} at ${jobAdded.companyName}' was added`,
           "success"
         );
       }
@@ -44,14 +41,13 @@ const AuthenticatedLayout = () => {
     onData: ({ data, client }) => {
       if (data.data) {
         const jobUpdated = data.data.jobUpdated;
-        const jobFragment = getFragmentData(FULL_JOB_DETAILS, jobUpdated);
         const id = client.cache.identify({
           __typename: "Job",
-          id: jobFragment.id,
+          id: jobUpdated.id,
         });
         client.cache.evict({ id, fieldName: "user" });
         notifyWith(
-          `Job '${jobFragment.jobTitle} at ${jobFragment.companyName}' was updated`,
+          `Job '${jobUpdated.jobTitle} at ${jobUpdated.companyName}' was updated`,
           "success"
         );
       }

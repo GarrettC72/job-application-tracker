@@ -3,7 +3,12 @@ import { gql } from "../../src/__generated__/gql";
 export const JOB_ADDED = gql(`#graphql
   subscription jobAdded {
     jobAdded {
-      ...JobDetails
+      companyName
+      jobTitle
+      latestActivity
+      dateCreated
+      lastModified
+      id
       user {
         email
       }
@@ -15,9 +20,12 @@ export const JOB_UPDATED = gql(`#graphql
   subscription jobUpdated {
     jobUpdated {
       ...FullJobDetails
+      companyName
+      jobTitle
       latestActivity
       dateCreated
       lastModified
+      id
       user {
         email
       }

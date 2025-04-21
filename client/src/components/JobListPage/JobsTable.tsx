@@ -14,13 +14,8 @@ import { DeleteForever, Edit } from "@mui/icons-material";
 import { Link } from "react-router";
 import { useMemo, useState } from "react";
 
-import {
-  FragmentType,
-  getFragmentData,
-} from "../../__generated__/fragment-masking";
-import { JOB_DETAILS } from "../../graphql/fragments";
+import { JobDetailsFragment } from "../../__generated__/graphql";
 import { useAppSelector } from "../../app/hooks";
-import { filterJobs } from "../../utils/jobs";
 import { parseDate } from "../../utils/parser";
 import { ActivityTypeLabel } from "../../types";
 import useJobs from "../../hooks/useJobs";
@@ -31,17 +26,17 @@ import DeleteJobDialog from "./DeleteJobDialog";
 import ServerResponse from "../ServerResponse";
 
 interface JobsTableContainerProps {
-  jobs: Array<FragmentType<typeof JOB_DETAILS>>;
+  jobs: JobDetailsFragment[];
   count: number;
   setSelectedJob: React.Dispatch<
-    React.SetStateAction<FragmentType<typeof JOB_DETAILS> | null>
+    React.SetStateAction<JobDetailsFragment | null>
   >;
 }
 
 interface JobsTableRowProps {
-  job: FragmentType<typeof JOB_DETAILS>;
+  job: JobDetailsFragment;
   setSelectedJob: React.Dispatch<
-    React.SetStateAction<FragmentType<typeof JOB_DETAILS> | null>
+    React.SetStateAction<JobDetailsFragment | null>
   >;
 }
 
@@ -67,22 +62,19 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const JobsTableRow = ({ job, setSelectedJob }: JobsTableRowProps) => {
-  const jobFragment = getFragmentData(JOB_DETAILS, job);
   return (
     <StyledTableRow>
-      <StyledTableCell>{jobFragment.companyName}</StyledTableCell>
-      <StyledTableCell>{jobFragment.jobTitle}</StyledTableCell>
+      <StyledTableCell>{job.companyName}</StyledTableCell>
+      <StyledTableCell>{job.jobTitle}</StyledTableCell>
       <StyledTableCell>
-        {jobFragment.latestActivity
-          ? ActivityTypeLabel[jobFragment.latestActivity]
-          : ""}
+        {job.latestActivity ? ActivityTypeLabel[job.latestActivity] : ""}
       </StyledTableCell>
-      <StyledTableCell>{parseDate(jobFragment.dateCreated)}</StyledTableCell>
-      <StyledTableCell>{parseDate(jobFragment.lastModified)}</StyledTableCell>
+      <StyledTableCell>{parseDate(job.dateCreated)}</StyledTableCell>
+      <StyledTableCell>{parseDate(job.lastModified)}</StyledTableCell>
       <StyledTableCell>
         <Button
           component={Link}
-          to={`/jobs/${jobFragment.id}`}
+          to={`/jobs/${job.id}`}
           variant="contained"
           startIcon={<Edit />}
         >
@@ -127,7 +119,7 @@ const JobsTableContainer = ({
               <JobsTableRow
                 job={job}
                 setSelectedJob={setSelectedJob}
-                key={getFragmentData(JOB_DETAILS, job).id}
+                key={job.id}
               />
             ))}
           </TableBody>
@@ -139,9 +131,9 @@ const JobsTableContainer = ({
 };
 
 const JobsTable = () => {
-  const [selectedJob, setSelectedJob] = useState<FragmentType<
-    typeof JOB_DETAILS
-  > | null>(null);
+  const [selectedJob, setSelectedJob] = useState<JobDetailsFragment | null>(
+    null
+  );
   const { jobs, loading, error } = useJobs();
   const { page, rowsPerPage, filter } = useAppSelector(
     ({ pagination }) => pagination
@@ -149,7 +141,14 @@ const JobsTable = () => {
   const debouncedFilter = useDebounce(filter);
 
   const filteredJobs = useMemo(
-    () => (jobs ? filterJobs(jobs, debouncedFilter) : []),
+    () =>
+      jobs
+        ? jobs.filter((job) => {
+            return job.companyName
+              .toLowerCase()
+              .includes(debouncedFilter.toLowerCase());
+          })
+        : [],
     [jobs, debouncedFilter]
   );
   const jobsToDisplay = useMemo(

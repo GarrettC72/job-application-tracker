@@ -1,6 +1,6 @@
 import { gql } from "../../src/__generated__/gql";
 
-export const JOB_DETAILS = gql(`#grpahql
+export const JOB_DETAILS = gql(`#graphql
   fragment JobDetails on Job {
     companyName
     jobTitle

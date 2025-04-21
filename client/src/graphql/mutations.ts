@@ -72,6 +72,8 @@ export const CREATE_JOB = gql(`#graphql
   mutation createJob($jobParams: JobMutationInput!) {
     addJob(jobParams: $jobParams) {
       ...JobDetails
+      companyName
+      jobTitle
     }
   }
 `);
@@ -80,6 +82,8 @@ export const UPDATE_JOB = gql(`#graphql
   mutation updateJob($id: ID!, $jobParams: JobMutationInput!) {
     updateJob(id: $id, jobParams: $jobParams) {
       ...FullJobDetails
+      companyName
+      jobTitle
       latestActivity
       dateCreated
       lastModified

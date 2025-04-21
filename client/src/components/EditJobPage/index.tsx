@@ -2,9 +2,7 @@ import { Typography } from "@mui/material";
 import { useMutation } from "@apollo/client";
 import { Link, useNavigate, useParams } from "react-router";
 
-import { getFragmentData } from "../../__generated__/fragment-masking";
 import { UPDATE_JOB } from "../../graphql/mutations";
-import { FULL_JOB_DETAILS } from "../../graphql/fragments";
 import { JobFormFields } from "../../types";
 import useJob from "../../hooks/useJob";
 import useNotification from "../../hooks/useNotification";
@@ -25,9 +23,8 @@ const EditJobPage = () => {
     onCompleted: (result) => {
       const job = result.updateJob;
       if (job) {
-        const unmaskedJob = getFragmentData(FULL_JOB_DETAILS, job);
         notifyWith(
-          `Job '${unmaskedJob.jobTitle} at ${unmaskedJob.companyName}' successfully updated`,
+          `Job '${job.jobTitle} at ${job.companyName}' successfully updated`,
           "success"
         );
         navigate("/");
@@ -73,7 +70,7 @@ const EditJobPage = () => {
     return <ServerResponse />;
   }
 
-  const { id, ...jobFields } = getFragmentData(FULL_JOB_DETAILS, job);
+  const { id, ...jobFields } = job;
 
   const onSubmit = (data: JobFormFields) => {
     updateJob({ variables: { id: id, jobParams: data } });

@@ -1,25 +1,19 @@
 import { ApolloCache } from "@apollo/client";
 
-import {
-  FragmentType,
-  getFragmentData,
-} from "../__generated__/fragment-masking";
+import { JobDetailsFragment } from "../__generated__/graphql";
 import { GET_USER_JOBS } from "../graphql/queries";
-import { JOB_DETAILS } from "../graphql/fragments";
 
 export const addJobToCache = (
   cache: ApolloCache<object>,
-  addedJob: FragmentType<typeof JOB_DETAILS>
+  addedJob: JobDetailsFragment
 ) => {
-  const uniqById = (jobs: Array<FragmentType<typeof JOB_DETAILS>>) => {
+  const uniqById = (jobs: JobDetailsFragment[]) => {
     const seen = new Set();
     return jobs.filter((job) => {
-      const jobFragment = getFragmentData(JOB_DETAILS, job);
-      const id = jobFragment.id;
+      const id = job.id;
       return seen.has(id) ? false : seen.add(id);
     });
   };
-  const jobFragment = getFragmentData(JOB_DETAILS, addedJob);
 
   cache.updateQuery({ query: GET_USER_JOBS }, (data) => {
     if (data) {
@@ -32,7 +26,7 @@ export const addJobToCache = (
     }
   });
 
-  const id = cache.identify({ __typename: "Job", id: jobFragment.id });
+  const id = cache.identify({ __typename: "Job", id: addedJob.id });
   cache.evict({ id, fieldName: "user" });
 };
 

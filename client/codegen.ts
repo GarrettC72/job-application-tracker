@@ -9,12 +9,7 @@ const config: CodegenConfig = {
       plugins: [],
       presetConfig: {
         gqlTagName: "gql",
-        fragmentMasking: { unmaskFunctionName: "getFragmentData" },
-        // fragmentMasking: false,
-        // inlineFragmentTypes: "mask",
-        // customDirectives: {
-        //   apolloUnmask: true,
-        // },
+        fragmentMasking: false,
       },
       config: {
         enumsAsTypes: true,
@@ -23,6 +18,10 @@ const config: CodegenConfig = {
             input: "string | number",
             output: "number",
           },
+        },
+        inlineFragmentTypes: "mask",
+        customDirectives: {
+          apolloUnmask: true,
         },
       },
     },
