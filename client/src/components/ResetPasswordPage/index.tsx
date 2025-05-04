@@ -72,7 +72,7 @@ const ResetPasswordPage = () => {
   const [status, setStatus] = useState("LOADING");
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") ?? "";
-  const { loading } = useQuery(VERIFY_PASSWORD_RESET, {
+  const { data, loading } = useQuery(VERIFY_PASSWORD_RESET, {
     skip: !token,
     variables: { token },
     onError: (error) => {
@@ -109,7 +109,11 @@ const ResetPasswordPage = () => {
     return <Loading />;
   }
 
-  if (status === "VERIFIED" || status === "BAD_USER_INPUT") {
+  const isVerified = data
+    ? data.getPasswordReset !== null && data.getPasswordReset !== undefined
+    : false;
+
+  if (isVerified || status === "BAD_USER_INPUT") {
     return (
       <div style={{ textAlign: "center" }}>
         <Typography variant="h4" gutterBottom sx={{ mt: 1.5 }}>
