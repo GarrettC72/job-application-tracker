@@ -3,23 +3,13 @@ import { z } from "zod";
 
 import { Token, TokenType } from "../types";
 
-const TokenTypeEnum = z.nativeEnum(TokenType, {
-  errorMap: (issue, ctx) => {
-    if (
-      issue.code === z.ZodIssueCode.invalid_type ||
-      issue.code === z.ZodIssueCode.invalid_enum_value
-    ) {
-      return { message: "Value of token type incorrect: " + ctx.data };
-    }
-    return { message: ctx.defaultError };
+const TokenTypeEnum = z.enum(TokenType, {
+  error: (issue) => {
+    return { message: "Value of token type incorrect: " + issue.input };
   },
 });
 
-const EmailSchema = z
-  .string({
-    required_error: "Missing email address",
-  })
-  .email({ message: "Please enter a valid email address" });
+const EmailSchema = z.email({ error: "Please enter a valid email address" });
 const TokenSchema = z.object({
   email: EmailSchema,
   id: z.custom<Types.ObjectId>(
@@ -43,7 +33,7 @@ export const parseEmail = (param: unknown): string => {
 };
 
 export const parseDateParam = (date: string, field: string): string => {
-  return z.string().date(`Value of ${field} incorrect: ${date}`).parse(date);
+  return z.iso.date(`Value of ${field} incorrect: ${date}`).parse(date);
 };
 
 export const toToken = (object: unknown): Token => {

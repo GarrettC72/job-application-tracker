@@ -1,5 +1,5 @@
 import { Secret } from "jsonwebtoken";
-import "dotenv/config";
+import "@dotenvx/dotenvx/config";
 
 const PORT = Number(process.env.PORT) || 4000;
 const MONGODB_URI =
