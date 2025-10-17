@@ -69,25 +69,12 @@ const getResetResponseProps = (status: string): ResetResponseProps | null => {
 };
 
 const ResetPasswordPage = () => {
-  const [status, setStatus] = useState("LOADING");
+  const [isUpdated, setIsUpdated] = useState(false);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") ?? "";
-  const { data, loading } = useQuery(VERIFY_PASSWORD_RESET, {
+  const { data, loading, error } = useQuery(VERIFY_PASSWORD_RESET, {
     skip: !token,
     variables: { token },
-    onError: (error) => {
-      const verifyError = error.graphQLErrors[0];
-      if (
-        verifyError.extensions &&
-        verifyError.extensions.code &&
-        typeof verifyError.extensions.code === "string"
-      ) {
-        setStatus(verifyError.extensions.code);
-      }
-    },
-    onCompleted: () => {
-      setStatus("VERIFIED");
-    },
   });
 
   if (!token) {
@@ -109,28 +96,54 @@ const ResetPasswordPage = () => {
     return <Loading />;
   }
 
+  if (error) {
+    const verifyError = error.graphQLErrors[0];
+    if (
+      verifyError.extensions &&
+      verifyError.extensions.code &&
+      typeof verifyError.extensions.code === "string"
+    ) {
+      const responseProps = getResetResponseProps(verifyError.extensions.code);
+      return responseProps === null ? (
+        <ServerResponse />
+      ) : (
+        <ServerResponse {...responseProps} />
+      );
+    }
+  }
+
+  console.log(isUpdated);
+
+  if (isUpdated) {
+    return (
+      <ServerResponse
+        title={"Password Successfully Changed"}
+        message={"Your new password is now saved."}
+        callToAction={
+          <>
+            Please click <Link to="/">here</Link> to login.
+          </>
+        }
+      />
+    );
+  }
+
   const isVerified = data
     ? data.getPasswordReset !== null && data.getPasswordReset !== undefined
     : false;
 
-  if (isVerified || status === "BAD_USER_INPUT") {
+  if (isVerified) {
     return (
       <div style={{ textAlign: "center" }}>
         <Typography variant="h4" gutterBottom sx={{ mt: 1.5 }}>
           Create A New Password
         </Typography>
-        <ResetPasswordForm token={token} setStatus={setStatus} />
+        <ResetPasswordForm token={token} setIsUpdated={setIsUpdated} />
       </div>
     );
   }
 
-  const responseProps = getResetResponseProps(status);
-
-  return responseProps === null ? (
-    <ServerResponse />
-  ) : (
-    <ServerResponse {...responseProps} />
-  );
+  return <ServerResponse />;
 };
 
 export default ResetPasswordPage;

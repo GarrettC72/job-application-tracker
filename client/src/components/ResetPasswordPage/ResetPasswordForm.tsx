@@ -8,10 +8,10 @@ import storageService from "../../services/storage";
 
 interface Props {
   token: string;
-  setStatus: React.Dispatch<React.SetStateAction<string>>;
+  setIsUpdated: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const ResetPasswordForm = ({ token, setStatus }: Props) => {
+const ResetPasswordForm = ({ token, setIsUpdated }: Props) => {
   const { reset: resetPassword, ...password } = useField("password");
   const { reset: resetConfirmPassword, ...confirmPassword } =
     useField("password");
@@ -26,7 +26,6 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
         updateError.extensions.code &&
         typeof updateError.extensions.code === "string"
       ) {
-        setStatus(updateError.extensions.code);
         if (updateError.extensions.code === "BAD_USER_INPUT") {
           notifyWith(
             "Failed to save new password. Make sure your password is at least 8 characters long and that you enter it correctly twice.",
@@ -36,7 +35,7 @@ const ResetPasswordForm = ({ token, setStatus }: Props) => {
       }
     },
     onCompleted: () => {
-      setStatus("UPDATED_PASSWORD");
+      setIsUpdated(true);
       storageService.removeToken();
     },
   });
