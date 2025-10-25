@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { Typography } from "@mui/material";
 import { Link, useSearchParams } from "react-router";
 import { useState } from "react";
@@ -7,6 +7,7 @@ import { VERIFY_PASSWORD_RESET } from "../../graphql/queries";
 import ResetPasswordForm from "./ResetPasswordForm";
 import Loading from "../Loading";
 import ServerResponse from "../ServerResponse";
+import { CombinedGraphQLErrors } from "@apollo/client";
 
 interface ResetResponseProps {
   title: string;
@@ -96,8 +97,8 @@ const ResetPasswordPage = () => {
     return <Loading />;
   }
 
-  if (error) {
-    const verifyError = error.graphQLErrors[0];
+  if (error && CombinedGraphQLErrors.is(error)) {
+    const verifyError = error.errors[0];
     if (
       verifyError.extensions &&
       verifyError.extensions.code &&

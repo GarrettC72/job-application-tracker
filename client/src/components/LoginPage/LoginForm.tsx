@@ -1,4 +1,5 @@
-import { useApolloClient, useMutation } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client/react";
+import { CombinedGraphQLErrors } from "@apollo/client";
 import { Box, Button, CircularProgress, TextField, Grid } from "@mui/material";
 import { useNavigate } from "react-router";
 
@@ -17,7 +18,9 @@ const LoginForm = () => {
   const client = useApolloClient();
   const [login, { loading }] = useMutation(LOGIN, {
     onError: (error) => {
-      notifyWith(error.graphQLErrors[0].message, "error");
+      if (CombinedGraphQLErrors.is(error)) {
+        notifyWith(error.errors[0].message, "error");
+      }
     },
     onCompleted: (data) => {
       if (data.login) {

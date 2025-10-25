@@ -1,4 +1,5 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
+import { CombinedGraphQLErrors } from "@apollo/client";
 import { Box, Button, CircularProgress, TextField, Grid } from "@mui/material";
 
 import { isEmail } from "../../utils/parser";
@@ -13,7 +14,9 @@ const ForgotPasswordForm = () => {
 
   const [sendPasswordReset, { loading }] = useMutation(SEND_PASSWORD_RESET, {
     onError: (error) => {
-      notifyWith(error.graphQLErrors[0].message, "error");
+      if (CombinedGraphQLErrors.is(error)) {
+        notifyWith(error.errors[0].message, "error");
+      }
     },
     onCompleted: () => {
       notifyWith(

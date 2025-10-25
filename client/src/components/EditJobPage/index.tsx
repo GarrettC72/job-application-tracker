@@ -1,5 +1,6 @@
 import { Typography } from "@mui/material";
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
+import { CombinedGraphQLErrors } from "@apollo/client";
 import { Link, useNavigate, useParams } from "react-router";
 
 import { UPDATE_JOB } from "../../graphql/mutations";
@@ -18,7 +19,9 @@ const EditJobPage = () => {
 
   const [updateJob, { loading: mutationLoading }] = useMutation(UPDATE_JOB, {
     onError: (error) => {
-      notifyWith(error.graphQLErrors[0].message, "error");
+      if (CombinedGraphQLErrors.is(error)) {
+        notifyWith(error.errors[0].message, "error");
+      }
     },
     onCompleted: (result) => {
       const job = result.updateJob;
@@ -36,8 +39,8 @@ const EditJobPage = () => {
     return <Loading />;
   }
 
-  if (error) {
-    const graphqlError = error.graphQLErrors[0];
+  if (error && CombinedGraphQLErrors.is(error)) {
+    const graphqlError = error.errors[0];
     if (
       graphqlError.extensions &&
       graphqlError.extensions.code &&

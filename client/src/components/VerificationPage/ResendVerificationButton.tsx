@@ -1,7 +1,8 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { Box, Button, CircularProgress } from "@mui/material";
 
 import { RESEND_VERIFICATION } from "../../graphql/mutations";
+import { CombinedGraphQLErrors } from "@apollo/client";
 
 interface Props {
   token: string;
@@ -11,13 +12,15 @@ interface Props {
 const ResendVerificationButton = ({ token, setStatus }: Props) => {
   const [resend, { loading }] = useMutation(RESEND_VERIFICATION, {
     onError: (error) => {
-      const resendError = error.graphQLErrors[0];
-      if (
-        resendError.extensions &&
-        resendError.extensions.code &&
-        typeof resendError.extensions.code === "string"
-      ) {
-        setStatus(resendError.extensions.code);
+      if (CombinedGraphQLErrors.is(error)) {
+        const resendError = error.errors[0];
+        if (
+          resendError.extensions &&
+          resendError.extensions.code &&
+          typeof resendError.extensions.code === "string"
+        ) {
+          setStatus(resendError.extensions.code);
+        }
       }
     },
     onCompleted: () => {

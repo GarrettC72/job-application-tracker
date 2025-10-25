@@ -1,6 +1,7 @@
 import { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
+  overwrite: true,
   schema: "introspection.json",
   documents: ["src/**/!(*.d).{ts,tsx}"],
   generates: {
@@ -12,6 +13,13 @@ const config: CodegenConfig = {
         fragmentMasking: false,
       },
       config: {
+        avoidOptionals: {
+          field: true,
+          inputValue: false,
+        },
+        defaultScalarType: "unknown",
+        nonOptionalTypename: true,
+        skipTypeNameForRoot: true,
         enumsAsTypes: true,
         scalars: {
           Date: {

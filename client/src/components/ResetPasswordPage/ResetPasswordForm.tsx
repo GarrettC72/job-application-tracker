@@ -1,4 +1,5 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
+import { CombinedGraphQLErrors } from "@apollo/client";
 import { Box, Button, CircularProgress, TextField, Grid } from "@mui/material";
 
 import { EDIT_PASSWORD } from "../../graphql/mutations";
@@ -20,17 +21,19 @@ const ResetPasswordForm = ({ token, setIsUpdated }: Props) => {
 
   const [updatePassword, { loading }] = useMutation(EDIT_PASSWORD, {
     onError: (error) => {
-      const updateError = error.graphQLErrors[0];
-      if (
-        updateError.extensions &&
-        updateError.extensions.code &&
-        typeof updateError.extensions.code === "string"
-      ) {
-        if (updateError.extensions.code === "BAD_USER_INPUT") {
-          notifyWith(
-            "Failed to save new password. Make sure your password is at least 8 characters long and that you enter it correctly twice.",
-            "error"
-          );
+      if (CombinedGraphQLErrors.is(error)) {
+        const updateError = error.errors[0];
+        if (
+          updateError.extensions &&
+          updateError.extensions.code &&
+          typeof updateError.extensions.code === "string"
+        ) {
+          if (updateError.extensions.code === "BAD_USER_INPUT") {
+            notifyWith(
+              "Failed to save new password. Make sure your password is at least 8 characters long and that you enter it correctly twice.",
+              "error"
+            );
+          }
         }
       }
     },

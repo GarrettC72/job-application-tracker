@@ -1,6 +1,6 @@
 import { Logout } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
-import { useApolloClient, useSubscription } from "@apollo/client";
+import { useApolloClient, useSubscription } from "@apollo/client/react";
 import { Navigate, Outlet } from "react-router";
 
 import {
@@ -16,6 +16,7 @@ import Notification from "../../features/notification/Notification";
 import ColorMode from "../../features/appearance/ColorMode";
 import Loading from "../Loading";
 import ServerResponse from "../ServerResponse";
+import { CombinedGraphQLErrors } from "@apollo/client";
 
 const AuthenticatedLayout = () => {
   const { currentUser, loading, error } = useCurrentUser();
@@ -73,17 +74,9 @@ const AuthenticatedLayout = () => {
   }
 
   if (error) {
-    const networkError = error.networkError;
-    if (
-      networkError &&
-      "result" in networkError &&
-      typeof networkError.result === "object" &&
-      networkError.result.errors &&
-      Array.isArray(networkError.result.errors)
-    ) {
-      const graphQlError = networkError.result.errors[0];
+    if (CombinedGraphQLErrors.is(error)) {
+      const graphQlError = error.errors[0];
       if (
-        graphQlError &&
         graphQlError.extensions &&
         graphQlError.extensions.code &&
         typeof graphQlError.extensions.code === "string" &&

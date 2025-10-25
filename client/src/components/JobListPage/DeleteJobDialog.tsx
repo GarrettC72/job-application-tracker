@@ -1,4 +1,5 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
+import { CombinedGraphQLErrors } from "@apollo/client";
 import {
   Box,
   Button,
@@ -23,8 +24,10 @@ interface Props {
 const DeleteJobDialog = ({ job, onClose }: Props) => {
   const [deleteJob, { loading }] = useMutation(DELETE_JOB, {
     onError: (error) => {
-      notifyWith(error.graphQLErrors[0].message, "error");
-      onClose();
+      if (CombinedGraphQLErrors.is(error)) {
+        notifyWith(error.errors[0].message, "error");
+        onClose();
+      }
     },
     onCompleted: (result) => {
       const job = result.deleteJob;

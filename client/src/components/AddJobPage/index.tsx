@@ -1,5 +1,6 @@
 import { Typography } from "@mui/material";
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
+import { CombinedGraphQLErrors } from "@apollo/client";
 import { useNavigate } from "react-router";
 
 import { addJobToCache } from "../../utils/cache";
@@ -14,7 +15,9 @@ const AddJobPage = () => {
 
   const [createJob, { loading }] = useMutation(CREATE_JOB, {
     onError: (error) => {
-      notifyWith(error.graphQLErrors[0].message, "error");
+      if (CombinedGraphQLErrors.is(error)) {
+        notifyWith(error.errors[0].message, "error");
+      }
     },
     onCompleted: (result) => {
       const job = result.addJob;

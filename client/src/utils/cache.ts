@@ -4,7 +4,7 @@ import { JobDetailsFragment } from "../__generated__/graphql";
 import { GET_USER_JOBS } from "../graphql/queries";
 
 export const addJobToCache = (
-  cache: ApolloCache<object>,
+  cache: ApolloCache,
   addedJob: JobDetailsFragment
 ) => {
   const uniqById = (jobs: JobDetailsFragment[]) => {
@@ -30,7 +30,7 @@ export const addJobToCache = (
   cache.evict({ id, fieldName: "user" });
 };
 
-export const removeJobFromCache = (cache: ApolloCache<object>, id: string) => {
+export const removeJobFromCache = (cache: ApolloCache, id: string) => {
   const cacheId = cache.identify({ __typename: "Job", id });
   cache.evict({ id: cacheId });
   cache.gc();

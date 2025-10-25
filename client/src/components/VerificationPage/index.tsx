@@ -1,4 +1,5 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
+import { CombinedGraphQLErrors } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 
@@ -72,13 +73,15 @@ const VerificationPage = () => {
   const [searchParams] = useSearchParams();
   const [verify] = useMutation(VERIFY_USER, {
     onError: (error) => {
-      const verifyError = error.graphQLErrors[0];
-      if (
-        verifyError.extensions &&
-        verifyError.extensions.code &&
-        typeof verifyError.extensions.code === "string"
-      ) {
-        setStatus(verifyError.extensions.code);
+      if (CombinedGraphQLErrors.is(error)) {
+        const verifyError = error.errors[0];
+        if (
+          verifyError.extensions &&
+          verifyError.extensions.code &&
+          typeof verifyError.extensions.code === "string"
+        ) {
+          setStatus(verifyError.extensions.code);
+        }
       }
     },
     onCompleted: () => {

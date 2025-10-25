@@ -1,4 +1,5 @@
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
+import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router";
 import React from "react";
