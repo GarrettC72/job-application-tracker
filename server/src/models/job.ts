@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { ActivityType, Job } from "../types";
+import { ActivityType, Job } from "../types.js";
 
 const schema = new mongoose.Schema<Job>({
   companyName: {

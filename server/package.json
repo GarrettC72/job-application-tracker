@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "tsc": "rm -rf build && tsc",
     "dev": "dotenvx run -- cross-env NODE_ENV=development ts-node-dev src/index.ts",
@@ -11,8 +12,9 @@
     "build:full": "npm run build:server && npm run build:client",
     "start": "dotenvx run -- cross-env NODE_ENV=production node build/src/index.js",
     "lint": "eslint .",
+    "type-check": "tsc --noEmit",
     "prettier": "npx prettier --write .",
-    "compile": "graphql-codegen"
+    "compile": "graphql-codegen-esm --config codegen.ts && sed -i 's/\\/types/\\/types.js/g' ./src/__generated__/resolvers-types.ts"
   },
   "author": "Garrett Chen",
   "license": "ISC",

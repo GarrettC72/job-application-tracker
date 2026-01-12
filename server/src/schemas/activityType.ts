@@ -1,7 +1,7 @@
-import gql from "graphql-tag";
+import { gql } from "graphql-tag";
 
-import { Resolvers } from "../__generated__/resolvers-types";
-import { ActivityType } from "../types";
+import { Resolvers } from "../__generated__/resolvers-types.js";
+import { ActivityType } from "../types.js";
 
 export const typeDef = gql`
   enum ActivityType {

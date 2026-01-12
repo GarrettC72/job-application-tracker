@@ -15,12 +15,12 @@ import cors from "cors";
 import http from "http";
 import path from "path";
 
-import { toToken } from "./utils/parser";
-import { verifyCurrentUser } from "./utils/userHelper";
-import { MyContext, TokenType } from "./types";
-import schema from "./schemas";
-import config from "./utils/config";
-import User from "./models/user";
+import { toToken } from "./utils/parser.js";
+import { verifyCurrentUser } from "./utils/userHelper.js";
+import { MyContext, TokenType } from "./types.js";
+import schema from "./schemas/index.js";
+import config from "./utils/config.js";
+import User from "./models/user.js";
 
 mongoose.set("strictQuery", false);
 
@@ -195,6 +195,32 @@ const start = async () => {
       `🚀  Server is now running on http://localhost:${config.PORT}/graphql`
     )
   );
+
+  process.on("SIGTERM", () => {
+    console.log("SIGTERM signal received");
+    console.log("Closing http server");
+    httpServer.close(() => {
+      void (async () => {
+        console.log("Http server closed");
+        await mongoose.connection.close(false);
+        console.log("MongoDB connection closed");
+        process.exit(0);
+      })();
+    });
+  });
+
+  process.on("SIGINT", () => {
+    console.log("SIGINT signal received");
+    console.log("Closing http server");
+    httpServer.close(() => {
+      void (async () => {
+        console.log("Http server closed");
+        await mongoose.connection.close(false);
+        console.log("MongoDB connection closed");
+        process.exit(0);
+      })();
+    });
+  });
 };
 
-void start();
+await start();

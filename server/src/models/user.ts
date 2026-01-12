@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { User } from "../types";
+import { User } from "../types.js";
 
 const schema = new mongoose.Schema<User>({
   email: {

@@ -1,7 +1,7 @@
 import { Types, isObjectIdOrHexString } from "mongoose";
 import { z } from "zod";
 
-import { Token, TokenType } from "../types";
+import { Token, TokenType } from "../types.js";
 
 const TokenTypeEnum = z.enum(TokenType, {
   error: (issue) => {

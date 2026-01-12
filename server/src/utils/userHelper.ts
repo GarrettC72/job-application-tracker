@@ -1,10 +1,10 @@
 import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
-import { Token, TokenType, UserDocument } from "../types";
-import { toToken } from "./parser";
-import config from "./config";
-import User from "../models/user";
+import { Token, TokenType, UserDocument } from "../types.js";
+import { toToken } from "./parser.js";
+import config from "./config.js";
+import User from "../models/user.js";
 
 export const handleTokenError = async (
   error: unknown,

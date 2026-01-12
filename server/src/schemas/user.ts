@@ -2,15 +2,19 @@ import { GraphQLError } from "graphql";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import gql from "graphql-tag";
+import { gql } from "graphql-tag";
 
-import { Resolvers } from "../__generated__/resolvers-types";
-import { parseEmail, parseNonEmptyStringParam, toToken } from "../utils/parser";
-import { sendEmail } from "../utils/mailer";
-import { getUser, handleTokenError } from "../utils/userHelper";
-import { EmailType, Token, TokenType } from "../types";
-import config from "../utils/config";
-import User from "../models/user";
+import { Resolvers } from "../__generated__/resolvers-types.js";
+import {
+  parseEmail,
+  parseNonEmptyStringParam,
+  toToken,
+} from "../utils/parser.js";
+import { sendEmail } from "../utils/mailer.js";
+import { getUser, handleTokenError } from "../utils/userHelper.js";
+import { EmailType, Token, TokenType } from "../types.js";
+import config from "../utils/config.js";
+import User from "../models/user.js";
 
 export const typeDef = gql`
   type User {

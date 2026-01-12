@@ -1,13 +1,13 @@
 import { GraphQLError } from "graphql";
 import { PubSub, withFilter } from "graphql-subscriptions";
 import { z } from "zod";
-import gql from "graphql-tag";
+import { gql } from "graphql-tag";
 
-import { Resolvers } from "../__generated__/resolvers-types";
-import { parseDateParam, parseNonEmptyStringParam } from "../utils/parser";
-import { verifyCurrentUser } from "../utils/userHelper";
-import { UserDetails } from "../types";
-import Job from "../models/job";
+import { Resolvers } from "../__generated__/resolvers-types.js";
+import { parseDateParam, parseNonEmptyStringParam } from "../utils/parser.js";
+import { verifyCurrentUser } from "../utils/userHelper.js";
+import { UserDetails } from "../types.js";
+import Job from "../models/job.js";
 
 const pubsub = new PubSub();
 

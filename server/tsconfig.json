@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES6",
+    "target": "es2022",
     "outDir": "./build/",
     "module": "NodeNext",
     "strict": true,
