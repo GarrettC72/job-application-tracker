@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "tsc": "rm -rf build && tsc",
-    "dev": "dotenvx run -- cross-env NODE_ENV=development ts-node-dev src/index.ts",
+    "dev": "dotenvx run -- cross-env NODE_ENV=development tsx watch --clear-screen=false src/index.ts",
     "build:server": "npm run compile && npm run tsc",
     "build:client": "rm -rf dist && cd ../client/ && npm install && npm run build && cp -r dist ../server/",
     "build:full": "npm run build:server && npm run build:client",
@@ -33,7 +33,7 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.0.0",
     "prettier": "^3.7.4",
-    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.52.0"
   },

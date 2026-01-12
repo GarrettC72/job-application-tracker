@@ -18,7 +18,7 @@ npm run dev
 
 `npm run compile` will run the GraphQL Code Generator to parse the GraphQL schema from all of the files in the `server/src/schema` directory to generate types that can be used in the resolver functions.
 
-`npm run dev` will start the server with `NODE_ENV=development` and will automatically restart the server on saving file changes through the `ts-node-dev` library.
+`npm run dev` will start the server with `NODE_ENV=development` and will automatically restart the server on saving file changes through the `tsx` library.
 
 Running the server requires certain environment variables in a `.env` file inside the `server` directory (i.e. `server/.env`). The variables are as follows:
 
