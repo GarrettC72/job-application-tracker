@@ -1,13 +1,15 @@
 import eslint from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
-import reactRefresh from "eslint-plugin-react-refresh";
+import { reactRefresh } from "eslint-plugin-react-refresh";
 import reactHooks from "eslint-plugin-react-hooks";
 import react from "eslint-plugin-react";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier";
+import { defineConfig } from "eslint/config";
 
-export default tseslint.config(
+export default defineConfig([
+  reactRefresh.configs.vite(),
   {
     // config with just ignores is the replacement for `.eslintignore`
     ignores: [
@@ -37,7 +39,6 @@ export default tseslint.config(
     plugins: {
       "@typescript-eslint": tseslint.plugin,
       "@stylistic": stylistic,
-      "react-refresh": reactRefresh,
       "react-hooks": reactHooks,
       react: react,
     },
@@ -66,5 +67,5 @@ export default tseslint.config(
       quotes: ["error", "double", { avoidEscape: true }],
       eqeqeq: "error",
     },
-  }
-);
+  },
+]);
