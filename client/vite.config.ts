@@ -19,22 +19,6 @@ export default defineConfig({
   build: {
     rolldownOptions: {
       output: {
-        // manualChunks(id: string) {
-        //   if (id.includes("node_modules")) {
-        //     if (
-        //       id.includes("react") ||
-        //       id.includes("use-sync-external-store") ||
-        //       id.includes("@emotion") ||
-        //       id.includes("rehackt")
-        //     )
-        //       return;
-        //     return id
-        //       .toString()
-        //       .split("node_modules/")[1]
-        //       .split("/")[0]
-        //       .toString();
-        //   }
-        // },
         codeSplitting: {
           groups: [
             {
