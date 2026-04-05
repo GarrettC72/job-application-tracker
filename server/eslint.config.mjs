@@ -49,6 +49,7 @@ export default tseslint.config(
         { argsIgnorePattern: "^_" },
       ],
       "@typescript-eslint/array-type": ["error", { default: "array-simple" }],
+      "@typescript-eslint/no-deprecated": "error",
       "no-case-declarations": "off",
       quotes: ["error", "double"],
       eqeqeq: "error",

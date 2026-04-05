@@ -14,7 +14,7 @@ const dateScalar = new GraphQLScalarType({
     if (value instanceof Date) {
       return value.getTime();
     }
-    throw Error("GraphQL Date Scalar serializer expected a `Date` object");
+    throw new Error("GraphQL Date Scalar serializer expected a `Date` object");
   },
   parseValue(value) {
     if (typeof value === "number") {
