@@ -63,6 +63,7 @@ export default defineConfig([
       ],
       "no-case-declarations": "off",
       "@typescript-eslint/array-type": ["error", { default: "array-simple" }],
+      "@typescript-eslint/no-deprecated": "error",
       "react/react-in-jsx-scope": 0,
       quotes: ["error", "double", { avoidEscape: true }],
       eqeqeq: "error",

@@ -17,23 +17,38 @@ export default defineConfig({
     },
   },
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        manualChunks(id: string) {
-          if (id.includes("node_modules")) {
-            if (
-              id.includes("react") ||
-              id.includes("use-sync-external-store") ||
-              id.includes("@emotion") ||
-              id.includes("rehackt")
-            )
-              return;
-            return id
-              .toString()
-              .split("node_modules/")[1]
-              .split("/")[0]
-              .toString();
-          }
+        // manualChunks(id: string) {
+        //   if (id.includes("node_modules")) {
+        //     if (
+        //       id.includes("react") ||
+        //       id.includes("use-sync-external-store") ||
+        //       id.includes("@emotion") ||
+        //       id.includes("rehackt")
+        //     )
+        //       return;
+        //     return id
+        //       .toString()
+        //       .split("node_modules/")[1]
+        //       .split("/")[0]
+        //       .toString();
+        //   }
+        // },
+        codeSplitting: {
+          groups: [
+            {
+              test: /node_modules/,
+              name: (moduleId) =>
+                moduleId.includes("node_modules")
+                  ? moduleId
+                      .toString()
+                      .split("node_modules/")[1]
+                      .split("/")[0]
+                      .toString()
+                  : "vendor",
+            },
+          ],
         },
       },
     },
