@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client/react";
 import { CombinedGraphQLErrors } from "@apollo/client";
-import { Box, Button, CircularProgress, TextField, Grid } from "@mui/material";
+import { Box, Button, CircularProgress, TextField, Stack } from "@mui/material";
 
 import { isEmail } from "../../utils/parser";
 import { REGISTER } from "../../graphql/mutations";
@@ -61,7 +61,7 @@ const SignUpForm = () => {
         "& .MuiTextField-root": { mb: 2 },
       }}
     >
-      <Grid container direction="column">
+      <Stack>
         <TextField
           label="Email"
           {...email}
@@ -124,7 +124,7 @@ const SignUpForm = () => {
             />
           )}
         </Box>
-      </Grid>
+      </Stack>
       <hr />
     </Box>
   );
