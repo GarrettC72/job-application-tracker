@@ -1,4 +1,4 @@
-import { CodegenConfig } from "@graphql-codegen/cli";
+import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   overwrite: true,
@@ -31,6 +31,7 @@ const config: CodegenConfig = {
         customDirectives: {
           apolloUnmask: true,
         },
+        useTypeImports: true,
       },
     },
   },

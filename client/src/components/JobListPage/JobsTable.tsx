@@ -14,7 +14,7 @@ import { DeleteForever, Edit } from "@mui/icons-material";
 import { Link } from "react-router";
 import { useMemo, useState } from "react";
 
-import { JobDetailsFragment } from "../../__generated__/graphql";
+import type { JobDetailsFragment } from "../../__generated__/graphql";
 import { useAppSelector } from "../../app/hooks";
 import { parseDate } from "../../utils/parser";
 import { ActivityTypeLabel } from "../../types";

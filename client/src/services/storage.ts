@@ -1,4 +1,4 @@
-import { ColorMode } from "../types";
+import type { ColorMode } from "../types";
 
 const USER_KEY = "loggedJobappUser";
 const COLOR_MODE_KEY = "JobappColorMode";

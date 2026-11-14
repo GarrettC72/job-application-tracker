@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client/react";
+import { skipToken, useQuery } from "@apollo/client/react";
 import { Typography } from "@mui/material";
 import { Link, useSearchParams } from "react-router";
 import { useState } from "react";
@@ -73,10 +73,14 @@ const ResetPasswordPage = () => {
   const [isUpdated, setIsUpdated] = useState(false);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") ?? "";
-  const { data, loading, error } = useQuery(VERIFY_PASSWORD_RESET, {
-    skip: !token,
-    variables: { token },
-  });
+  const { data, loading, error } = useQuery(
+    VERIFY_PASSWORD_RESET,
+    token
+      ? {
+          variables: { token },
+        }
+      : skipToken
+  );
 
   if (!token) {
     return (

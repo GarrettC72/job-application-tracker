@@ -1,4 +1,4 @@
-import { AlertColor } from "@mui/material";
+import type { AlertColor } from "@mui/material";
 
 import { useAppDispatch } from "../app/hooks";
 import { setNotification } from "../features/notification/notificationSlice";

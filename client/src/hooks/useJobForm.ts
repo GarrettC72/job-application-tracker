@@ -1,5 +1,6 @@
 import { useReducer } from "react";
-import { ActivityTypeValue, JobFormFields } from "../types";
+import type { JobFormFields } from "../types";
+import { ActivityTypeValue } from "../types";
 
 interface TextFieldPayload {
   name: string;

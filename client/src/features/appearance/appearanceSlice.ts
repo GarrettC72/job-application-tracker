@@ -1,7 +1,8 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-import { ColorMode } from "../../types";
-import { AppDispatch } from "../../app/store";
+import type { ColorMode } from "../../types";
+import type { AppDispatch } from "../../app/store";
 import storageService from "../../services/storage";
 
 interface AppearanceState {

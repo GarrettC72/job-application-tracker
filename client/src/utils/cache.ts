@@ -1,6 +1,6 @@
 import { ApolloCache } from "@apollo/client";
 
-import { JobDetailsFragment } from "../__generated__/graphql";
+import type { JobDetailsFragment } from "../__generated__/graphql";
 import { GET_USER_JOBS } from "../graphql/queries";
 
 export const addJobToCache = (

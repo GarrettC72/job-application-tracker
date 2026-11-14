@@ -15,18 +15,6 @@ export const ActivityType = {
 
 export type ActivityType = (typeof ActivityType)[keyof typeof ActivityType];
 
-// export enum ActivityType {
-//   APPLIED = "Submitted Job Application",
-//   SENT_RESUME = "Sent Resume",
-//   ONLINE_ASSESSMENT = "Took Online Assessment",
-//   INTERVIEWED = "Interviewed For Job",
-//   REJECTED = "Rejected",
-//   CLOSED_FILLED = "Job Closed/Filled",
-//   RECEIVED_OFFER = "Received Job Offer",
-//   ACCEPTED_OFFER = "Accepted Job Offer",
-//   DECLINED_OFFER = "Declined Job Offer",
-// }
-
 export interface Activity {
   activityType: ActivityType;
   date: string;
@@ -73,13 +61,7 @@ export const TokenType = {
   Login: "login",
 } as const;
 
-type TokenType = (typeof TokenType)[keyof typeof TokenType];
-
-// export enum TokenType {
-//   Verification = "verification",
-//   Password = "password",
-//   Login = "login",
-// }
+export type TokenType = (typeof TokenType)[keyof typeof TokenType];
 
 export const EmailType = {
   Verify: "Verify",
@@ -88,12 +70,6 @@ export const EmailType = {
 } as const;
 
 export type EmailType = (typeof EmailType)[keyof typeof EmailType];
-
-// export enum EmailType {
-//   Verify = "Verify",
-//   Reverify = "Reverify",
-//   PasswordReset = "PasswordReset",
-// }
 
 export interface Token {
   email: string;

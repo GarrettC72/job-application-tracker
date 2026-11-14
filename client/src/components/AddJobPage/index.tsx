@@ -4,7 +4,7 @@ import { CombinedGraphQLErrors } from "@apollo/client";
 import { useNavigate } from "react-router";
 
 import { addJobToCache } from "../../utils/cache";
-import { JobFormFields } from "../../types";
+import type { JobFormFields } from "../../types";
 import { CREATE_JOB } from "../../graphql/mutations";
 import useNotification from "../../hooks/useNotification";
 import JobForm from "../JobForm";

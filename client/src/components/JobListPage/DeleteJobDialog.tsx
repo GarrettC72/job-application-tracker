@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-import { JobDetailsFragment } from "../../__generated__/graphql";
+import type { JobDetailsFragment } from "../../__generated__/graphql";
 import { DELETE_JOB } from "../../graphql/mutations";
 import { removeJobFromCache } from "../../utils/cache";
 import useNotification from "../../hooks/useNotification";

@@ -10,7 +10,8 @@ import {
 } from "@mui/material";
 import { Link } from "react-router";
 
-import { ActivityTypeValue, ActivityTypeLabel, JobFormFields } from "../types";
+import type { JobFormFields } from "../types";
+import { ActivityTypeValue, ActivityTypeLabel } from "../types";
 import { useAppSelector } from "../app/hooks";
 import useJobForm from "../hooks/useJobForm";
 
