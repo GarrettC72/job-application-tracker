@@ -3,11 +3,11 @@ import { PubSub, withFilter } from "graphql-subscriptions";
 import { z } from "zod";
 import { gql } from "graphql-tag";
 
-import { Resolvers } from "../__generated__/resolvers-types.js";
-import { parseDateParam, parseNonEmptyStringParam } from "../utils/parser.js";
-import { verifyCurrentUser } from "../utils/userHelper.js";
-import { UserDetails } from "../types.js";
-import Job from "../models/job.js";
+import type { Resolvers } from "../__generated__/resolvers-types.ts";
+import { parseDateParam, parseNonEmptyStringParam } from "../utils/parser.ts";
+import { verifyCurrentUser } from "../utils/userHelper.ts";
+import type { UserDetails } from "../types.ts";
+import Job from "../models/job.ts";
 
 const pubsub = new PubSub();
 

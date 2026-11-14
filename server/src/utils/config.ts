@@ -1,4 +1,4 @@
-import { Secret } from "jsonwebtoken";
+import type { Secret } from "jsonwebtoken";
 import "@dotenvx/dotenvx/config";
 
 const PORT = Number(process.env.PORT) || 4000;

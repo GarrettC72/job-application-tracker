@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
-import { ActivityType, Job } from "../types.js";
+import type { Job } from "../types.ts";
+import { ActivityType } from "../types.ts";
 
 const schema = new mongoose.Schema<Job>({
   companyName: {
@@ -32,7 +33,7 @@ const schema = new mongoose.Schema<Job>({
       },
       activityType: {
         type: String,
-        enum: ActivityType,
+        enum: Object.values(ActivityType),
         required: true,
       },
       description: String,

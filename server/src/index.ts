@@ -15,12 +15,13 @@ import cors from "cors";
 import http from "http";
 import path from "path";
 
-import { toToken } from "./utils/parser.js";
-import { verifyCurrentUser } from "./utils/userHelper.js";
-import { MyContext, TokenType } from "./types.js";
-import schema from "./schemas/index.js";
-import config from "./utils/config.js";
-import User from "./models/user.js";
+import { toToken } from "./utils/parser.ts";
+import { verifyCurrentUser } from "./utils/userHelper.ts";
+import type { MyContext } from "./types.ts";
+import { TokenType } from "./types.ts";
+import schema from "./schemas/index.ts";
+import config from "./utils/config.ts";
+import User from "./models/user.ts";
 
 mongoose.set("strictQuery", false);
 

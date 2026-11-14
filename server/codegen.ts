@@ -2,7 +2,7 @@ import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   schema: "./src/schemas/*.ts",
-  importExtension: ".js",
+  importExtension: ".ts",
   generates: {
     "./src/__generated__/resolvers-types.ts": {
       config: {
@@ -11,6 +11,8 @@ const config: CodegenConfig = {
         enumValues: {
           ActivityType: "../types#ActivityType",
         },
+        useTypeImports: true,
+        enumsAsConst: true,
       },
       plugins: ["typescript", "typescript-resolvers"],
     },

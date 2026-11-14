@@ -4,11 +4,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { gql } from "graphql-tag";
 
-import { Resolvers } from "../__generated__/resolvers-types.js";
-import { parseEmail } from "../utils/parser.js";
-import { Token, TokenType } from "../types.js";
-import config from "../utils/config.js";
-import User from "../models/user.js";
+import type { Resolvers } from "../__generated__/resolvers-types.ts";
+import { parseEmail } from "../utils/parser.ts";
+import type { Token } from "../types.ts";
+import { TokenType } from "../types.ts";
+import config from "../utils/config.ts";
+import User from "../models/user.ts";
 
 export const typeDef = gql`
   type Token {

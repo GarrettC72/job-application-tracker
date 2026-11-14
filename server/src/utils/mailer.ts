@@ -1,8 +1,8 @@
 import { google } from "googleapis";
 import nodemailer from "nodemailer";
 
-import { EmailType } from "../types.js";
-import config from "./config.js";
+import { EmailType } from "../types.ts";
+import config from "./config.ts";
 
 const OAuth2 = google.auth.OAuth2;
 

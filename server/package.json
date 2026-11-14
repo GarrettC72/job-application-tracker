@@ -14,7 +14,7 @@
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
     "prettier": "npx prettier --write .",
-    "compile": "graphql-codegen-esm --config codegen.ts && sed -i 's/\\/types/\\/types.js/g' ./src/__generated__/resolvers-types.ts"
+    "compile": "graphql-codegen-esm --config codegen.ts && sed -i 's/\\/types/\\/types.ts/g; /export { ActivityType };/d' ./src/__generated__/resolvers-types.ts"
   },
   "author": "Garrett Chen",
   "license": "ISC",

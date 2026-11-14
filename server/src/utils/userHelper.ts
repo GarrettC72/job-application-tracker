@@ -1,15 +1,16 @@
 import { GraphQLError } from "graphql";
 import jwt from "jsonwebtoken";
 
-import { Token, TokenType, UserDocument } from "../types.js";
-import { toToken } from "./parser.js";
-import config from "./config.js";
-import User from "../models/user.js";
+import type { Token, UserDocument } from "../types.ts";
+import { TokenType } from "../types.ts";
+import { toToken } from "./parser.ts";
+import config from "./config.ts";
+import User from "../models/user.ts";
 
 export const handleTokenError = async (
   error: unknown,
   token: string,
-  type: TokenType.Password | TokenType.Verification,
+  type: "password" | "verification",
   verified: boolean
 ): Promise<GraphQLError> => {
   let invalidMessage, expiredMessage;

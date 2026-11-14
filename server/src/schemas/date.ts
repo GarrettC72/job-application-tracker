@@ -1,7 +1,7 @@
 import { GraphQLScalarType, Kind } from "graphql";
 import { gql } from "graphql-tag";
 
-import { Resolvers } from "../__generated__/resolvers-types.js";
+import type { Resolvers } from "../__generated__/resolvers-types.ts";
 
 export const typeDef = gql`
   scalar Date
